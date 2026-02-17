@@ -64,7 +64,7 @@ public class ConfermatoState implements HackState {
     }
 
     @Override
-    public void invitaStaff(Hackathon hackathon, Organizzatore organizzatore) {
+    public void invitaStaff(Hackathon hackathon, Utente utente, RuoliStaff tipoRuolo) {
         throw new IllegalStateException("Non puoi invitare staff in stato confermato");
     }
 
@@ -76,8 +76,11 @@ public class ConfermatoState implements HackState {
 
     @Override
     public void confermaHackathon(Hackathon hackathon) {
-        hackathon.CambiaStato(new ConfermatoState(hackathon));{
-
+        throw new IllegalStateException("L'hackathon è già confermato");
     }
-}
+
+    @Override
+    public boolean isStaffIncompleto(Hackathon hackathon) {
+        return false;
+    }
 }

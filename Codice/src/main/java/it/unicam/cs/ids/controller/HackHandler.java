@@ -28,8 +28,8 @@ public class HackHandler {
         hackathon.aggiungiMentore(mentore);
     }
 
-    public void invitaStaff(Organizzatore organizzatore) {
-        hackathon.invitaStaff(organizzatore);
+    public void invitaStaff(Utente utente, RuoliStaff tipoRuolo) {
+        hackathon.invitaStaff(utente, tipoRuolo);
     }
 
     public void conferma() {
