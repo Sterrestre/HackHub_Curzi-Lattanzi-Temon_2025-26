@@ -32,7 +32,7 @@ public interface HackState {
 
     void aggiungiMentore(Hackathon hackathon, RuoloPartecipazione mentore);
 
-    void invitaStaff(Hackathon hackathon, Organizzatore organizzatore);
+    void invitaStaff(Hackathon hackathon, Utente utente, RuoliStaff tipoRuolo);
 
     void eliminaHackathon(Hackathon hackathon);
 

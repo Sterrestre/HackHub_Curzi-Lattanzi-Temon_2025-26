@@ -25,7 +25,7 @@ public abstract class ConclusoState implements HackState {
     }
 
     @Override
-    public void invitaStaff(Hackathon hackathon, Organizzatore organizzatore) {
+    public void invitaStaff(Hackathon hackathon, Utente utente, RuoliStaff tipoRuolo) {
         throw new IllegalStateException("Hackathon concluso");
     }
 

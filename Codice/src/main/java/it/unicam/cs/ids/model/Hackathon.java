@@ -75,8 +75,8 @@ public abstract class Hackathon {
         state.aggiungiMentore(this, mentore);
     }
 
-    public void invitaStaff(Organizzatore organizzatore) {
-        state.invitaStaff(this, organizzatore);
+    public void invitaStaff(Utente utente, RuoliStaff tipoRuolo) {
+        state.invitaStaff(this, utente, tipoRuolo);
     }
 
     public void elimina() {
@@ -87,7 +87,23 @@ public abstract class Hackathon {
         state.confermaHackathon(this);
     }
 
-    public void CambiaStato(ConfermatoState nuovoStato) {
-        this.stato = nuovoStato;
+    public void cambiaStato(HackState nuovoStato) {
+        this.state = nuovoStato;
+        // Aggiorna anche l'enum Stato in base al tipo di stato
+        if (nuovoStato instanceof BozzaState) {
+            this.stato = Stato.BOZZA;
+        } else if (nuovoStato instanceof ConfermatoState) {
+            this.stato = Stato.CONFERMATO;
+        } else if (nuovoStato instanceof ConclusoState) {
+            this.stato = Stato.CONCLUSO;
+        }
+    }
+
+    public InfoHack getInfoHack() {
+        return this.infoHack;
+    }
+
+    public List<RuoloPartecipazione> getRuoli() {
+        return this.ruoli;
     }
 }
