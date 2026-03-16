@@ -1,9 +1,9 @@
 package it.unicam.cs.ids.service;
 
+import it.unicam.cs.ids.controller.HackHandler;
 import it.unicam.cs.ids.infrastructure.MailSender;
-import it.unicam.cs.ids.model.HackState;
-import it.unicam.cs.ids.model.Invito;
-import it.unicam.cs.ids.model.InvitoStaff;
+import it.unicam.cs.ids.model.*;
+
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
@@ -30,7 +30,7 @@ public class InvitiHandler {
         InvitoStaff invito = new InvitoStaff(daParteDi, destinatario, hackathon, ruolo, scadenza);
 
         String oggetto = MailCreator.creaOggettoInvito(invito);
-        String corpo = MailCreator.creaCorpo(invito);
+        String corpo = MailCreator.creaCorpoInvito(invito);
 
         invitoService.salva(invito);
         mailSender.inviaEmail(invito);
@@ -98,8 +98,8 @@ public class InvitiHandler {
 
     private void gestisciRispostaGiudice(InvitoStaff staff, boolean accetta) {
         // l'utente ha accettato di diventare giudice: viene aggiunto allo staff dell'hackathon
-        if (accetta = true) {
-            HackHandler.aggiungiGiudice(Hackathon staff.getHackathon(), Utente staff.getDestinatario());
+        if (accetta) {
+            HackHandler.aggiungiGiudice(Utente staff.getDestinatario(), Hackathon staff.getHackathon());
         // l'utente non ha accettato di diventare giudice: lo staff di quell'hackathon è dichiarato incompleto
         } else {
             // TODO: vedi sequence da "staff incompleto"
@@ -108,8 +108,8 @@ public class InvitiHandler {
 
     private void gestisciRispostaMentore(InvitoStaff staff, boolean accetta) {
         Hackathon hack = staff.getHackathon();
-        if (accetta = true) {
-            HackHandler.aggiungiMentore(Hackathon hack, Utente staff.getDestinatario());
+        if (accetta) {
+            HackHandler.aggiungiMentore(Utente staff.getDestinatario(), Hackathon hack);
         } else {
             if (hack.getStato() == Stato.BOZZA) {
                 int numMentori = hack.getRuoli().stream()
