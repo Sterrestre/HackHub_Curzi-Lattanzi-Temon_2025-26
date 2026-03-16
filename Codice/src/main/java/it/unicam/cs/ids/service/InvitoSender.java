@@ -1,6 +1,6 @@
-package it.unicam.cs.ids.model;
+package it.unicam.cs.ids.service;
 
-import it.unicam.cs.ids.Invito;
+import it.unicam.cs.ids.model.Invito;
 
 /**
  * Interfaccia che si occupa dell'invio di un {@code Invito} a un destinatario.
@@ -12,7 +12,7 @@ public interface InvitoSender {
     /**
      * Invia l'invito specificato.
      *
-     * @param invito l'oggetto {@code Invito} da inviare; non deve essere {@code null}
+     * @param invito l'invito che deve essere mandato
      */
-    void invia(Invito invito);
+    void inviaEmail(Invito invito);
 }
