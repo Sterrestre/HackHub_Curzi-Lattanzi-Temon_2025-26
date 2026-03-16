@@ -1,0 +1,12 @@
+version: '3.8'
+
+services:
+  config:
+    image: alpine:latest
+    env_file:
+      - .env
+    command: ["sleep", "infinity"]
+
+secrets:
+  gmail_credentials:
+    file: ./secrets/credentials.json

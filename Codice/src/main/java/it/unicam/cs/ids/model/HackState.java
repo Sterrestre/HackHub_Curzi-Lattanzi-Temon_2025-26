@@ -3,9 +3,9 @@ package it.unicam.cs.ids.model;
 import java.time.LocalDateTime;
 
 /**
- * Rappresenta lo stato di un hackathon.
- * Questa interfaccia può essere implementata per definire i vari stati
- * che un hackathon può assumere durante il suo ciclo di vita("bozza", "confermato", "concluso").
+ * Questa interfaccia permette di alterare il comportamento di una classe Hackathon in modo dinamico,
+ * rispetto al suo stato interno.
+ * L'interfaccia implementa il pattern State.
  */
 
 public interface HackState {
