@@ -5,5 +5,4 @@ package it.unicam.cs.ids.infrastructure;
  */
 public interface Gmail {
     void inviaEmail(String destinatario, String oggetto, String corpo);
-
 }

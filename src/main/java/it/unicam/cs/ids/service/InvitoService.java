@@ -1,7 +1,6 @@
 package it.unicam.cs.ids.service;
 
 import it.unicam.cs.ids.model.Invito;
-import it.unicam.cs.ids.model.InvitoStaff;
 
 import java.util.ArrayList;
 import java.util.Collections;

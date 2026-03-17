@@ -1,7 +1,7 @@
 package it.unicam.cs.ids.service;
 
 import it.unicam.cs.ids.controller.HackHandler;
-import it.unicam.cs.ids.infrastructure.MailSender;
+import it.unicam.cs.ids.infrastructure.GmailMailSender;
 import it.unicam.cs.ids.model.*;
 
 import java.time.LocalDateTime;
@@ -9,33 +9,30 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static it.unicam.cs.ids.model.Stato.BOZZA;
+
 /**
  * Controller dei casi d'uso inerenti alla creazione e spedizione di inviti e alla gestione delle rispettive risposte.
  */
 
 public class InvitiHandler {
 
-    private final MailSender mailSender;
+    private final GmailMailSender gmailMailSender;
     private final InvitoService invitoService;
+    NotificationService notificationService;
 
-    public InvitiHandler(MailSender mailSender, InvitoService invitoService) {
-        this.mailSender = mailSender;
+    public InvitiHandler(GmailMailSender gmailMailSender, InvitoService invitoService) {
+        this.gmailMailSender = gmailMailSender;
         this.invitoService = invitoService;
     }
 
 
-    public InvitoStaff creaInvitoStaff(Utente daParteDi, Utente destinatario, Hackathon hackathon, RuoliStaff ruolo) {
+    public void creaInvitoStaff(Utente daParteDi, Utente destinatario, Hackathon hackathon, RuoliStaff ruolo) {
         int giorniScadenza = Integer.parseInt(System.getenv("INVITO_SCAD_GG"));
         LocalDateTime scadenza = LocalDateTime.now().plusDays(giorniScadenza);
         InvitoStaff invito = new InvitoStaff(daParteDi, destinatario, hackathon, ruolo, scadenza);
-
-        String oggetto = MailCreator.creaOggettoInvito(invito);
-        String corpo = MailCreator.creaCorpoInvito(invito);
-
         invitoService.salva(invito);
-        mailSender.inviaEmail(invito);
-
-        return invito;
+        notificationService.inviaInvito(invito);
     }
 
     //TODO accetta e rifiuta invito con relativa implementazione dei metodi
@@ -43,8 +40,14 @@ public class InvitiHandler {
     public void rispostaInvito(Invito invito, boolean accetta) {
         switch (invito) {
             case InvitoStaff staff -> gestisciRispostaStaff(staff, accetta);
+            case InvitoTeam team -> gestisciRispostaTeam(team, accetta);
+            default -> throw new IllegalStateException("Tipo di invito non riconosciuto: " + invito);
         }
         invitoService.elimina(invito);
+    }
+
+    private void gestisciRispostaTeam(InvitoTeam team, boolean accetta) {
+        // TODO: quando implementeremo il caso d'uso
     }
 
 
@@ -82,12 +85,13 @@ public class InvitiHandler {
             List<InvitoStaff> invitiScaduti = entry.getValue();
 
 
-            if (hack.getStato() == HackState.BOZZA) {
+            if (hack.getStato() == BOZZA) {
                 //TODO setStaffIncompleto + manda notifica
-                String messaggio = MailCreator.creaMessaggioStaffIncompleto(hack, invitiScaduti);
-                mailSender.inviaEmail();
+                HackHandler.setStaffIncompleto(true);
+                notificationService.inviaNotificaStaffIncompleto(hack,  invitiScaduti);
             }
 
+            perHackathon.getHackathon(hack).forEach(notificationService::inviaNotificaInvitoScaduto);
             perHackathon.getHackathon(hack).forEach(invitoService::elimina);
         }
     }
@@ -99,7 +103,7 @@ public class InvitiHandler {
     private void gestisciRispostaGiudice(InvitoStaff staff, boolean accetta) {
         // l'utente ha accettato di diventare giudice: viene aggiunto allo staff dell'hackathon
         if (accetta) {
-            HackHandler.aggiungiGiudice(Utente staff.getDestinatario(), Hackathon staff.getHackathon());
+            HackHandler.aggiungiGiudice(staff.getDestinatario(), staff.getHackathon());
         // l'utente non ha accettato di diventare giudice: lo staff di quell'hackathon è dichiarato incompleto
         } else {
             // TODO: vedi sequence da "staff incompleto"
@@ -109,25 +113,24 @@ public class InvitiHandler {
     private void gestisciRispostaMentore(InvitoStaff staff, boolean accetta) {
         Hackathon hack = staff.getHackathon();
         if (accetta) {
-            HackHandler.aggiungiMentore(Utente staff.getDestinatario(), Hackathon hack);
+            HackHandler.aggiungiMentore(staff.getDestinatario(), hack);
         } else {
-            if (hack.getStato() == Stato.BOZZA) {
-                int numMentori = hack.getRuoli().stream()
+            if (hack.getStato() == BOZZA) {
+                int numMentori = Math.toIntExact(hack.getRuoli().stream()
                         .filter(rp -> rp.getTipoRuolo() == RuoliStaff.MENTORE)
-                        .count();
+                        .count());
 
                 if (numMentori == 0) {
-                    int numInvitiMentori = invitoService.getInviti().stream()
+                    int numInvitiMentori = Math.toIntExact(invitoService.getInviti().stream()
                             .filter(inv -> inv instanceof InvitoStaff)
                             .map(inv -> (InvitoStaff) inv)
                             .filter(inv -> inv.getHackathon().equals(hack))
                             .filter(inv -> inv.getRuolo() == RuoliStaff.MENTORE)
-                            .count();
+                            .count());
 
                     // TODO: vedi sequence da "opt numInviti == 0, setStaffIncompleto
                 }
             }
         }
     }
-
 }

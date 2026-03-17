@@ -1,8 +1,6 @@
 package it.unicam.cs.ids.service;
 
-import it.unicam.cs.ids.model.Invito;
-import it.unicam.cs.ids.model.InvitoStaff;
-import it.unicam.cs.ids.model.InvitoTeam;
+import it.unicam.cs.ids.model.*;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -28,9 +26,9 @@ public class MailCreator {
         if (invito instanceof InvitoStaff staff) {
             InfoHack infoHack = staff.getHackathon().getInfoHack();
             Utente mittente = staff.getMittente();
-            return corpo.concat(mittente.getUtenteNome + " ti ha invitato come " + staff.getRuolo() + " per l'hackathon " + staff.getHackathon() + " da lui creato," +
-                    "che si terrà dal " + infoHack.getDataInizio() + " al " + infoHack.getDataFine + " presso " + infoHack.getLuogo() + ". \n Per maggiori informazioni contatta l'organizzatore alla seguente mail "
-                    + mittente.getUtenteEmail + ". \n\n ATTENZIONE! L'invito è valido fino a " +staff.getScadenza() ". Dopo tale data l'invito risulterà rifiutato e verrà eliminato");
+            return corpo.concat(mittente.getUtenteNome() + " ti ha invitato come " + staff.getRuolo() + " per l'hackathon " + staff.getHackathon() + " da lui creato," +
+                    "che si terrà dal " + infoHack.getDataInizio() + " al " + infoHack.getDataFine() + " presso " + infoHack.getLuogo() + ". \n Per maggiori informazioni contatta l'organizzatore alla seguente mail "
+                    + mittente.getUtenteEmail() + ". \n\n ATTENZIONE! L'invito è valido fino a " + staff.getScadenza() + ". Dopo tale data l'invito risulterà rifiutato e verrà eliminato");
         }
 
         if (invito instanceof InvitoTeam team)
@@ -50,10 +48,30 @@ public class MailCreator {
                 .map(inv -> inv.getDestinatario().getUtenteNome())
                 .collect(Collectors.joining(", "));
 
-        return "Buongiorno " + hack.getOrganizzatore().getUtente().getUtenteNome() + ",\n\n" +
+        Utente organizzatore = hack.getRuoli().stream()
+                .filter(rp -> rp.getTipoRuolo() == RuoliStaff.ORGANIZZATORE)
+                .findFirst()
+                .orElseThrow(() -> new IllegalStateException("Organizzatore mancante"))
+                .getUtente();
+
+
+        return "Buongiorno " + organizzatore.getUtenteNome() + ",\n\n" +
                 "l'hackathon da te creato \"" + hack.getNome() + "\" risulta incompleto " +
                 "perché i seguenti utenti non hanno accettato il tuo invito: " + nomi + ".\n\n" +
                 "Invita nuovi utenti per poter procedere con la conferma dell'hackathon, " +
                 "oppure elimina l'evento.";
+    }
+
+
+// INVITO SCADUTO
+    public static String creaOggettoInvitoScaduto(InvitoStaff staff) {
+        return "Il tuo invito è scaduto";
+    }
+
+    public static String creaMessaggioInvitoScaduto(InvitoStaff staff) {
+        return "Buongiorno " + staff.getDestinatario().getUtenteNome() + ",\n\n"
+                + "il tuo invito per il ruolo di " + staff.getRuolo()
+                + " all'hackathon \"" + staff.getHackathon().getNome()
+                + "\" è scaduto.";
     }
 }

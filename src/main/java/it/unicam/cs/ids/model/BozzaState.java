@@ -111,8 +111,8 @@ public class BozzaState implements HackState {
         // Aggiunge il ruolo alla lista
         hackathon.ruoli.add(nuovoRuolo);
 
-        // TODO: Implementare l'invio dell'invito tramite InvitoSender
-        // InvitoSender sender = new Gmail(); // o altra implementazione
+        // TODO: Implementare l'invio dell'invito tramite MailSender
+        // MailSender sender = new Gmail(); // o altra implementazione
         // Invito invito = new InvitoStaff(utente, hackathon, tipoRuolo);
         // sender.invia(invito);
     }

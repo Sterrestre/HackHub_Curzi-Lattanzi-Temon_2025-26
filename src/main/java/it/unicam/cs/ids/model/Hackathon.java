@@ -5,6 +5,10 @@ import java.util.List;
 
 public abstract class Hackathon {
 
+    // TODO: inizializzare il nome dell'hackathon nel costruttore + creare rispettivi getter
+    //         (e setter? <-- per la modifica da parte dell'organizzatore).
+    // Inserito il metodo getStato (mi serviva per InvitiHandler)
+
     public InfoHack InfoHack;
     protected HackState state;              // stato corrente
     protected String hackID;
@@ -97,6 +101,10 @@ public abstract class Hackathon {
         } else if (nuovoStato instanceof ConclusoState) {
             this.stato = Stato.CONCLUSO;
         }
+    }
+
+    public Stato getStato() {
+        return stato;
     }
 
     public InfoHack getInfoHack() {
