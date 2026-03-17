@@ -1,8 +1,8 @@
 package it.unicam.cs.ids;
 
-import it.unicam.cs.ids.infrastructure.Gmail;
-import it.unicam.cs.ids.infrastructure.GmailClientFactory;
-import it.unicam.cs.ids.infrastructure.GmailMailSender;
+import it.unicam.cs.ids.service.infrastructure.Gmail;
+import it.unicam.cs.ids.service.infrastructure.GmailClientFactory;
+import it.unicam.cs.ids.service.infrastructure.GmailMailSender;
 import it.unicam.cs.ids.service.InvitiHandler;
 import it.unicam.cs.ids.service.MailSender;
 import it.unicam.cs.ids.service.NotificationService;
