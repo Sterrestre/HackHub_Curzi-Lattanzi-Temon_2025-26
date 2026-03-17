@@ -1,28 +1,32 @@
 package it.unicam.cs.ids.model;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+
 
 public abstract class Hackathon {
 
-    // TODO: inizializzare il nome dell'hackathon nel costruttore + creare rispettivi getter
-    //         (e setter? <-- per la modifica da parte dell'organizzatore).
-    // Inserito il metodo getStato (mi serviva per InvitiHandler)
-
     public InfoHack InfoHack;
     protected HackState state;              // stato corrente
-    protected String hackID;
     protected String nome;
     protected InfoHack infoHack;
     protected Stato stato;                  // enum: BOZZA, CONFERMATO, CONCLUSO
     protected List<RuoloPartecipazione> ruoli;
     protected int numTeamIscritti;
+    protected StaffIncompleto staffIncompleto;
 
-    public Hackathon(InfoHack infoHack) {
-        this.hackID = hackID;
+    public Hackathon(InfoHack infoHack, String nome, Utente utente) {
         this.infoHack = infoHack;
         this.stato = Stato.BOZZA;
         this.numTeamIscritti = 0;
+        this.nome = nome;
+        this.ruoli = new ArrayList<>();
+        RuoloPartecipazione organizzatore;
+        RoleFactory factory = new RoleFactory();
+        organizzatore = factory.assegnaOrganizzatore( utente, this);
+
+        ruoli.add(organizzatore);
     }
 
     public void setState(HackState newState) {
@@ -75,9 +79,25 @@ public abstract class Hackathon {
     }
 
 
-    public void aggiungiMentore(RuoloPartecipazione mentore) {
-        state.aggiungiMentore(this, mentore);
+    public void aggiungiMentore(Utente mentore) {
+        if (mentore == null) {
+            throw new IllegalArgumentException("Il mentore non puo essere null");
+        }
+        RoleFactory factory = new RoleFactory();
+        RuoloPartecipazione ruoloMentore = factory.assegnaMentore(mentore, this);
+        state.aggiungiMentore(this, ruoloMentore);
     }
+
+
+    public void aggiungiGiudice(Utente giudice) {
+        if (giudice == null) {
+            throw new IllegalArgumentException("Il giudice non puo essere null");
+        }
+        RoleFactory factory = new RoleFactory();
+        RuoloPartecipazione ruoloGiudice = factory.assegnaGiudice(giudice, this);
+        state.aggiungiMentore(this, ruoloGiudice);
+    }
+
 
     public void invitaStaff(Utente utente, RuoliStaff tipoRuolo) {
         state.invitaStaff(this, utente, tipoRuolo);
@@ -102,10 +122,10 @@ public abstract class Hackathon {
             this.stato = Stato.CONCLUSO;
         }
     }
-
     public Stato getStato() {
         return stato;
     }
+
 
     public InfoHack getInfoHack() {
         return this.infoHack;
@@ -113,5 +133,17 @@ public abstract class Hackathon {
 
     public List<RuoloPartecipazione> getRuoli() {
         return this.ruoli;
+    }
+
+    public void setStaffIncompleto(StaffIncompleto staffIncompleto) {
+        this.staffIncompleto = staffIncompleto;
+    }
+
+    public Utente getOrganizzatore() {
+       return this.getRuoli().stream()
+                .filter(rp -> rp.getTipoRuolo() == RuoliStaff.ORGANIZZATORE)
+                .map(RuoloPartecipazione::getUtente)
+                .findFirst()
+                .orElseThrow(() -> new IllegalStateException("Hackathon senza organizzatore"));
     }
 }
