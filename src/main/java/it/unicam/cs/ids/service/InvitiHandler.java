@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static it.unicam.cs.ids.model.StaffIncompleto.INCOMPLETO;
 import static it.unicam.cs.ids.model.Stato.BOZZA;
 
 /**
@@ -18,12 +19,12 @@ import static it.unicam.cs.ids.model.Stato.BOZZA;
 public class InvitiHandler {
 
     private final GmailMailSender gmailMailSender;
-    private final InvitoService invitoService;
-    NotificationService notificationService;
+    private static InvitoService invitoService = new InvitoService();
+    static NotificationService notificationService;
 
     public InvitiHandler(GmailMailSender gmailMailSender, InvitoService invitoService) {
         this.gmailMailSender = gmailMailSender;
-        this.invitoService = invitoService;
+        InvitiHandler.invitoService = invitoService;
     }
 
 
@@ -65,7 +66,7 @@ public class InvitiHandler {
 
     /**
      * Metodo che verifica se la scadenza dell'invito per un membro dello staff è scaduto.
-     * Crea una lista degli inviti scaduti e li elimina, mandato una notifica all'organizzatore.
+     * Crea una lista degli inviti scaduti e li elimina, mandando una notifica all'organizzatore.
      * Qualora l'hackathon per cui era stato mandato l'invito sia ancora in stato di BOZZA, avvisa l'organizzatore.
      */
     public void verificaScadenze() {
@@ -76,7 +77,6 @@ public class InvitiHandler {
                 .filter(i -> i.getScadenza().isBefore(LocalDateTime.now()))
                 .toList();
 
-
         Map<Hackathon, List<InvitoStaff>> perHackathon =
                 scaduti.stream().collect(Collectors.groupingBy(InvitoStaff::getHackathon));
 
@@ -86,27 +86,26 @@ public class InvitiHandler {
 
 
             if (hack.getStato() == BOZZA) {
-                //TODO setStaffIncompleto + manda notifica
-                HackHandler.setStaffIncompleto(true);
-                notificationService.inviaNotificaStaffIncompleto(hack,  invitiScaduti);
+                HackHandler.setStaffIncompleto(hack, INCOMPLETO);
+                notificationService.inviaNotificaStaffIncompleto(hack, invitiScaduti);
             }
 
-            perHackathon.getHackathon(hack).forEach(notificationService::inviaNotificaInvitoScaduto);
-            perHackathon.getHackathon(hack).forEach(invitoService::elimina);
+            invitiScaduti.forEach(notificationService::inviaNotificaInvitoScaduto);
+            invitiScaduti.forEach(invitoService::elimina);
         }
     }
 
-//  Il caso d'uso Risposta membro staff viene attivato dal tempo (gli inviti sono scaduti).
-
-
 
     private void gestisciRispostaGiudice(InvitoStaff staff, boolean accetta) {
+        Hackathon hack = staff.getHackathon();
         // l'utente ha accettato di diventare giudice: viene aggiunto allo staff dell'hackathon
         if (accetta) {
-            HackHandler.aggiungiGiudice(staff.getDestinatario(), staff.getHackathon());
-        // l'utente non ha accettato di diventare giudice: lo staff di quell'hackathon è dichiarato incompleto
+            HackHandler.aggiungiGiudice(staff.getDestinatario(), hack);
+            // l'utente non ha accettato di diventare giudice: lo staff di quell'hackathon è dichiarato incompleto
         } else {
-            // TODO: vedi sequence da "staff incompleto"
+            HackHandler.setStaffIncompleto(hack, INCOMPLETO);
+            InvitoStaff stf = staff;
+            notificationService.inviaNotificaStaffIncompleto(hack, (List<InvitoStaff>) staff);
         }
     }
 
@@ -134,3 +133,30 @@ public class InvitiHandler {
         }
     }
 }
+
+
+    // Crea il ruolo appropriato usando la factory
+    RuoloPartecipazione nuovoRuolo;
+    RoleFactory factory = new RoleFactory();
+
+        switch (tipoRuolo) {
+        case ORGANIZZATORE:
+            nuovoRuolo = factory.assegnaOrganizzatore(utente, hackathon);
+            break;
+        case GIUDICE:
+            nuovoRuolo = factory.assegnaGiudice(utente, hackathon);
+            break;
+        case MENTORE:
+            nuovoRuolo = factory.assegnaMentore(utente, hackathon);
+            break;
+        default:
+            throw new IllegalArgumentException("Tipo di ruolo non supportato: " + tipoRuolo);
+    }
+
+    // Aggiunge il ruolo alla lista
+        hackathon.ruoli.add(nuovoRuolo);
+
+// TODO: Implementare l'invio dell'invito tramite MailSender
+// MailSender sender = new Gmail(); // o altra implementazione
+// Invito invito = new InvitoStaff(utente, hackathon, tipoRuolo);
+// sender.invia(invito);

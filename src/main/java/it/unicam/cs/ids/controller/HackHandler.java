@@ -34,7 +34,7 @@ public class HackHandler {
     public static void aggiungiGiudice(Utente giudice, Hackathon hackathon) {
         hackathon.aggiungiGiudice(giudice);
     }
-    public void setStaffIncompleto(Hackathon hackathon,StaffIncompleto staffIncompleto) {
+    public static void setStaffIncompleto(Hackathon hackathon, StaffIncompleto staffIncompleto) {
         hackathon.setStaffIncompleto(staffIncompleto);
     }
 
