@@ -3,6 +3,7 @@ package it.unicam.cs.ids.controller;
 import it.unicam.cs.ids.model.*;
 import java.time.LocalDateTime;
 
+// Serve un metodo per cambiare staffIncompleto, es setStaffIncompleto(enum...)
 public class HackHandler {
 
     private Hackathon hackathon;
