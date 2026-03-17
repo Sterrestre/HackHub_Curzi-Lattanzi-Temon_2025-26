@@ -27,7 +27,7 @@ public class InvitiHandler {
     }
 
 
-    public void creaInvitoStaff(Utente daParteDi, Utente destinatario, Hackathon hackathon, RuoliStaff ruolo) {
+    public static void creaInvitoStaff(Utente daParteDi, Utente destinatario, Hackathon hackathon, RuoliStaff ruolo) {
         int giorniScadenza = Integer.parseInt(System.getenv("INVITO_SCAD_GG"));
         LocalDateTime scadenza = LocalDateTime.now().plusDays(giorniScadenza);
         InvitoStaff invito = new InvitoStaff(daParteDi, destinatario, hackathon, ruolo, scadenza);

@@ -3,15 +3,17 @@ package it.unicam.cs.ids.controller;
 import it.unicam.cs.ids.model.*;
 import java.time.LocalDateTime;
 
-// Serve un metodo per cambiare staffIncompleto, es setStaffIncompleto(enum...)
+
 public class HackHandler {
 
     private Hackathon hackathon;
 
-    public void creaHackathon(String id, String nome, InfoHack info) {
-        this.hackathon = new Hackathon(info) {
+    public void creaHackathon(Utente utente, String nome, InfoHack info) {
+        this.hackathon = new Hackathon(info,nome,utente) {
         };
     }
+
+    int giorniScadenzaHackathon = Integer.parseInt(System.getenv("HACKATHON_SCAD_GG"));
 
     public void setInfo(InfoHack info) {
         hackathon.setInfo(info);
@@ -25,8 +27,15 @@ public class HackHandler {
         hackathon.modificaDataInizio(nuovaData);
     }
 
-    public void aggiungiMentore(RuoloPartecipazione mentore) {
+    public static void aggiungiMentore(Utente mentore, Hackathon hackathon) {
         hackathon.aggiungiMentore(mentore);
+    }
+
+    public static void aggiungiGiudice(Utente giudice, Hackathon hackathon) {
+        hackathon.aggiungiGiudice(giudice);
+    }
+    public void setStaffIncompleto(Hackathon hackathon,StaffIncompleto staffIncompleto) {
+        hackathon.setStaffIncompleto(staffIncompleto);
     }
 
     public void invitaStaff(Utente utente, RuoliStaff tipoRuolo) {

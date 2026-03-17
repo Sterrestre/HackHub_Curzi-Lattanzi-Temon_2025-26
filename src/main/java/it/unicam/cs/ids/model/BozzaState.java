@@ -1,5 +1,7 @@
 package it.unicam.cs.ids.model;
 
+import it.unicam.cs.ids.service.InvitiHandler;
+
 import java.time.LocalDateTime;
 
 public class BozzaState implements HackState {
@@ -89,32 +91,8 @@ public class BozzaState implements HackState {
                 }
             }
         }
+        InvitiHandler.creaInvitoStaff(hackathon.getOrganizzatore(), utente, hackathon, tipoRuolo);
 
-        // Crea il ruolo appropriato usando la factory
-        RuoloPartecipazione nuovoRuolo;
-        RoleFactory factory = new RoleFactory();
-
-        switch (tipoRuolo) {
-            case ORGANIZZATORE:
-                nuovoRuolo = factory.assegnaOrganizzatore(utente, hackathon);
-                break;
-            case GIUDICE:
-                nuovoRuolo = factory.assegnaGiudice(utente, hackathon);
-                break;
-            case MENTORE:
-                nuovoRuolo = factory.assegnaMentore(utente, hackathon);
-                break;
-            default:
-                throw new IllegalArgumentException("Tipo di ruolo non supportato: " + tipoRuolo);
-        }
-
-        // Aggiunge il ruolo alla lista
-        hackathon.ruoli.add(nuovoRuolo);
-
-        // TODO: Implementare l'invio dell'invito tramite MailSender
-        // MailSender sender = new Gmail(); // o altra implementazione
-        // Invito invito = new InvitoStaff(utente, hackathon, tipoRuolo);
-        // sender.invia(invito);
     }
 
     @Override
