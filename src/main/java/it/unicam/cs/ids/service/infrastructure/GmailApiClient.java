@@ -1,6 +1,6 @@
-package it.unicam.cs.ids.infrastructure;
+package it.unicam.cs.ids.service.infrastructure;
 
-public class GmailApiClient implements it.unicam.cs.ids.infrastructure.Gmail {
+public class GmailApiClient implements it.unicam.cs.ids.service.infrastructure.Gmail {
 
     private final com.google.api.services.gmail.Gmail gmailService;
 

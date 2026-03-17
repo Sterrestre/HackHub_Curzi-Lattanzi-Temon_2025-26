@@ -1,4 +1,4 @@
-package it.unicam.cs.ids.infrastructure;
+package it.unicam.cs.ids.service.infrastructure;
 
 import it.unicam.cs.ids.service.MailSender;
 import it.unicam.cs.ids.service.MailCreator;

@@ -1,7 +1,7 @@
 package it.unicam.cs.ids.service;
 
 import it.unicam.cs.ids.controller.HackHandler;
-import it.unicam.cs.ids.infrastructure.GmailMailSender;
+import it.unicam.cs.ids.service.infrastructure.GmailMailSender;
 import it.unicam.cs.ids.model.*;
 
 import java.time.LocalDateTime;

@@ -1,4 +1,4 @@
-package it.unicam.cs.ids.infrastructure;
+package it.unicam.cs.ids.service.infrastructure;
 
 import java.io.FileInputStream;
 import java.io.IOException;
