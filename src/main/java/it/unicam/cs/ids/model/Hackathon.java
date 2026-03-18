@@ -7,7 +7,6 @@ import java.util.List;
 
 public abstract class Hackathon {
 
-    public InfoHack InfoHack;
     protected HackState state;              // stato corrente
     protected String nome;
     protected InfoHack infoHack;
@@ -17,8 +16,9 @@ public abstract class Hackathon {
     protected StaffIncompleto staffIncompleto;
     protected Conto conto;
     protected List<Sottomissione> sottomissioni = new ArrayList<>();
-    protected List<Sottomissione> classifica = new ArrayList<>();
-    protected Long teamVincitore;
+    protected List<TeamIscritto> teamIscritti = new ArrayList<>();
+    protected List<TeamIscritto> classifica = new ArrayList<>();
+    protected TeamIscritto teamVincitore;
     protected boolean classificaConfermata = false;
 
     public Hackathon(InfoHack infoHack, String nome, Utente utente) {
@@ -152,24 +152,36 @@ public abstract class Hackathon {
                 .orElseThrow(() -> new IllegalStateException("Hackathon senza organizzatore"));
     }
 
+    public List<TeamIscritto> getTeamIscritti() {
+        return this.teamIscritti;
+    }
+
+    private TeamIscritto getTeamById(Long id) {
+        return getTeamIscritti().stream()
+                .filter(t -> t.getId() == id)
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("Team non trovato"));
+    }
+
     public List<Sottomissione> getSottomissioniValutate() {
         return sottomissioni.stream().filter(Sottomissione::isValutata).toList();
     }
 
-    public List<Sottomissione> calcolaClassificaPreliminare() {
-        List<Sottomissione> valutate = getSottomissioniValutate();
+    public List<TeamIscritto> calcolaClassificaPreliminare() {
 
-        valutate.sort((s1, s2) -> {
-            int cmp = Double.compare(s2.getVotazione(), s1.getVotazione());
-            if (cmp != 0) return cmp;
-            return s1.getDataCaricamento().compareTo(s2.getDataCaricamento());
+        List<TeamIscritto> team = getTeamIscritti();
+
+        team.sort((t1, t2) -> {
+            double v1 = t1.getSottomissione().getVotazione();
+            double v2 = t2.getSottomissione().getVotazione();
+            return Double.compare(v2, v1); // ordine decrescente
         });
 
-        this.classifica = new ArrayList<>(valutate);
+        this.classifica = new ArrayList<>(team);
         return this.classifica;
     }
 
-    public List<Sottomissione> getClassificaCorrente() {
+    public List<TeamIscritto> getClassificaCorrente() {
         return this.classifica;
     }
 
@@ -184,14 +196,14 @@ public abstract class Hackathon {
         return getDettagliSottomissione(id).getGiudizio();
     }
 
-    public void aggiornaClassifica(List<Long> nuovoOrdine) {
-        List<Sottomissione> nuova = new ArrayList<>();
-
+    public void aggiornaClassifica(List<Long> nuovoOrdineTeam) {
         if (classificaConfermata)
             throw new IllegalStateException("La classifica è già stata confermata");
 
-        for (Long id : nuovoOrdine) {
-            nuova.add(getDettagliSottomissione(id));
+        List<TeamIscritto> nuova = new ArrayList<>();
+
+        for (Long id : nuovoOrdineTeam) {
+            nuova.add(getTeamById(id));
         }
 
         this.classifica = nuova;
@@ -201,8 +213,8 @@ public abstract class Hackathon {
         this.classificaConfermata = true;
     }
 
-    public void setTeamVincitore(long teamID) {
-        this.teamVincitore = teamID;
+    public void setTeamVincitore(TeamIscritto team) {
+        this.teamVincitore = team;
     }
 
     public double getPremioInDenaro() {
