@@ -14,6 +14,7 @@ public class Utente {
     private String biografia;
     private LocalDate dataDiNascita;
     private List<RuoloPartecipazione> ruoli = new ArrayList<>();
+    private Conto conto;
 
     public Utente(String utenteID, String utenteNome, String utenteCognome, String utenteEmail, String nickname, String biografia, LocalDate dataDiNascita) {
         this.utenteID = utenteID;
@@ -61,5 +62,9 @@ public class Utente {
         if(!ruoli.contains(ruolo)){
             ruoli.add(ruolo);
         }
+    }
+
+    public Conto getConto() {
+        return conto;
     }
 }

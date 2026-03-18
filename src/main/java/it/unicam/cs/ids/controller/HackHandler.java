@@ -49,4 +49,44 @@ public class HackHandler {
     public void elimina() {
         hackathon.elimina();
     }
+
+    public List<Sottomissione> getSottomissioniValutate() {
+        return hackathon.getSottomissioniValutate();
+    }
+
+    public List<Sottomissione> calcolaClassificaPreliminare() {
+        return hackathon.calcolaClassificaPreliminare();
+    }
+
+    public List<Sottomissione> visualizzaClassifica() {
+        return hackathon.getClassificaCorrente();
+    }
+
+    public Sottomissione getDettagli(long sottomissioneID) {
+        return hackathon.getDettagliSottomissione(sottomissioneID);
+    }
+
+    public String getGiudizio(long sottomissioneID) {
+        return hackathon.getGiudizioSottomissione(sottomissioneID);
+    }
+
+    public void aggiornaClassifica(List<Long> nuovoOrdine) {
+        hackathon.aggiornaClassifica(nuovoOrdine);
+    }
+
+    public void confermaClassifica() {
+        hackathon.confermaClassifica();
+    }
+
+    public void setTeamVincitore(long teamID) {
+        hackathon.setTeamVincitore(teamID);
+    }
+
+    public double getPremioInDenaro() {
+        return hackathon.getPremioInDenaro();
+    }
+
+    public void concludeHackathon() {
+        hackathon.cambiaStato(new ConclusoState());
+    }
 }

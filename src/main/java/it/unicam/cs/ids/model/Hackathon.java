@@ -15,6 +15,11 @@ public abstract class Hackathon {
     protected List<RuoloPartecipazione> ruoli;
     protected int numTeamIscritti;
     protected StaffIncompleto staffIncompleto;
+    protected Conto conto;
+    protected List<Sottomissione> sottomissioni = new ArrayList<>();
+    protected List<Sottomissione> classifica = new ArrayList<>();
+    protected Long teamVincitore;
+    protected boolean classificaConfermata = false;
 
     public Hackathon(InfoHack infoHack, String nome, Utente utente) {
         this.infoHack = infoHack;
@@ -145,5 +150,62 @@ public abstract class Hackathon {
                 .map(RuoloPartecipazione::getUtente)
                 .findFirst()
                 .orElseThrow(() -> new IllegalStateException("Hackathon senza organizzatore"));
+    }
+
+    public List<Sottomissione> getSottomissioniValutate() {
+        return sottomissioni.stream().filter(Sottomissione::isValutata).toList();
+    }
+
+    public List<Sottomissione> calcolaClassificaPreliminare() {
+        List<Sottomissione> valutate = getSottomissioniValutate();
+
+        valutate.sort((s1, s2) -> {
+            int cmp = Double.compare(s2.getVotazione(), s1.getVotazione());
+            if (cmp != 0) return cmp;
+            return s1.getDataCaricamento().compareTo(s2.getDataCaricamento());
+        });
+
+        this.classifica = new ArrayList<>(valutate);
+        return this.classifica;
+    }
+
+    public List<Sottomissione> getClassificaCorrente() {
+        return this.classifica;
+    }
+
+    public Sottomissione getDettagliSottomissione(long id) {
+        return sottomissioni.stream()
+                .filter(s -> s.getId() == id)
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("Sottomissione non trovata"));
+    }
+
+    public String getGiudizioSottomissione(long id) {
+        return getDettagliSottomissione(id).getGiudizio();
+    }
+
+    public void aggiornaClassifica(List<Long> nuovoOrdine) {
+        List<Sottomissione> nuova = new ArrayList<>();
+
+        if (classificaConfermata)
+            throw new IllegalStateException("La classifica è già stata confermata");
+
+        for (Long id : nuovoOrdine) {
+            nuova.add(getDettagliSottomissione(id));
+        }
+
+        this.classifica = nuova;
+    }
+
+    public void confermaClassifica() {
+        this.classificaConfermata = true;
+    }
+
+    public void setTeamVincitore(long teamID) {
+        this.teamVincitore = teamID;
+    }
+
+    public double getPremioInDenaro() {
+        return this.infoHack.getPremio();
     }
 }
