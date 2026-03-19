@@ -30,7 +30,9 @@ public interface HackState {
 
     void modificaNumMaxTeam(Hackathon hackathon, int nuovoNum);
 
-    void aggiungiMentore(Hackathon hackathon, RuoloPartecipazione mentore);
+    void aggiungiMentore(Hackathon hackathon, Utente utente);
+
+    void aggiungiGiudice(Hackathon hackathon, Utente utente);
 
     void invitaStaff(Hackathon hackathon, Utente utente, RuoliStaff tipoRuolo);
 

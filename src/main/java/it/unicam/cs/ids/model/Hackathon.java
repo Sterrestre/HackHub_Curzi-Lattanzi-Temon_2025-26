@@ -21,6 +21,7 @@ public abstract class Hackathon {
     protected TeamIscritto teamVincitore;
     protected boolean classificaConfermata = false;
 
+
     public Hackathon(InfoHack infoHack, String nome, Utente utente) {
         this.infoHack = infoHack;
         this.stato = Stato.BOZZA;
