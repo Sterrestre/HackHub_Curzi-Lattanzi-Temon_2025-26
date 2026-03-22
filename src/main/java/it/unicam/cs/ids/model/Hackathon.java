@@ -4,8 +4,10 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import static it.unicam.cs.ids.model.RuoliStaff.ORGANIZZATORE;
 
-public abstract class Hackathon {
+
+public class Hackathon {
 
     protected HackState state;              // stato corrente
     protected String nome;
@@ -22,17 +24,12 @@ public abstract class Hackathon {
     protected boolean classificaConfermata = false;
 
 
-    public Hackathon(InfoHack infoHack, String nome, Utente utente) {
+    public Hackathon(InfoHack infoHack, String nome) {
         this.infoHack = infoHack;
         this.stato = Stato.BOZZA;
         this.numTeamIscritti = 0;
         this.nome = nome;
         this.ruoli = new ArrayList<>();
-        RuoloPartecipazione organizzatore;
-        RoleFactory factory = new RoleFactory();
-        organizzatore = factory.assegnaOrganizzatore( utente, this);
-
-        ruoli.add(organizzatore);
     }
 
     public void setState(HackState newState) {
@@ -85,6 +82,7 @@ public abstract class Hackathon {
     }
 
 
+    // metodi da inserire in hackhandler?
     public void aggiungiMentore(Utente mentore) {
         if (mentore == null) {
             throw new IllegalArgumentException("Il mentore non puo essere null");
@@ -132,6 +130,10 @@ public abstract class Hackathon {
         return stato;
     }
 
+    public String getNome() {
+        return nome;
+    }
+
 
     public InfoHack getInfoHack() {
         return this.infoHack;
@@ -145,9 +147,11 @@ public abstract class Hackathon {
         this.staffIncompleto = staffIncompleto;
     }
 
+    public StaffIncompleto getStaffIncompleto() { return this.staffIncompleto;}
+
     public Utente getOrganizzatore() {
        return this.getRuoli().stream()
-                .filter(rp -> rp.getTipoRuolo() == RuoliStaff.ORGANIZZATORE)
+                .filter(rp -> rp.getTipoRuolo() == ORGANIZZATORE)
                 .map(RuoloPartecipazione::getUtente)
                 .findFirst()
                 .orElseThrow(() -> new IllegalStateException("Hackathon senza organizzatore"));

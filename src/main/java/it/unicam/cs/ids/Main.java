@@ -1,35 +1,34 @@
 package it.unicam.cs.ids;
 
-import it.unicam.cs.ids.service.infrastructure.Gmail;
-import it.unicam.cs.ids.service.infrastructure.GmailClientFactory;
-import it.unicam.cs.ids.service.infrastructure.GmailMailSender;
-import it.unicam.cs.ids.service.InvitiHandler;
-import it.unicam.cs.ids.service.MailSender;
-import it.unicam.cs.ids.service.NotificationService;
-
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
+import it.unicam.cs.ids.controller.InvitiHandler;
+import it.unicam.cs.ids.model.RoleFactory;
+import it.unicam.cs.ids.service.*;
+import it.unicam.cs.ids.service.infrastructure.gmail.GmailClientFactory;
+import it.unicam.cs.ids.service.infrastructure.gmail.GmailMailSender;
+import com.google.api.services.gmail.Gmail;
 
 //TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
 // click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
 public class Main {
 
-    Gmail gmail = GmailClientFactory.createGmailClient();
-    MailSender mailSender = new GmailMailSender(gmail);
-    NotificationService notificationService = new NotificationService(mailSender);
-    private GmailMailSender invitoService;
-    InvitiHandler handler = new InvitiHandler(invitoService, notificationService);
+    public static void main(String[] args) throws Exception {
 
-    public Main() throws Exception {
+        // 1. Creazione client Gmail e RoleFactory
+        Gmail gmail = GmailClientFactory.createGmailClient();
+        RoleFactory roleFactory = new RoleFactory();
+
+
+        // 2. Adapter per inviare email
+        MailSender mailSender = new GmailMailSender(gmail);
+
+        // 3. Servizio applicativi
+        InvitoService invitoService = new InvitoService();
+        NotificationService notificationService = new NotificationService(mailSender);
+
+        // 4. Handler dei casi d'uso
+        InvitiHandler invitiHandler = new InvitiHandler(invitoService, notificationService, roleFactory);
+
+        // 5. Scheduler
+        new InvitoScheduler(invitiHandler);
     }
-
-    public class InvitoScheduler {
-
-        public InvitoScheduler(InvitiHandler handler) {
-            ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
-            scheduler.scheduleAtFixedRate(handler::verificaScadenze, 0, 1, TimeUnit.MINUTES);
-        }
-    }
-
 }
