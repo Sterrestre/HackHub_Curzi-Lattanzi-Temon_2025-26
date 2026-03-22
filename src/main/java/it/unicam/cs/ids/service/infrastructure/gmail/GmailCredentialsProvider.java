@@ -1,4 +1,4 @@
-package it.unicam.cs.ids.service.infrastructure;
+package it.unicam.cs.ids.service.infrastructure.gmail;
 
 import java.io.FileInputStream;
 import java.io.IOException;
