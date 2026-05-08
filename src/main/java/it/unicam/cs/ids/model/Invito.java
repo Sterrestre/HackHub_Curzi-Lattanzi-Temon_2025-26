@@ -17,7 +17,6 @@ public abstract class Invito {
     /**
      * Costruttore per creare un invito.
      *
-     * @param daParteDi l'utente che vuole mandare l'invito; non deve essere {@code null}
      * @param destinatario l'utente destinatario dell'invito; non deve essere {@code null}
      */
     public Invito(Utente destinatario) {

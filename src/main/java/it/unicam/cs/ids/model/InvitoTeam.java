@@ -1,15 +1,15 @@
 package it.unicam.cs.ids.model;
 
 public class InvitoTeam extends Invito{
-    private final MembroTeam daParteDi;
+    private final MembroTeam mittente;
 
-    public InvitoTeam(MembroTeam daParteDi, Utente destinatario) {
+    public InvitoTeam(MembroTeam mittente, Utente destinatario) {
         super(destinatario);
-        this.daParteDi = daParteDi;
+        this.mittente = mittente;
     }
 
 
     public MembroTeam getMittente() {
-        return daParteDi;
+        return mittente;
     }
 }

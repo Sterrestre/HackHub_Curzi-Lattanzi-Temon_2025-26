@@ -4,14 +4,22 @@ import it.unicam.cs.ids.model.*;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import static it.unicam.cs.ids.model.RuoliStaff.ORGANIZZATORE;
+
 
 public class HackHandler {
+
+    private final RoleFactory roleFactory;
+
+    public  HackHandler(RoleFactory roleFactory) {
+        this.roleFactory = roleFactory;
+    }
 
     private Hackathon hackathon;
 
     public void creaHackathon(Utente utente, String nome, InfoHack info) {
-        this.hackathon = new Hackathon(info,nome,utente) {
-        };
+        this.hackathon = new Hackathon(info,nome);
+        RuoloPartecipazione ruolo = roleFactory.creaERegistraRuolo(ORGANIZZATORE, utente, this.hackathon);
     }
 
     int giorniScadenzaHackathon = Integer.parseInt(System.getenv("HACKATHON_SCAD_GG"));

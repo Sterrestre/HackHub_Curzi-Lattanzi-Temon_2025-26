@@ -1,6 +1,6 @@
 package it.unicam.cs.ids.model;
 
-import it.unicam.cs.ids.service.InvitiHandler;
+import it.unicam.cs.ids.controller.InvitiHandler;
 
 import java.time.LocalDateTime;
 
