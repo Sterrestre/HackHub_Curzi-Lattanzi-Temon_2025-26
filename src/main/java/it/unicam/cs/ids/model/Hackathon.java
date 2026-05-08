@@ -221,4 +221,18 @@ public abstract class Hackathon {
     public double getPremioInDenaro() {
         return this.infoHack.getPremio();
     }
+
+    public void validaPresenze() {
+        // esempio di validazione minima
+        for (TeamIscritto team : teamIscritti) {
+            for (MembroTeamIscritto m : team.getElencoIscritti()) {
+                if (!m.isPresente()) {
+                    throw new IllegalStateException("Presenze non valide per il team: " + team.getTeam().getNome());
+                }
+            }
+        }
+    }
+
+    public void salvaPresenze() {
+    }
 }

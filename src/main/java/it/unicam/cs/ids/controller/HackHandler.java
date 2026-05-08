@@ -90,4 +90,36 @@ public class HackHandler {
     public void concludiHackathon() {
         hackathon.cambiaStato(new ConclusoState());
     }
+
+    public List<TeamIscritto> getTeamIscritti() {
+        return hackathon.getTeamIscritti();
+    }
+
+    public List<MembroTeamIscritto> getMembriIscritti(TeamIscritto team) {
+        return team.getElencoIscritti();
+    }
+
+    public void setPresente(MembroTeamIscritto membro, boolean presente) {
+        membro.setPresente(presente);
+    }
+
+    public void validaPresenze() {
+        // delega a Hackathon
+        hackathon.validaPresenze();
+    }
+
+    public void salvaPresenze() {
+        hackathon.salvaPresenze();
+    }
+
+    public void assegnaMentore(TeamIscritto team, Mentore mentore) {
+        team.getElencoIscritti().stream()
+                .filter(m -> m.getUtente().equals(mentore))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("Mentore non trovato nel team"))
+                .setMentoreAssegnato(mentore);
+    }
+
+
+
 }
