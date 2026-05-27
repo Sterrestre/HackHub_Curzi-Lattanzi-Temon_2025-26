@@ -2,7 +2,7 @@ package it.unicam.cs.ids.model;
 
 import java.time.LocalDateTime;
 
-public class ConfermatoState implements HackState {
+public abstract class ConfermatoState implements HackState {
 
     public ConfermatoState(Hackathon hackathon) {
     }

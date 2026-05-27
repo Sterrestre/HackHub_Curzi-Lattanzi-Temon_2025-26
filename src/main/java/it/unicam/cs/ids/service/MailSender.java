@@ -1,5 +1,7 @@
 package it.unicam.cs.ids.service;
 
+import java.time.LocalDateTime;
+
 public interface MailSender {
 
     /**
@@ -10,4 +12,17 @@ public interface MailSender {
      * @param corpo corpo della mail
      */
     void inviaEmail(String destinatario, String oggetto, String corpo);
+
+
+    /**
+     * Simula invio email al team
+     */
+    private void inviaPropostaTeam(RichiestaSupporto richiesta, LocalDateTime dataOra, String collegamento) {
+
+        System.out.println("Invio proposta call al team:");
+        System.out.println("Data: " + dataOra);
+        System.out.println("Link: " + collegamento);
+        System.out.println("Messaggio: proposta call per la richiesta -> " + richiesta.getRichiesta());
+    }
+
 }

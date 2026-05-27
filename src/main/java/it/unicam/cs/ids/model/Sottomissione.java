@@ -10,7 +10,7 @@ public class Sottomissione {
     private StatoSottomissione statoSottomissione = StatoSottomissione.MANCANTE;
     private Valutazione valutazione;
     private LocalDateTime dataCaricamento;
-
+    private TeamIscritto team;
 
     public Sottomissione(String sottomissioneID) {
         if (sottomissioneID == null) {
@@ -87,17 +87,16 @@ public class Sottomissione {
         return "Sottomissione{id='" + sottomissioneID + "', stato=" + statoSottomissione + ", data=" + dataCaricamento + "}";
     }
 
- /** DA RIVEDERE
-*/
-//   public String getGiudizio() {
-//        if (valutazione == null) {
-//            throw new IllegalStateException("Impossibile ottenere il giudizio: sottomissione non valutata");
-//        }
-//        return valutazione.getGiudizio();
-//    }
-//
-//    public long getId() {
-//        return 0;
-//    }
+
+   public String getGiudizio() {
+       if (valutazione == null) {
+           throw new IllegalStateException("Impossibile ottenere il giudizio: sottomissione non valutata");
+       }
+        return valutazione.getGiudizio();
+   }
+
+   public long getId() {
+       return 0;
+   }
 
 }

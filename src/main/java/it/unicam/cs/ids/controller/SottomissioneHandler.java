@@ -50,4 +50,6 @@ public class SottomissioneHandler {
         sottomissione.setValutazione(valutazione);
         sottomissione.setStatoSottomissione(StatoSottomissione.VALUTATA);
     }
+
+    // todo visualizzaSottomissione e getHackathon
 }

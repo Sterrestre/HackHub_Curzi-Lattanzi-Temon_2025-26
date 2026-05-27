@@ -36,11 +36,11 @@ public class HackHandler {
         hackathon.modificaDataInizio(nuovaData);
     }
 
-    public static void aggiungiMentore(Utente mentore, Hackathon hackathon) {
+    public void aggiungiMentore(Utente mentore, Hackathon hackathon) {
         hackathon.aggiungiMentore(mentore);
     }
 
-    public static void aggiungiGiudice(Utente giudice, Hackathon hackathon) {
+    public void aggiungiGiudice(Utente giudice, Hackathon hackathon) {
         hackathon.aggiungiGiudice(giudice);
     }
     public static void setStaffIncompleto(Hackathon hackathon, StaffIncompleto staffIncompleto) {
@@ -107,10 +107,6 @@ public class HackHandler {
         return team.getElencoIscritti();
     }
 
-    public void setPresente(MembroTeamIscritto membro, boolean presente) {
-        membro.setPresente(presente);
-    }
-
     public void validaPresenze() {
         // delega a Hackathon
         hackathon.validaPresenze();
@@ -128,6 +124,16 @@ public class HackHandler {
                 .setMentoreAssegnato(mentore);
     }
 
+    public void impostaPresenza(MembroTeamIscritto membro, boolean presenza) {
+        membro.setPresente(presenza);
+    }
 
+    public void setPresente(MembroTeamIscritto membro, boolean presente) {
+        membro.setPresenza(presente);
+    }
 
+    public Penalizzazione penalizza(TeamIscritto team, String tipoIntervento, String motivazione) {
+        // da implementare
+        return null;
+    }
 }

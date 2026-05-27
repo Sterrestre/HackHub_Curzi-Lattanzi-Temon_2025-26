@@ -55,4 +55,10 @@ public class TeamIscritto {
         return elencoIscritti.size();
     }
 
+    public void setSottomissione(Sottomissione sottomissione) {
+    }
+
+    public boolean getId() {
+        return false;
+    }
 }

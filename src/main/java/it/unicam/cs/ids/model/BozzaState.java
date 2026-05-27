@@ -4,7 +4,7 @@ import it.unicam.cs.ids.controller.InvitiHandler;
 
 import java.time.LocalDateTime;
 
-public class BozzaState implements HackState {
+public abstract class BozzaState implements HackState {
 
     @Override
     public void setInfoHack(Hackathon hackathon, InfoHack info) {

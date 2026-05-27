@@ -124,6 +124,8 @@ public class Hackathon {
             this.stato = Stato.CONFERMATO;
         } else if (nuovoStato instanceof ConclusoState) {
             this.stato = Stato.CONCLUSO;
+        } else if (nuovoStato instanceof InCorsoState) {
+            this.stato = Stato.IN_CORSO;
         }
     }
     public Stato getStato() {
