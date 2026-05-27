@@ -6,7 +6,6 @@ import java.util.List;
 
 import static it.unicam.cs.ids.model.RuoliStaff.ORGANIZZATORE;
 
-
 public class Hackathon {
 
     protected HackState state;              // stato corrente
@@ -22,7 +21,7 @@ public class Hackathon {
     protected List<TeamIscritto> classifica = new ArrayList<>();
     protected TeamIscritto teamVincitore;
     protected boolean classificaConfermata = false;
-
+    protected List<Penalizzazione> penalizzazioni = new ArrayList<>();
 
     public Hackathon(InfoHack infoHack, String nome) {
         this.infoHack = infoHack;
@@ -241,4 +240,17 @@ public class Hackathon {
 
     public void salvaPresenze() {
     }
+
+    public List<TeamIscritto> getTeamAssegnati(long mentoreID) {
+        return teamIscritti.stream()
+                .filter(team -> team.getMentoreAssegnato() != null)
+                .filter(team -> team.getMentoreAssegnato().getMentoreID() == mentoreID)
+                .toList();
+    }
+
+    public void applicaPenalizzazione(long teamID, String tipoIntervento, String motivazione) {
+        Penalizzazione p = new Penalizzazione(teamID, tipoIntervento, motivazione);
+        penalizzazioni.add(p);
+    }
+
 }

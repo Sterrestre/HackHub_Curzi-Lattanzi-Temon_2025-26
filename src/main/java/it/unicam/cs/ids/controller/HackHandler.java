@@ -129,11 +129,32 @@ public class HackHandler {
     }
 
     public void setPresente(MembroTeamIscritto membro, boolean presente) {
-        membro.setPresenza(presente);
+        membro.setPresente(presente);
     }
 
     public Penalizzazione penalizza(TeamIscritto team, String tipoIntervento, String motivazione) {
         // da implementare
         return null;
     }
+
+    public List<TeamIscritto> getTeamIscritti(long hackID) {
+        return hackathon.getTeamIscritti();
+    }
+
+    public boolean validaDati(String teamID, String tipoIntervento, String motivazione) {
+
+        boolean teamEsiste = hackathon.getTeamIscritti().stream()
+                .anyMatch(t -> t.getTeam().getTeamID().equals(teamID));
+
+        if (!teamEsiste) return false;
+        if (tipoIntervento == null || tipoIntervento.isBlank()) return false;
+        if (motivazione == null || motivazione.isBlank()) return false;
+
+        return true;
+    }
+
+    public void applicaPenalizzazione(long teamID, String tipoIntervento, String motivazione) {
+        hackathon.applicaPenalizzazione(teamID, tipoIntervento, motivazione);
+    }
+
 }

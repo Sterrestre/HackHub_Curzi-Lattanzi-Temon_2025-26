@@ -1,7 +1,9 @@
 package it.unicam.cs.ids.model;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class TeamIscritto {
 
@@ -10,6 +12,8 @@ public class TeamIscritto {
     private Utente amministratore;
     private List<MembroTeamIscritto> elencoIscritti = new ArrayList<>();
     private Sottomissione sottomissione;
+    private Mentore mentoreAssegnato;
+    private Map<RichiestaSupporto, Boolean> richiesteSupporto = new HashMap<>();
 
     public TeamIscritto(Team team, Hackathon hackathon, Utente amministratore) {
         this.team = team;
@@ -56,9 +60,31 @@ public class TeamIscritto {
     }
 
     public void setSottomissione(Sottomissione sottomissione) {
+        this.sottomissione = sottomissione;
     }
 
-    public boolean getId() {
-        return false;
+    public long getId() {
+        return team.getId();
+    }
+
+    public Mentore getMentoreAssegnato() {
+        return mentoreAssegnato;
+    }
+
+    public void setMentoreAssegnato(Mentore mentore) {
+        this.mentoreAssegnato = mentore;
+    }
+
+    public Map<RichiestaSupporto, Boolean> getRichiesteSupporto() {
+        return richiesteSupporto;
+    }
+
+    public void aggiungiRichiestaSupporto(RichiestaSupporto richiesta) {
+        richiesteSupporto.put(richiesta, false); // false = non visualizzata
+    }
+
+    public void segnaRichiestaVisualizzata(RichiestaSupporto richiesta) {
+        richiesteSupporto.put(richiesta, true);
+        richiesta.modificaStato(true);
     }
 }

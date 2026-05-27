@@ -61,4 +61,3 @@ public class MembroTeamIscritto {
         this.mentoreAssegnato = mentoreAssegnato;
     }
 }
-}
