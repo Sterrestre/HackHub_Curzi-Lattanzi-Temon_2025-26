@@ -1,18 +1,33 @@
 plugins {
     id("java")
+    id ("org.springframework.boot") version "3.2.0"
+    id("io.spring.dependency-management") version "1.1.3"
 }
 
-group = "it.unicam.cs.mpgc"
+group = "it.unicam.cs"
 version = "1.0-SNAPSHOT"
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
+}
 
 repositories {
     mavenCentral()
 }
 
 dependencies {
-    testImplementation(platform("org.junit:junit-bom:5.10.0"))
-    testImplementation("org.junit.jupiter:junit-jupiter")
-    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+    // Spring Boot base
+    implementation ("org.springframework.boot:spring-boot-starter-web")
+
+    // Validazioni (opzionale ma utile)
+    implementation ("org.springframework.boot:spring-boot-starter-validation")
+
+//    testImplementation(platform("org.junit:junit-bom:5.10.0"))
+//    testImplementation("org.junit.jupiter:junit-jupiter")
+//    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+
+    testImplementation ("org.springframework.boot:spring-boot-starter-test")
 
 // sistema di notifiche - Gmail
     implementation("com.google.api-client:google-api-client:2.2.0")

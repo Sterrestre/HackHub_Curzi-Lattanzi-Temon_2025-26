@@ -1,6 +1,6 @@
 package it.unicam.cs.ids.controller;
 
-import it.unicam.cs.ids.model.*;
+import it.unicam.cs.ids.model.Utente;
 import it.unicam.cs.ids.model.hackathon.ConfermatoState;
 import it.unicam.cs.ids.model.hackathon.Hackathon;
 import it.unicam.cs.ids.model.inviti.Invito;
@@ -11,6 +11,7 @@ import it.unicam.cs.ids.model.staff.RuoliStaff;
 import it.unicam.cs.ids.model.team.MembroTeam;
 import it.unicam.cs.ids.service.InvitoService;
 import it.unicam.cs.ids.service.NotificationService;
+import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -23,7 +24,7 @@ import static it.unicam.cs.ids.model.hackathon.Stato.BOZZA;
 /**
  * Controller dei casi d'uso inerenti alla creazione e spedizione di inviti e alla gestione delle rispettive risposte.
  */
-
+@Service
 public class InvitiHandler {
 
     private final InvitoService invitoService;

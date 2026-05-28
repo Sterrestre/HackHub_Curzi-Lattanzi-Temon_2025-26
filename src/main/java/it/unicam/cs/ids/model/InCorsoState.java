@@ -1,5 +1,12 @@
 package it.unicam.cs.ids.model;
 
+import it.unicam.cs.ids.model.hackathon.HackState;
+import it.unicam.cs.ids.model.hackathon.Hackathon;
+import it.unicam.cs.ids.model.hackathon.InfoHack;
+import it.unicam.cs.ids.model.staff.Giudice;
+import it.unicam.cs.ids.model.staff.RuoliStaff;
+import it.unicam.cs.ids.model.staff.RuoloPartecipazione;
+
 import java.time.LocalDateTime;
 
 public abstract class InCorsoState implements HackState {

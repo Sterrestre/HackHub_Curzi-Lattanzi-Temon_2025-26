@@ -1,5 +1,7 @@
 package it.unicam.cs.ids.service;
 
+import it.unicam.cs.ids.model.RichiestaSupporto;
+
 import java.time.LocalDateTime;
 
 public interface MailSender {
@@ -22,7 +24,7 @@ public interface MailSender {
         System.out.println("Invio proposta call al team:");
         System.out.println("Data: " + dataOra);
         System.out.println("Link: " + collegamento);
-        System.out.println("Messaggio: proposta call per la richiesta -> " + richiesta.getRichiesta());
+        System.out.println("Messaggio: proposta call per la richiesta -> " + richiesta.getDettagli());
     }
 
 }

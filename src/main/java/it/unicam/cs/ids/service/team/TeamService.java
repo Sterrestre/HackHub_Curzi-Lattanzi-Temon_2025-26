@@ -3,7 +3,9 @@ package it.unicam.cs.ids.service.team;
 import it.unicam.cs.ids.model.Utente;
 import it.unicam.cs.ids.model.team.MembroTeam;
 import it.unicam.cs.ids.model.team.Team;
+import org.springframework.stereotype.Service;
 
+@Service
 public class TeamService {
 
     public Team creaTeam(String nome, Utente amministratore) {

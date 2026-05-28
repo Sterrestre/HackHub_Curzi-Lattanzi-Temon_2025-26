@@ -5,12 +5,14 @@ import it.unicam.cs.ids.model.hackathon.Hackathon;
 import it.unicam.cs.ids.model.inviti.Invito;
 import it.unicam.cs.ids.model.inviti.InvitoHackathon;
 import it.unicam.cs.ids.model.staff.RuoliStaff;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 /**
  * Classe responsabile di creare l'oggetto e il corpo della mail da inviare, ed inviare la mail appena creata.
  */
+@Service
 public class NotificationService {
 
     private final MailSender mailSender;

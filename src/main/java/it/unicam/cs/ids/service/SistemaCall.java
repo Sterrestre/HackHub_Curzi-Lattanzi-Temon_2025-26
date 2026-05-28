@@ -1,5 +1,7 @@
 package it.unicam.cs.ids.service;
 
+import org.springframework.stereotype.Service;
+
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -7,7 +9,8 @@ import java.util.UUID;
  * <<Service>>
  * Rappresenta il sistema esterno per la gestione delle call (Calendar).
  */
-public class sistemaCall {
+@Service
+public class SistemaCall {
 
     /**
      * Genera un collegamento per una call

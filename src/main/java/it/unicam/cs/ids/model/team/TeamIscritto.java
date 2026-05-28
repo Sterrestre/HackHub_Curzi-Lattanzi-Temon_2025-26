@@ -34,7 +34,7 @@ public class TeamIscritto {
 
     public Hackathon getHackathon() {return hackathon;}
 
-    public MembroTeam getAmministratore() {return amministratore;}
+    public Utente getAmministratore() {return amministratore;}
 
     public List<MembroTeamIscritto> getElencoIscritti() {
         return elencoIscritti;
@@ -64,8 +64,8 @@ public class TeamIscritto {
         this.sottomissione = sottomissione;
     }
 
-    public long getId() {
-        return team.getId();
+    public String getId() {
+        return team.getTeamID();
     }
 
     public Mentore getMentoreAssegnato() {
@@ -88,5 +88,4 @@ public class TeamIscritto {
         richiesteSupporto.put(richiesta, true);
         richiesta.modificaStato(true);
     }
-}
 }

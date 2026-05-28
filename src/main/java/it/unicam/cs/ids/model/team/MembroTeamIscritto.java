@@ -2,6 +2,7 @@ package it.unicam.cs.ids.model.team;
 
 import it.unicam.cs.ids.model.MetodoPagamento;
 import it.unicam.cs.ids.model.Utente;
+import it.unicam.cs.ids.model.staff.Mentore;
 
 public class MembroTeamIscritto {
     private TeamIscritto teamIscritto;
@@ -35,6 +36,10 @@ public class MembroTeamIscritto {
 
     public void setPresenza(boolean presenza) {
         this.presente = presenza;
+    }
+
+    public boolean isPresente() {
+        return presente;
     }
 }
 

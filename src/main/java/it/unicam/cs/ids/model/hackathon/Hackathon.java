@@ -10,15 +10,19 @@ import it.unicam.cs.ids.model.team.TeamIscritto;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.UUID;
 
 import static it.unicam.cs.ids.model.staff.RuoliStaff.ORGANIZZATORE;
 
 public class Hackathon {
 
+    private final String id;
+
     protected HackState state;              // stato corrente
     protected String nome;
     protected InfoHack infoHack;
-    protected Stato stato;                  // enum: BOZZA, CONFERMATO, CONCLUSO
+    public Stato stato;                  // enum: BOZZA, CONFERMATO, CONCLUSO
     public List<RuoloPartecipazione> ruoli; // public per essere visibile dalla roleFactory
     protected int numTeamIscritti;
     protected StaffIncompleto staffIncompleto;
@@ -31,6 +35,7 @@ public class Hackathon {
     protected List<Penalizzazione> penalizzazioni = new ArrayList<>();
 
     public Hackathon(InfoHack infoHack, String nome) {
+        this.id = UUID.randomUUID().toString();
         this.infoHack = infoHack;
         this.stato = Stato.BOZZA;
         this.numTeamIscritti = 0;
@@ -105,7 +110,7 @@ public class Hackathon {
         }
         RoleFactory factory = new RoleFactory();
         RuoloPartecipazione ruoloGiudice = factory.assegnaGiudice(giudice, this);
-        state.aggiungiMentore(this, ruoloGiudice);
+        state.aggiungiGiudice(this, ruoloGiudice.getUtente());
     }
 
 
@@ -142,6 +147,9 @@ public class Hackathon {
         return nome;
     }
 
+    public String getHackathonID() {
+        return this.id;
+    }
 
     public InfoHack getInfoHack() {
         return this.infoHack;
@@ -169,9 +177,9 @@ public class Hackathon {
         return this.teamIscritti;
     }
 
-    private TeamIscritto getTeamById(Long id) {
+    private TeamIscritto getTeamById(String id) {
         return getTeamIscritti().stream()
-                .filter(t -> t.getId() == id)
+                .filter(t -> t.getTeam().getTeamID().equals(id))
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("Team non trovato"));
     }
@@ -185,8 +193,8 @@ public class Hackathon {
         List<TeamIscritto> team = getTeamIscritti();
 
         team.sort((t1, t2) -> {
-            double v1 = t1.getSottomissione().getVotazione();
-            double v2 = t2.getSottomissione().getVotazione();
+            double v1 = t1.getSottomissione().getValutazione().getVoto();
+            double v2 = t2.getSottomissione().getValutazione().getVoto();
             return Double.compare(v2, v1); // ordine decrescente
         });
 
@@ -198,24 +206,24 @@ public class Hackathon {
         return this.classifica;
     }
 
-    public Sottomissione getDettagliSottomissione(long id) {
+    public Sottomissione getDettagliSottomissione(String id) {
         return sottomissioni.stream()
-                .filter(s -> s.getId() == id)
+                .filter(s -> Objects.equals(s.getId(), id))
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("Sottomissione non trovata"));
     }
 
-    public String getGiudizioSottomissione(long id) {
-        return getDettagliSottomissione(id).getGiudizio();
+    public String getGiudizioSottomissione(Sottomissione id) {
+        return getDettagliSottomissione(id.getSottomissioneID()).getGiudizio();
     }
 
-    public void aggiornaClassifica(List<Long> nuovoOrdineTeam) {
+    public void aggiornaClassifica(List<String> nuovoOrdineTeam) {
         if (classificaConfermata)
             throw new IllegalStateException("La classifica è già stata confermata");
 
         List<TeamIscritto> nuova = new ArrayList<>();
 
-        for (Long id : nuovoOrdineTeam) {
+        for (String id : nuovoOrdineTeam) {
             nuova.add(getTeamById(id));
         }
 

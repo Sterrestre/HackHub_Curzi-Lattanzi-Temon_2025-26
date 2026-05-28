@@ -1,6 +1,5 @@
 package it.unicam.cs.ids.controller;
 
-import it.unicam.cs.ids.model.Penalizzazione;
 import it.unicam.cs.ids.model.Sottomissione;
 import it.unicam.cs.ids.model.Utente;
 import it.unicam.cs.ids.model.hackathon.ConclusoState;
@@ -12,19 +11,22 @@ import it.unicam.cs.ids.model.staff.RoleFactory;
 import it.unicam.cs.ids.model.staff.RuoliStaff;
 import it.unicam.cs.ids.model.staff.RuoloPartecipazione;
 import it.unicam.cs.ids.model.team.*;
+import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 import static it.unicam.cs.ids.model.staff.RuoliStaff.ORGANIZZATORE;
 
-
+@Service
 public class HackHandler {
 
     private final RoleFactory roleFactory;
+    private final TeamHandler teamHandler;
 
-    public  HackHandler(RoleFactory roleFactory) {
+    public  HackHandler(RoleFactory roleFactory, TeamHandler teamHandler) {
         this.roleFactory = roleFactory;
+        this.teamHandler = teamHandler;
     }
 
     private Hackathon hackathon;
@@ -83,15 +85,15 @@ public class HackHandler {
         return hackathon.getClassificaCorrente();
     }
 
-    public Sottomissione getDettagli(long sottomissioneID) {
+    public Sottomissione getDettagli(String sottomissioneID) {
         return hackathon.getDettagliSottomissione(sottomissioneID);
     }
 
-    public String getGiudizio(long sottomissioneID) {
-        return hackathon.getGiudizioSottomissione(sottomissioneID);
+    public String getGiudizio(Sottomissione sottomissione) {
+        return hackathon.getGiudizioSottomissione(sottomissione);
     }
 
-    public void aggiornaClassifica(List<Long> nuovoOrdineTeam) {
+    public void aggiornaClassifica(List<String> nuovoOrdineTeam) {
         hackathon.aggiornaClassifica(nuovoOrdineTeam);
     }
 
@@ -134,6 +136,7 @@ public class HackHandler {
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("Mentore non trovato nel team"))
                 .setMentoreAssegnato(mentore);
+        //..?
 
         // TODO setMentoreAssegnato è solo qua. Finire di implementare, inserendo il team nella lista del mentore, e il mentore nel TeamIscritto
     }
@@ -144,11 +147,6 @@ public class HackHandler {
 
     public void setPresente(MembroTeamIscritto membro, boolean presente) {
         membro.setPresenza(presente);
-    }
-
-    public Penalizzazione penalizza(TeamIscritto team, String tipoIntervento, String motivazione) {
-        // da implementare
-        return null;
     }
 
     public List<TeamIscritto> getTeamIscritti(long hackID) {
@@ -197,8 +195,10 @@ public class HackHandler {
         }
 
         // Delego la logica di iscrizione al service
-        TeamHandler.iscriviMembroTeam(membTeam, hackathon);
-        return "Iscrizione avvenuta con successo";
+        MembroTeamIscritto nuovoIscritto = teamHandler.iscriviMembroTeam(membTeam, hackathon);
+        if (nuovoIscritto != null) {
+            return "Iscrizione avvenuta con successo";
+        } else return "Iscrizione fallita";
     }
 
 }

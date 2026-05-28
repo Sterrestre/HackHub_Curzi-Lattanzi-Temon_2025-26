@@ -2,6 +2,7 @@ package it.unicam.cs.ids.model.staff;
 
 import it.unicam.cs.ids.model.Utente;
 import it.unicam.cs.ids.model.hackathon.Hackathon;
+import org.springframework.context.annotation.Bean;
 
 public class RoleFactory {
 
@@ -26,13 +27,13 @@ public class RoleFactory {
         return o;
     }
 
-    private Giudice assegnaGiudice(Utente utente, Hackathon hackathon) {
+    public Giudice assegnaGiudice(Utente utente, Hackathon hackathon) {
         Giudice g = new Giudice(utente, hackathon);
         utente.addRuolo(g);
         return g;
     }
 
-    private Mentore assegnaMentore(Utente utente, Hackathon hackathon) {
+    public Mentore assegnaMentore(Utente utente, Hackathon hackathon) {
         Mentore m = new Mentore(utente, hackathon);
         utente.addRuolo(m);
         return m;

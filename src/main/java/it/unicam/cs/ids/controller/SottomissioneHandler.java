@@ -5,10 +5,12 @@ import it.unicam.cs.ids.model.StatoSottomissione;
 import it.unicam.cs.ids.model.hackathon.Hackathon;
 import it.unicam.cs.ids.model.team.TeamIscritto;
 import it.unicam.cs.ids.model.Valutazione;
+import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.time.LocalDateTime;
 
+@Service
 public class SottomissioneHandler {
 
 

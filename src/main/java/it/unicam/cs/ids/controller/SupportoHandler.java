@@ -1,9 +1,12 @@
 package it.unicam.cs.ids.controller;
 
-import it.unicam.cs.ids.model.Hackathon;
 import it.unicam.cs.ids.model.RichiestaSupporto;
+import it.unicam.cs.ids.model.hackathon.Hackathon;
+import it.unicam.cs.ids.model.team.TeamIscritto;
+import it.unicam.cs.ids.service.HackathonService;
 import it.unicam.cs.ids.service.MailSender;
-import it.unicam.cs.ids.service.sistemaCall;
+import it.unicam.cs.ids.service.SistemaCall;
+import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -12,20 +15,21 @@ import java.util.Map;
 /**
  * Gestisce le operazioni legate alle richieste di supporto e alle call.
  */
+@Service
 public class SupportoHandler {
 
-    private final sistemaCall sistemaCall;
-    private final Hackathon hackathon;
+    private final SistemaCall sistemaCall;
+    private final HackathonService hackathonService;
 
-    public SupportoHandler(sistemaCall sistemaCall, Hackathon hackathon) {
+    public SupportoHandler(SistemaCall sistemaCall, HackathonService hackathonService) {
         this.sistemaCall = sistemaCall;
-        this.hackathon = hackathon;
+        this.hackathonService = hackathonService;
     }
 
     /**
      * Genera un collegamento tramite il sistema esterno (Calendar)
      */
-    public String generaCollegamento(sistemaCall sistemaCall) {
+    public String generaCollegamento(SistemaCall sistemaCall) {
         return sistemaCall.generaCollegamento(LocalDateTime.now());
     }
 
@@ -45,7 +49,7 @@ public class SupportoHandler {
    // public void inviaPropostaCall(RichiestaSupporto richiesta, LocalDateTime dataOra) {
 
         // 1. genera link call
-      //  String link = sistemaCall.generaCollegamento(dataOra);
+      //  String link = SistemaCall.generaCollegamento(dataOra);
 
    // }
 
@@ -79,17 +83,30 @@ public class SupportoHandler {
         return dataOra.isBefore(fineHackathon);
     }
 
-    public List<TeamIscritto> getTeamAssegnati(long mentoreID) {
-        return hackathon.getTeamAssegnati(mentoreID);
+    public List<TeamIscritto> getTeamAssegnati(String hackathonID, String mentoreID) {
+        Hackathon h = hackathonService.getHackathon(hackathonID);
+        return h.getTeamAssegnati(mentoreID);
     }
 
     public Map<RichiestaSupporto, Boolean> getRichiesteSupporto(String teamID) {
-        TeamIscritto team = hackathon.getTeamIscritti().stream()
+        TeamIscritto team = hackathonService.getTeamIscritti().stream()
                 .filter(t -> t.getTeam().getTeamID().equals(teamID))
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("Team non trovato: " + teamID));
 
         return team.getRichiesteSupporto();
+
+        //TODO Controlla con il metodo incapsulato
+//        public Map<RichiestaSupporto, Boolean> getRichiesteSupporto(String hackathonId, String teamID) {
+//            Hackathon h = hackathonService.getHackathon(hackathonId);
+//
+//            TeamIscritto team = h.getTeamIscritti().stream()
+//                    .filter(t -> t.getTeam().getTeamID().equals(teamID))
+//                    .findFirst()
+//                    .orElseThrow(() -> new IllegalArgumentException("Team non trovato: " + teamID));
+//
+//            return team.getRichiesteSupporto();
+//        }
     }
 
 }

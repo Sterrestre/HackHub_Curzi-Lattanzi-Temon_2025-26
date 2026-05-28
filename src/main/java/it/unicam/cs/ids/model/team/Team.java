@@ -8,8 +8,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class Team {
-
-
     private String teamID;
     private String nome;
     private List<MembroTeam> membriTeam = new ArrayList<>();

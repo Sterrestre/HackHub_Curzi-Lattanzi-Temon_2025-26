@@ -2,6 +2,7 @@ package it.unicam.cs.ids.model.hackathon;
 
 import it.unicam.cs.ids.model.staff.RuoliStaff;
 import it.unicam.cs.ids.model.Utente;
+import it.unicam.cs.ids.model.staff.RuoloPartecipazione;
 
 import java.time.LocalDateTime;
 
@@ -36,6 +37,8 @@ public interface HackState {
     void aggiungiMentore(Hackathon hackathon, Utente utente);
 
     void aggiungiGiudice(Hackathon hackathon, Utente utente);
+
+    void aggiungiMentore(Hackathon hackathon, RuoloPartecipazione mentore);
 
     void invitaStaff(Hackathon hackathon, Utente utente, RuoliStaff tipoRuolo);
 

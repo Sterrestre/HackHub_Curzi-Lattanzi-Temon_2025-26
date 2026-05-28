@@ -1,11 +1,13 @@
 package it.unicam.cs.ids.model;
 
+import it.unicam.cs.ids.model.team.TeamIscritto;
+
 import java.io.File;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
 public class Sottomissione {
-    private String sottomissioneID;
+    private final String sottomissioneID;
     private File file;
     private StatoSottomissione statoSottomissione = StatoSottomissione.MANCANTE;
     private Valutazione valutazione;
@@ -95,8 +97,8 @@ public class Sottomissione {
         return valutazione.getGiudizio();
    }
 
-   public long getId() {
-       return 0;
+   public String getId() {
+       return sottomissioneID;
    }
 
 }
