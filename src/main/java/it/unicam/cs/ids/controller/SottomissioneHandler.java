@@ -4,6 +4,7 @@ import it.unicam.cs.ids.model.Sottomissione;
 import it.unicam.cs.ids.model.StatoSottomissione;
 import it.unicam.cs.ids.model.TeamIscritto;
 import it.unicam.cs.ids.model.Valutazione;
+import it.unicam.cs.ids.model.Hackathon;
 
 import java.io.File;
 import java.time.LocalDateTime;
@@ -22,7 +23,7 @@ public class SottomissioneHandler {
         // Nel flow/sequence: se non esiste -> crea, se esiste -> sostituisce
         Sottomissione sottomissione = teamIscritto.getSottomissione();
         if (sottomissione == null) {
-            sottomissione = new Sottomissione();
+            sottomissione = new Sottomissione(teamIscritto.toString());
             teamIscritto.setSottomissione(sottomissione);
         }
 
@@ -51,5 +52,19 @@ public class SottomissioneHandler {
         sottomissione.setStatoSottomissione(StatoSottomissione.VALUTATA);
     }
 
-    // todo visualizzaSottomissione e getHackathon
+    public Sottomissione visualizzaSottomissione(TeamIscritto teamIscritto) {
+        if (teamIscritto == null) {
+            throw new IllegalArgumentException("TeamIscritto nullo");
+        }
+
+        return teamIscritto.getSottomissione();
+    }
+
+    public Hackathon getHackathon(TeamIscritto teamIscritto) {
+        if (teamIscritto == null) {
+            throw new IllegalArgumentException("TeamIscritto nullo");
+        }
+
+        return teamIscritto.getHackathon();
+    }
 }
