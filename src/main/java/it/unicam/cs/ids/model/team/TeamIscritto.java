@@ -1,4 +1,10 @@
-package it.unicam.cs.ids.model;
+package it.unicam.cs.ids.model.team;
+
+import it.unicam.cs.ids.model.RichiestaSupporto;
+import it.unicam.cs.ids.model.Sottomissione;
+import it.unicam.cs.ids.model.Utente;
+import it.unicam.cs.ids.model.hackathon.Hackathon;
+import it.unicam.cs.ids.model.staff.Mentore;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -6,7 +12,6 @@ import java.util.List;
 import java.util.Map;
 
 public class TeamIscritto {
-
     private Team team;
     private Hackathon hackathon;
     private Utente amministratore;
@@ -15,31 +20,27 @@ public class TeamIscritto {
     private Mentore mentoreAssegnato;
     private Map<RichiestaSupporto, Boolean> richiesteSupporto = new HashMap<>();
 
+
     public TeamIscritto(Team team, Hackathon hackathon, Utente amministratore) {
         this.team = team;
         this.hackathon = hackathon;
         this.amministratore = amministratore;
     }
 
+
     public Team getTeam() {
         return team;
     }
 
-    public Hackathon getHackathon() {
-        return hackathon;
-    }
+    public Hackathon getHackathon() {return hackathon;}
 
-    public Utente getAmministratore() {
-        return amministratore;
-    }
+    public MembroTeam getAmministratore() {return amministratore;}
 
     public List<MembroTeamIscritto> getElencoIscritti() {
         return elencoIscritti;
     }
 
-    public Sottomissione getSottomissione() {
-        return sottomissione;
-    }
+    public Sottomissione getSottomissione() {return sottomissione;}
 
     public void aggiungiIscritto(MembroTeamIscritto membro) {
         if (!elencoIscritti.contains(membro)) {
@@ -87,4 +88,5 @@ public class TeamIscritto {
         richiesteSupporto.put(richiesta, true);
         richiesta.modificaStato(true);
     }
+}
 }

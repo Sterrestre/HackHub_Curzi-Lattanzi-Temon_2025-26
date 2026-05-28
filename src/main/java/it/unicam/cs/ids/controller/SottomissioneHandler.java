@@ -2,9 +2,9 @@ package it.unicam.cs.ids.controller;
 
 import it.unicam.cs.ids.model.Sottomissione;
 import it.unicam.cs.ids.model.StatoSottomissione;
-import it.unicam.cs.ids.model.TeamIscritto;
+import it.unicam.cs.ids.model.hackathon.Hackathon;
+import it.unicam.cs.ids.model.team.TeamIscritto;
 import it.unicam.cs.ids.model.Valutazione;
-import it.unicam.cs.ids.model.Hackathon;
 
 import java.io.File;
 import java.time.LocalDateTime;

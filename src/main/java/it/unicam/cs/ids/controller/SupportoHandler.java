@@ -2,7 +2,6 @@ package it.unicam.cs.ids.controller;
 
 import it.unicam.cs.ids.model.Hackathon;
 import it.unicam.cs.ids.model.RichiestaSupporto;
-import it.unicam.cs.ids.model.TeamIscritto;
 import it.unicam.cs.ids.service.MailSender;
 import it.unicam.cs.ids.service.sistemaCall;
 

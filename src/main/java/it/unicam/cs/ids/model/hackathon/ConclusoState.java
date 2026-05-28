@@ -1,4 +1,8 @@
-package it.unicam.cs.ids.model;
+package it.unicam.cs.ids.model.hackathon;
+
+import it.unicam.cs.ids.model.staff.RuoliStaff;
+import it.unicam.cs.ids.model.staff.RuoloPartecipazione;
+import it.unicam.cs.ids.model.Utente;
 
 import java.time.LocalDateTime;
 

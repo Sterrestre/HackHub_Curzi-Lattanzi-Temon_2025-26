@@ -1,10 +1,17 @@
-package it.unicam.cs.ids.model;
+package it.unicam.cs.ids.model.hackathon;
+
+import it.unicam.cs.ids.model.*;
+import it.unicam.cs.ids.model.staff.RoleFactory;
+import it.unicam.cs.ids.model.staff.RuoliStaff;
+import it.unicam.cs.ids.model.staff.RuoloPartecipazione;
+import it.unicam.cs.ids.model.team.MembroTeamIscritto;
+import it.unicam.cs.ids.model.team.TeamIscritto;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import static it.unicam.cs.ids.model.RuoliStaff.ORGANIZZATORE;
+import static it.unicam.cs.ids.model.staff.RuoliStaff.ORGANIZZATORE;
 
 public class Hackathon {
 
@@ -12,7 +19,7 @@ public class Hackathon {
     protected String nome;
     protected InfoHack infoHack;
     protected Stato stato;                  // enum: BOZZA, CONFERMATO, CONCLUSO
-    protected List<RuoloPartecipazione> ruoli;
+    public List<RuoloPartecipazione> ruoli; // public per essere visibile dalla roleFactory
     protected int numTeamIscritti;
     protected StaffIncompleto staffIncompleto;
     protected Conto conto;
@@ -88,7 +95,7 @@ public class Hackathon {
         }
         RoleFactory factory = new RoleFactory();
         RuoloPartecipazione ruoloMentore = factory.assegnaMentore(mentore, this);
-        state.aggiungiMentore(this, ruoloMentore);
+        state.aggiungiMentore(this, ruoloMentore.getUtente());
     }
 
 

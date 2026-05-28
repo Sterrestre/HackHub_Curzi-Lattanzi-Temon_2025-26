@@ -1,6 +1,10 @@
 package it.unicam.cs.ids.service;
 
 import it.unicam.cs.ids.model.*;
+import it.unicam.cs.ids.model.hackathon.Hackathon;
+import it.unicam.cs.ids.model.inviti.Invito;
+import it.unicam.cs.ids.model.inviti.InvitoHackathon;
+import it.unicam.cs.ids.model.staff.RuoliStaff;
 
 import java.util.List;
 
@@ -25,18 +29,18 @@ public class NotificationService {
     public void inviaNotificaInvitoAccettato(Invito invito) {
         String oggetto = MailCreator.creaOggettoInvitoAccettato(invito);
         String corpo = MailCreator.creaCorpoInvitoAccettato(invito);
-        mailSender.inviaEmail(invito.getDestinatario.getUtenteEmail(), oggetto, corpo);
+        mailSender.inviaEmail(invito.getDestinatario().getUtenteEmail(), oggetto, corpo);
     }
 
 
     public void inviaNotificaInvitoRifiutato(Invito invito) {
         String oggetto = MailCreator.creaOggettoInvitoRifiutato(invito);
         String corpo = MailCreator.creaCorpoInvitoRifiutato(invito);
-        mailSender.inviaEmail(invito.getDestinatario.getUtenteEmail(), oggetto, corpo);
+        mailSender.inviaEmail(invito.getDestinatario().getUtenteEmail(), oggetto, corpo);
     }
 
 
-    public void inviaNotificaStaffIncompleto(Hackathon hack, List<InvitoStaff> scaduti) {
+    public void inviaNotificaStaffIncompleto(Hackathon hack, List<InvitoHackathon> scaduti) {
         String oggetto = MailCreator.creaOggettoOrganizzatore(hack);
         String corpo = MailCreator.creaMessaggioStaffIncompleto(hack, scaduti);
 
@@ -49,7 +53,7 @@ public class NotificationService {
         mailSender.inviaEmail(organizzatore.getUtenteEmail(), oggetto, corpo);
     }
 
-    public void inviaNotificaInvitoScaduto(InvitoStaff invito) {
+    public void inviaNotificaInvitoScaduto(InvitoHackathon invito) {
         String oggetto = MailCreator.creaOggettoInvito(invito);
         String corpo = MailCreator.creaMessaggioInvitoScaduto(invito);
 

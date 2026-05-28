@@ -1,10 +1,22 @@
 package it.unicam.cs.ids.controller;
 
-import it.unicam.cs.ids.model.*;
+import it.unicam.cs.ids.model.Penalizzazione;
+import it.unicam.cs.ids.model.Sottomissione;
+import it.unicam.cs.ids.model.Utente;
+import it.unicam.cs.ids.model.hackathon.ConclusoState;
+import it.unicam.cs.ids.model.hackathon.Hackathon;
+import it.unicam.cs.ids.model.hackathon.InfoHack;
+import it.unicam.cs.ids.model.hackathon.StaffIncompleto;
+import it.unicam.cs.ids.model.staff.Mentore;
+import it.unicam.cs.ids.model.staff.RoleFactory;
+import it.unicam.cs.ids.model.staff.RuoliStaff;
+import it.unicam.cs.ids.model.staff.RuoloPartecipazione;
+import it.unicam.cs.ids.model.team.*;
+
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static it.unicam.cs.ids.model.RuoliStaff.ORGANIZZATORE;
+import static it.unicam.cs.ids.model.staff.RuoliStaff.ORGANIZZATORE;
 
 
 public class HackHandler {
@@ -122,14 +134,16 @@ public class HackHandler {
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("Mentore non trovato nel team"))
                 .setMentoreAssegnato(mentore);
+
+        // TODO setMentoreAssegnato è solo qua. Finire di implementare, inserendo il team nella lista del mentore, e il mentore nel TeamIscritto
     }
 
     public void impostaPresenza(MembroTeamIscritto membro, boolean presenza) {
-        membro.setPresente(presenza);
+        membro.setPresenza(presenza);
     }
 
     public void setPresente(MembroTeamIscritto membro, boolean presente) {
-        membro.setPresente(presente);
+        membro.setPresenza(presente);
     }
 
     public Penalizzazione penalizza(TeamIscritto team, String tipoIntervento, String motivazione) {
@@ -155,6 +169,36 @@ public class HackHandler {
 
     public void applicaPenalizzazione(long teamID, String tipoIntervento, String motivazione) {
         hackathon.applicaPenalizzazione(teamID, tipoIntervento, motivazione);
+    }
+
+    // Implementazione del CU "Iscriviti" - It2
+    public String iscriviMembroteam(MembroTeam membTeam, Hackathon hackathon){
+
+        // Controllo che la data di scadenza delle iscrizioni non sia stata superata
+        LocalDateTime scad = hackathon.getInfoHack().getScadenzaIscrizioni();
+        if (scad.isBefore(LocalDateTime.now())) {
+            return "Iscrizioni chiuse";
+        }
+
+        // Controllo che il num max di iscritti per quel team non sia già stato raggiunto
+        int dimMax = hackathon.getInfoHack().getDimMaxTeam();
+        Team team = membTeam.getTeam();
+        int iscritti = hackathon.getTeamIscritti()                .stream()
+                .filter(t -> t.getTeam().equals(team))
+                .mapToInt(TeamIscritto::getNumIscritti)
+                .sum();
+        if (iscritti >= dimMax) {
+            return "Numero massimo di iscritti per il team raggiunto";
+        }
+
+        // Controllo che non sia un mentore
+        if (membTeam.getUtente().getRuoli().stream().anyMatch(r -> r.getHackathon() == hackathon && r.getTipoRuolo() == RuoliStaff.MENTORE)) {
+            return "I mentori non possono iscriversi come membri del team";
+        }
+
+        // Delego la logica di iscrizione al service
+        TeamHandler.iscriviMembroTeam(membTeam, hackathon);
+        return "Iscrizione avvenuta con successo";
     }
 
 }

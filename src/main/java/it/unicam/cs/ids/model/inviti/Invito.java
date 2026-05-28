@@ -1,4 +1,6 @@
-package it.unicam.cs.ids.model;
+package it.unicam.cs.ids.model.inviti;
+
+import it.unicam.cs.ids.model.Utente;
 
 import java.time.LocalDateTime;
 
@@ -11,7 +13,6 @@ import java.time.LocalDateTime;
  */
 public abstract class Invito {
     protected Utente destinatario;
-    protected Utente daParteDi;
     protected LocalDateTime dataCreazione;
 
     /**

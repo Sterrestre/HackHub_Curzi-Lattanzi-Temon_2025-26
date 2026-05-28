@@ -1,4 +1,7 @@
-package it.unicam.cs.ids.model;
+package it.unicam.cs.ids.model.staff;
+
+import it.unicam.cs.ids.model.Utente;
+import it.unicam.cs.ids.model.hackathon.Hackathon;
 
 public class RoleFactory {
 

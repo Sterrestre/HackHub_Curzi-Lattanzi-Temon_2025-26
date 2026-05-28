@@ -1,7 +1,7 @@
 package it.unicam.cs.ids;
 
 import it.unicam.cs.ids.controller.InvitiHandler;
-import it.unicam.cs.ids.model.RoleFactory;
+import it.unicam.cs.ids.model.staff.RoleFactory;
 import it.unicam.cs.ids.service.*;
 import it.unicam.cs.ids.service.infrastructure.gmail.GmailClientFactory;
 import it.unicam.cs.ids.service.infrastructure.gmail.GmailMailSender;

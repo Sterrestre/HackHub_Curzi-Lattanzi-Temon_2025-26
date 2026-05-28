@@ -1,22 +1,23 @@
-package it.unicam.cs.ids.model;
+package it.unicam.cs.ids.model.team;
+
+import it.unicam.cs.ids.model.Utente;
 
 public class MembroTeam {
-
     private Utente utente;
     private Team team;
     private boolean amministratore;
 
-    // -------------------------
-    //       COSTRUTTORE
-    // -------------------------
-    public MembroTeam(Utente utente, Team team, boolean amministratore) {
+    MembroTeam(Utente utente, Team team, boolean amministratore) {
+        if (utente == null) throw new NullPointerException("L'utente non puo' essere null!");
+        if (team == null) throw new NullPointerException("Il team non puo' essere null!");
+
         this.utente = utente;
         this.team = team;
         this.amministratore = amministratore;
     }
 
     public Utente getUtente() {
-        return utente;
+        return  this.utente;
     }
 
     public void setUtente(Utente utente) {
@@ -32,7 +33,7 @@ public class MembroTeam {
     }
 
     public boolean isAmministratore() {
-        return amministratore;
+        return this.amministratore;
     }
 
     public void setAmministratore(boolean amministratore) {

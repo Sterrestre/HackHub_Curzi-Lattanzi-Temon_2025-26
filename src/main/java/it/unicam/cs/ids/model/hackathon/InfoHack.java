@@ -1,4 +1,4 @@
-package it.unicam.cs.ids.model;
+package it.unicam.cs.ids.model.hackathon;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;

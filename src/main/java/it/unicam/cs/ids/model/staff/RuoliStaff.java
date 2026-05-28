@@ -1,4 +1,4 @@
-package it.unicam.cs.ids.model;
+package it.unicam.cs.ids.model.staff;
 
 public enum RuoliStaff {
     ORGANIZZATORE,

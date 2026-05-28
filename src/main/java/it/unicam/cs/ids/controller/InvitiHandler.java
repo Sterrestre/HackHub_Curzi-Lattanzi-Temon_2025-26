@@ -1,6 +1,14 @@
 package it.unicam.cs.ids.controller;
 
 import it.unicam.cs.ids.model.*;
+import it.unicam.cs.ids.model.hackathon.ConfermatoState;
+import it.unicam.cs.ids.model.hackathon.Hackathon;
+import it.unicam.cs.ids.model.inviti.Invito;
+import it.unicam.cs.ids.model.inviti.InvitoHackathon;
+import it.unicam.cs.ids.model.inviti.InvitoTeam;
+import it.unicam.cs.ids.model.staff.RoleFactory;
+import it.unicam.cs.ids.model.staff.RuoliStaff;
+import it.unicam.cs.ids.model.team.MembroTeam;
 import it.unicam.cs.ids.service.InvitoService;
 import it.unicam.cs.ids.service.NotificationService;
 
@@ -9,8 +17,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static it.unicam.cs.ids.model.StaffIncompleto.INCOMPLETO;
-import static it.unicam.cs.ids.model.Stato.BOZZA;
+import static it.unicam.cs.ids.model.hackathon.StaffIncompleto.INCOMPLETO;
+import static it.unicam.cs.ids.model.hackathon.Stato.BOZZA;
 
 /**
  * Controller dei casi d'uso inerenti alla creazione e spedizione di inviti e alla gestione delle rispettive risposte.
@@ -30,33 +38,41 @@ public class InvitiHandler {
     }
 
 
-    public void creaInvitoStaff(Utente daParteDi, Utente destinatario, Hackathon hackathon, RuoliStaff ruolo) {
+    public void creaInvitoStaff(Utente organizzatore, Utente destinatario, Hackathon hackathon, RuoliStaff ruolo) {
         int giorniScadenza = Integer.parseInt(System.getenv("INVITO_SCAD_GG"));
         LocalDateTime scadenza = LocalDateTime.now().plusDays(giorniScadenza);
-        InvitoStaff invito = new InvitoStaff(daParteDi, destinatario, hackathon, ruolo, scadenza);
+        InvitoHackathon invito = new InvitoHackathon(organizzatore, destinatario, hackathon, ruolo, scadenza);
         invitoService.salva(invito);
         notificationService.inviaInvito(invito);
     }
 
-    //TODO accetta e rifiuta invito con relativa implementazione dei metodi
+    // TODO?
+    public void creaInvitoTeam(MembroTeam mittente, Utente destinatario) {}
+
 
     public void rispostaInvito(Invito invito, boolean accetta) {
         switch (invito) {
-            case InvitoStaff staff -> gestisciRispostaStaff(staff, accetta);
+            case InvitoHackathon staff -> gestisciRispostaStaff(staff, accetta);
             case InvitoTeam team -> gestisciRispostaTeam(team, accetta);
             default -> throw new IllegalStateException("Tipo di invito non riconosciuto: " + invito);
         }
         invitoService.elimina(invito);
     }
 
+    //TODO accetta e rifiuta invito con relativa implementazione dei metodi
     private void gestisciRispostaTeam(InvitoTeam team, boolean accetta) {
-        // TODO: quando implementeremo il caso d'uso
+        if (accetta) {
+            if (team.getDestinatario().getTeam() != null) {
+                throw new UnicoTeamException();
+            }
+
+        }
     }
 
 
 //  Il caso d'uso Risposta membro staff viene attivato dall'utente invitato come membro di staff (ha risposto all'invito).
 //  La risposta viene gestita diversamente in base al ruolo per cui l'utente era stato invitato, se come giudice o come mentore.
-    private void gestisciRispostaStaff(InvitoStaff staff, boolean accetta) {
+    private void gestisciRispostaStaff(InvitoHackathon staff, boolean accetta) {
         RuoliStaff ruolo = staff.getRuolo();
         Hackathon hackathon = staff.getHackathon();
 
@@ -82,7 +98,7 @@ public class InvitiHandler {
     }
 
 
-    private void gestisciRispostaGiudice(InvitoStaff staff, boolean accetta) {
+    private void gestisciRispostaGiudice(InvitoHackathon staff, boolean accetta) {
         Hackathon hack = staff.getHackathon();
         // l'utente ha accettato di diventare giudice: viene aggiunto allo staff dell'hackathon
         if (accetta) {
@@ -91,12 +107,12 @@ public class InvitiHandler {
             // l'utente non ha accettato di diventare giudice: lo staff di quell'hackathon è dichiarato incompleto
         } else {
             HackHandler.setStaffIncompleto(hack, INCOMPLETO);
-            notificationService.inviaNotificaStaffIncompleto(hack, (List<InvitoStaff>) staff);
+            notificationService.inviaNotificaStaffIncompleto(hack, (List<InvitoHackathon>) staff);
         }
     }
 
 
-    private void gestisciRispostaMentore(InvitoStaff staff, boolean accetta) {
+    private void gestisciRispostaMentore(InvitoHackathon staff, boolean accetta) {
         Hackathon hack = staff.getHackathon();
         if (accetta) {
             roleFactory.creaERegistraRuolo(staff.getRuolo(), staff.getDestinatario(), hack);
@@ -113,7 +129,7 @@ public class InvitiHandler {
 
                     if (numInvitiMentori == 0) {
                         HackHandler.setStaffIncompleto(hack, INCOMPLETO);
-                        notificationService.inviaNotificaStaffIncompleto(hack, (List<InvitoStaff>) staff);
+                        notificationService.inviaNotificaStaffIncompleto(hack, (List<InvitoHackathon>) staff);
                     }
                 }
             }
@@ -129,18 +145,18 @@ public class InvitiHandler {
      * Qualora l'hackathon per cui era stato mandato l'invito sia ancora in stato di BOZZA, avvisa l'organizzatore.
      */
     public void verificaScadenze() {
-        List<InvitoStaff> scaduti = invitoService.getInviti().stream()
-                .filter(InvitoStaff.class::isInstance)
-                .map(InvitoStaff.class::cast)
+        List<InvitoHackathon> scaduti = invitoService.getInviti().stream()
+                .filter(InvitoHackathon.class::isInstance)
+                .map(InvitoHackathon.class::cast)
                 .filter(i -> i.getScadenza().isBefore(LocalDateTime.now()))
                 .toList();
 
-        Map<Hackathon, List<InvitoStaff>> perHackathon =
-                scaduti.stream().collect(Collectors.groupingBy(InvitoStaff::getHackathon));
+        Map<Hackathon, List<InvitoHackathon>> perHackathon =
+                scaduti.stream().collect(Collectors.groupingBy(InvitoHackathon::getHackathon));
 
-        for (Map.Entry<Hackathon, List<InvitoStaff>> entry : perHackathon.entrySet()) {
+        for (Map.Entry<Hackathon, List<InvitoHackathon>> entry : perHackathon.entrySet()) {
             Hackathon hack = entry.getKey();
-            List<InvitoStaff> invitiScaduti = entry.getValue();
+            List<InvitoHackathon> invitiScaduti = entry.getValue();
 
 
             if (hack.getStato() == BOZZA) {
@@ -155,8 +171,8 @@ public class InvitiHandler {
 
     private int getInvitiMentori(Hackathon hack) {
         return Math.toIntExact(invitoService.getInviti().stream()
-                .filter(inv -> inv instanceof InvitoStaff)
-                .map(inv -> (InvitoStaff) inv)
+                .filter(inv -> inv instanceof InvitoHackathon)
+                .map(inv -> (InvitoHackathon) inv)
                 .filter(inv -> inv.getHackathon().equals(hack))
                 .filter(inv -> inv.getRuolo() == RuoliStaff.MENTORE)
                 .count());
