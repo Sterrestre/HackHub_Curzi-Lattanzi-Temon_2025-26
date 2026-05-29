@@ -20,7 +20,6 @@ public interface MailSender {
      * Simula invio email al team
      */
     private void inviaPropostaTeam(RichiestaSupporto richiesta, LocalDateTime dataOra, String collegamento) {
-
         System.out.println("Invio proposta call al team:");
         System.out.println("Data: " + dataOra);
         System.out.println("Link: " + collegamento);

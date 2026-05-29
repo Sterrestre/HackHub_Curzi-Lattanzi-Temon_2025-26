@@ -88,8 +88,9 @@ public class SupportoHandler {
         return h.getTeamAssegnati(mentoreID);
     }
 
-    public Map<RichiestaSupporto, Boolean> getRichiesteSupporto(String teamID) {
-        TeamIscritto team = hackathonService.getTeamIscritti().stream()
+    public Map<RichiestaSupporto, Boolean> getRichiesteSupporto(String teamID, String hackathonID) {
+        Hackathon h = hackathonService.getHackathon(hackathonID);
+        TeamIscritto team = h.getTeamIscritti().stream()
                 .filter(t -> t.getTeam().getTeamID().equals(teamID))
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("Team non trovato: " + teamID));

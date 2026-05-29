@@ -1,10 +1,8 @@
 package it.unicam.cs.ids.controller;
 
-import it.unicam.cs.ids.model.MetodoPagamento;
 import it.unicam.cs.ids.model.Utente;
 import it.unicam.cs.ids.model.hackathon.Hackathon;
 import it.unicam.cs.ids.model.team.MembroTeam;
-import it.unicam.cs.ids.model.team.MembroTeamIscritto;
 import it.unicam.cs.ids.model.team.Team;
 import it.unicam.cs.ids.model.team.TeamIscritto;
 import it.unicam.cs.ids.service.NotificationService;
@@ -19,12 +17,20 @@ public class TeamHandler {
 
     private final TeamService teamService;
     private final NotificationService notificationService;
+    private final InvitiHandler invitiHandler;
 
-    public TeamHandler(TeamService teamService, NotificationService notificationService) {
+    public TeamHandler(TeamService teamService, NotificationService notificationService, InvitiHandler invitiHandler) {
         this.teamService = teamService;
         this.notificationService = notificationService;
+        this.invitiHandler = invitiHandler;
     }
 
+    /**
+     * Crea un nuovo team con il nome specificato e l'utente amministratore. L'utente amministratore diventa automaticamente membro del team.
+     * @param nome del team che si vuole creare
+     * @param amministratore l'utente che crea il team. Non deve appartenere a nessun altro team.
+     * @return il nuovo team
+     */
     public Team creaTeam(String nome, Utente amministratore) {
         //TODO implementare il catch dell'eccezione che implementi l'opt team != null
         if (amministratore.getTeam() != null) {
@@ -38,33 +44,16 @@ public class TeamHandler {
         }
 
         Team team = teamService.creaTeam(nome, amministratore);
-        // aggiungi membro team? TeamHandler o MembroTeamHandler?
-        MembroTeam admin = new MembroTeam(amministratore, team, true);
-    // TODO
-        //  notificationService.inviaNotificaCreazioneTeam(team, amministratore);
-
+        System.out.println("Team " + team.getNome() + " creato con successo. Amministratore: " + amministratore.getNickname());
         return team;
     }
 
-    //TODO
-    public void aggiungiMembroTeam(Team team, Utente utente) {
-        MembroTeam nuovo = teamService.aggiungiMembro(team, utente);
+    //TODO la parte che riguarda il membro può essere delegata a MembriTeamHandler
+    public void aggiungiMembroTeam(Team team, Utente utente, boolean amministratore) {
+        MembroTeam nuovo = teamService.aggiungiMembro(team, utente, amministratore);
     //    notificationService.inviaNotificaAggiuntaMemebro(?);
     }
 
-    public void rimuoviMembroTeam(MembroTeam membroTeam) {}
-
-    public String rendiAmministratore(MembroTeam admin, MembroTeam membroTeam) {
-        if (membroTeam.getTeam() == admin.getTeam()) {
-            if (membroTeam.isAmministratore()) {
-                throw new IllegalArgumentException("Il membro è già amministratore");
-            }
-            membroTeam.setAmministratore(true);
-            // TODO invia notifica
-            // notificationService.inviaNotificaAmministratore();
-        }
-        return "Il membro del team "+membroTeam.getUtente().getNickname()+" è ora amministratore";
-    }
 
     public TeamIscritto iscriviTeam(Team team, Hackathon hackathon, MembroTeam amministratore) {
         LocalDateTime scadIscr = hackathon.getInfoHack().getScadenzaIscrizioni();
@@ -81,19 +70,19 @@ public class TeamHandler {
         return null;
     }
 
-    public MembroTeamIscritto iscriviMembroTeam(MembroTeam membTeam, Hackathon hackathon) {
-        TeamIscritto teamIscr = hackathon.getTeamIscritti().stream()
-                .filter(t -> t.getTeam().equals(membTeam.getTeam()))
-                .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("Il team non è iscritto all'hackathon"));
 
-        MetodoPagamento metPag = MetodoPagamento.NON_SELEZIONATO;
-        if (hackathon.getPremioInDenaro() > 0) {
-            // TODO chiedere il metodo di pagamento all'attore
+    /**
+     * Invita un utente a unirsi al team. L'utente riceverà una notifica e potrà accettare o rifiutare l'invito.
+     * @param admin il membro del team che vuole mandare l'invito
+     * @param utente l'utente che si vuole invitare ad unirsi al team. L'utente può far già parte di un altro team o meno.
+     * @throws IllegalStateException se l'utente è già membro del team.
+     * @return messaggio di conferma dell'invio.
+     */
+    public String invitaUtente(MembroTeam admin, Utente utente) {
+        if (utente.getTeam() == admin.getTeam()) {
+            throw new IllegalStateException("L'utente è già membro del team");
         }
-
-        MembroTeamIscritto membroTeamIscritto = new MembroTeamIscritto(membTeam.getUtente(), teamIscr, metPag);
-        teamIscr.getElencoIscritti().add(membroTeamIscritto);
-        return membroTeamIscritto;
+        invitiHandler.creaInvitoTeam(admin, utente);
+        return "L'utente "+utente.getNickname()+" è stato invitato al team "+admin.getTeam().getNome();
     }
 }

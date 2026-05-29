@@ -5,15 +5,20 @@ import it.unicam.cs.ids.model.Utente;
 public class MembroTeam {
     private Utente utente;
     private Team team;
-    private boolean amministratore;
+    private boolean amministratore = false;
 
-    MembroTeam(Utente utente, Team team, boolean amministratore) {
+
+    /**
+     * Costruttore per creare un nuovo membro del team. L'utente e il team non possono essere null.
+     * @param utente
+     * @param team
+     */
+    public MembroTeam(Utente utente, Team team) {
         if (utente == null) throw new NullPointerException("L'utente non puo' essere null!");
         if (team == null) throw new NullPointerException("Il team non puo' essere null!");
 
         this.utente = utente;
         this.team = team;
-        this.amministratore = amministratore;
     }
 
     public Utente getUtente() {

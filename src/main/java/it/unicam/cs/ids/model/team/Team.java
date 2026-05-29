@@ -5,6 +5,7 @@ import it.unicam.cs.ids.model.team.MembroTeam;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class Team {
@@ -12,27 +13,44 @@ public class Team {
     private String nome;
     private List<MembroTeam> membriTeam = new ArrayList<>();
 
-    public Team(String teamID, String nome) {
-        this.teamID = teamID;
+    /**
+     * Crea un team, associandogli il nome corrispondente e un ID univoco.
+     * @param nome il nome del team.
+     * @throws IllegalArgumentException se il nome è null o vuoto
+     */
+    public Team(String nome) {
+        this.teamID = UUID.randomUUID().toString();
         if (nome == null || nome.isBlank()) {
             throw new IllegalArgumentException("Il nome del team non può essere vuoto");
         }
         this.nome = nome;
     }
 
+    /**
+     * Permette di recuperare l'ID univoco del team
+     * @return l'ID del team.
+     */
     public String getTeamID() {
         return teamID;
     }
 
-    public void setTeamID(String teamID) {
-        this.teamID = teamID;
-    }
-
+    /**
+     * Restituisce il nome del team.
+     * @return il nome del team.
+     */
     public String getNome() {
         return nome;
     }
 
+    /**
+     * Permette di cambiare il nome del team.
+     * @param nome il nuovo nome del team.
+     * @throws IllegalArgumentException se il nome è null o vuoto
+     */
     public void setNome(String nome) {
+        if (nome == null || nome.isBlank()) {
+            throw new IllegalArgumentException("Il nome del team non può essere vuoto");
+        }
         this.nome = nome;
     }
 
@@ -40,15 +58,18 @@ public class Team {
         return membriTeam;
     }
 
-    public it.unicam.cs.ids.model.team.MembroTeam aggiungiMembro(Utente utente) {
+    public MembroTeam aggiungiMembro(Utente utente) {
         // evita duplicati
         if (membriTeam.stream().anyMatch(m -> m.getUtente().equals(utente))) {
             throw new IllegalArgumentException("L'utente è già membro del team");
         }
 
-        MembroTeam membro = new MembroTeam(utente, this, false);
+        MembroTeam membro = new MembroTeam(utente, this);
+
+        // Aggiornamento della relazione bidirezionale
         membriTeam.add(membro);
         utente.setTeam(this);
+
         return membro;
     }
 

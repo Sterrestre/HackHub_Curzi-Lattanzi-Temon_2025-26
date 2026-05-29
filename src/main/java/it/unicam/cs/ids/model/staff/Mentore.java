@@ -7,13 +7,10 @@ import it.unicam.cs.ids.model.team.TeamIscritto;
 import java.util.ArrayList;
 import java.util.List;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class Mentore extends RuoloPartecipazione {
     List<TeamIscritto> teamAssociati = new ArrayList<>();
 
-    private long mentoreID;
+    private String mentoreID;
     private List<TeamIscritto> listaTeamAssegnati = new ArrayList<>();
 
     public Mentore(Utente utente, Hackathon hackathon) {
@@ -26,11 +23,11 @@ public class Mentore extends RuoloPartecipazione {
         return RuoliStaff.MENTORE;
     }
 
-    public long getMentoreID() {
+    public String getMentoreID() {
         return mentoreID;
     }
 
-    public void setMentoreID(long mentoreID) {
+    public void setMentoreID(String mentoreID) {
         this.mentoreID = mentoreID;
     }
 

@@ -256,7 +256,7 @@ public class Hackathon {
     public void salvaPresenze() {
     }
 
-    public List<TeamIscritto> getTeamAssegnati(long mentoreID) {
+    public List<TeamIscritto> getTeamAssegnati(String mentoreID) {
         return teamIscritti.stream()
                 .filter(team -> team.getMentoreAssegnato() != null)
                 .filter(team -> team.getMentoreAssegnato().getMentoreID() == mentoreID)
