@@ -32,7 +32,7 @@ public interface InfoHackBuilder {
     /**
      * Imposta il luogo in cui si svolgerà l'evento.
      *
-     * @param luogo descrizione del luogo o indirizzo
+     * @param luogo regolamento del luogo o indirizzo
      */
     void setLuogo(String luogo);
 

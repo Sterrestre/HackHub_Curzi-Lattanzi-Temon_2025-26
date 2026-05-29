@@ -8,8 +8,8 @@ public class InfoHack {
 
     private String nome;
     private String regolamento;
-    private LocalDate dataInizio;
-    private LocalDate dataFine;
+    private LocalDateTime dataInizio;
+    private LocalDateTime dataFine;
     private String luogo;
     private LocalDateTime scadenzaIscrizioni;
     private double quotaIscrizione;
@@ -23,11 +23,11 @@ public class InfoHack {
         return regolamento;
     }
 
-    public LocalDate getDataInizio() {
+    public LocalDateTime getDataInizio() {
         return dataInizio;
     }
 
-    public LocalDate getDataFine() {
+    public LocalDateTime getDataFine() {
         return dataFine;
     }
 
@@ -83,7 +83,7 @@ public class InfoHack {
      * (se già impostata). La scadenza iscrizioni (se già impostata) deve restare antecedente.
      * @throws IllegalArgumentException se la data è null, già passata o viola la coerenza temporale
      */
-    public void setDataInizio(LocalDate dataInizio) {
+    public void setDataInizio(LocalDateTime dataInizio) {
         int giorniScadenzaHackathon = Integer.parseInt(System.getenv("HACKATHON_SCAD_GG"));
 
         if (dataInizio == null) {
@@ -105,7 +105,7 @@ public class InfoHack {
      * Imposta la data di fine. Deve essere successiva alla data di inizio (se già impostata).
      * @throws IllegalArgumentException se la data è null o non rispetta la coerenza temporale
      */
-    public void setDataFine(LocalDate dataFine) {
+    public void setDataFine(LocalDateTime dataFine) {
         if (dataFine == null) {
             throw new IllegalArgumentException("La data di fine non può essere null");
         }

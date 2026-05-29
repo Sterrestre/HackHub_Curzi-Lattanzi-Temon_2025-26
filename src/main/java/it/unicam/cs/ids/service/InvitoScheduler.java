@@ -1,12 +1,8 @@
 package it.unicam.cs.ids.service;
 
-import it.unicam.cs.ids.controller.InvitiHandler;
+import it.unicam.cs.ids.handler.InvitiHandler;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 @Component
 public class InvitoScheduler {

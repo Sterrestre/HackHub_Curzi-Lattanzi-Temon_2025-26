@@ -1,4 +1,4 @@
-package it.unicam.cs.ids.controller;
+package it.unicam.cs.ids.handler;
 
 public class Scaduto extends RuntimeException {
     public Scaduto() {

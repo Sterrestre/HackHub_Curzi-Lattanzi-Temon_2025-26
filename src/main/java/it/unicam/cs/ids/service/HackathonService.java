@@ -27,7 +27,7 @@ public class HackathonService {
     /**
      * Recupera un hackathon tramite il suo ID.
      */
-    public Hackathon getHackathon(String id) {
+    public Hackathon getHackathonByID(String id) {
         Hackathon h = hackathonMap.get(id);
         if (h == null) {
             throw new IllegalArgumentException("Hackathon non trovato: " + id);
@@ -46,7 +46,7 @@ public class HackathonService {
      * Aggiorna lo stato di un hackathon.
      */
     public void aggiornaStato(String id, Stato nuovoStato) {
-        Hackathon h = getHackathon(id);
+        Hackathon h = getHackathonByID(id);
         h.stato = nuovoStato;
     }
 
@@ -54,7 +54,7 @@ public class HackathonService {
      * Aggiunge un team iscritto a un hackathon.
      */
     public void aggiungiTeam(String id, TeamIscritto team) {
-        Hackathon h = getHackathon(id);
+        Hackathon h = getHackathonByID(id);
         h.getTeamIscritti().add(team);
     }
 

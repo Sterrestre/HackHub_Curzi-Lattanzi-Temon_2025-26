@@ -1,6 +1,6 @@
 package it.unicam.cs.ids.model.hackathon;
 
-import it.unicam.cs.ids.controller.InvitiHandler;
+import it.unicam.cs.ids.handler.InvitiHandler;
 import it.unicam.cs.ids.model.staff.RuoliStaff;
 import it.unicam.cs.ids.model.staff.RuoloPartecipazione;
 import it.unicam.cs.ids.model.Utente;
@@ -21,12 +21,12 @@ public abstract class BozzaState implements HackState {
 
     @Override
     public void modificaDataInizio(Hackathon hackathon, LocalDateTime nuovaData) {
-        hackathon.infoHack.setDataInizio(nuovaData.toLocalDate());
+        hackathon.infoHack.setDataInizio(nuovaData);
     }
 
     @Override
     public void modificaDataFine(Hackathon hackathon, LocalDateTime nuovaDataFine) {
-        hackathon.infoHack.setDataFine(nuovaDataFine.toLocalDate());
+        hackathon.infoHack.setDataFine(nuovaDataFine);
     }
 
     @Override

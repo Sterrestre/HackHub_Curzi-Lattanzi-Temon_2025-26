@@ -2,7 +2,11 @@ package it.unicam.cs.ids.model.team;
 
 import it.unicam.cs.ids.model.Utente;
 
+import java.util.UUID;
+
 public class MembroTeam {
+    private String membroTeamId;
+    private String utenteId;
     private Utente utente;
     private Team team;
     private boolean amministratore = false;
@@ -19,6 +23,11 @@ public class MembroTeam {
 
         this.utente = utente;
         this.team = team;
+        this.membroTeamId = UUID.randomUUID().toString();
+    }
+
+    public String getMembroTeamId() {
+        return membroTeamId;
     }
 
     public Utente getUtente() {

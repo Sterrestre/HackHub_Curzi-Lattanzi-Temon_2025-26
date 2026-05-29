@@ -1,4 +1,4 @@
-package it.unicam.cs.ids.controller;
+package it.unicam.cs.ids.handler;
 
 import it.unicam.cs.ids.model.RichiestaSupporto;
 import it.unicam.cs.ids.model.hackathon.Hackathon;
@@ -84,32 +84,19 @@ public class SupportoHandler {
     }
 
     public List<TeamIscritto> getTeamAssegnati(String hackathonID, String mentoreID) {
-        Hackathon h = hackathonService.getHackathon(hackathonID);
+        Hackathon h = hackathonService.getHackathonByID(hackathonID);
         return h.getTeamAssegnati(mentoreID);
     }
 
     public Map<RichiestaSupporto, Boolean> getRichiesteSupporto(String teamID, String hackathonID) {
-        Hackathon h = hackathonService.getHackathon(hackathonID);
+        Hackathon h = hackathonService.getHackathonByID(hackathonID);
         TeamIscritto team = h.getTeamIscritti().stream()
                 .filter(t -> t.getTeam().getTeamID().equals(teamID))
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("Team non trovato: " + teamID));
 
         return team.getRichiesteSupporto();
-
-        //TODO Controlla con il metodo incapsulato
-//        public Map<RichiestaSupporto, Boolean> getRichiesteSupporto(String hackathonId, String teamID) {
-//            Hackathon h = hackathonService.getHackathon(hackathonId);
-//
-//            TeamIscritto team = h.getTeamIscritti().stream()
-//                    .filter(t -> t.getTeam().getTeamID().equals(teamID))
-//                    .findFirst()
-//                    .orElseThrow(() -> new IllegalArgumentException("Team non trovato: " + teamID));
-//
-//            return team.getRichiesteSupporto();
-//        }
     }
-
 }
 
 
