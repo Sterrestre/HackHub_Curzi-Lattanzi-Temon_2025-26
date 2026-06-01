@@ -1,102 +1,101 @@
 package it.unicam.cs.ids.model.hackathon;
 
+import it.unicam.cs.ids.model.Utente;
+import it.unicam.cs.ids.model.staff.Giudice;
 import it.unicam.cs.ids.model.staff.RuoliStaff;
 import it.unicam.cs.ids.model.staff.RuoloPartecipazione;
-import it.unicam.cs.ids.model.Utente;
 
 import java.time.LocalDateTime;
 
-public class ConfermatoState implements HackState {
-
-    public ConfermatoState(Hackathon hackathon) {
-
-    }
+public class InCorsoState implements HackState {
 
     @Override
     public void setInfoHack(Hackathon hackathon, InfoHack info) {
-        throw new IllegalStateException("Non puoi modificare info dopo la conferma");
+        throw new IllegalStateException("Hackathon in corso: non modificabile");
     }
 
     @Override
     public void modificaRegolamento(Hackathon hackathon, String nuovoRegolamento) {
-        throw new IllegalStateException("Regolamento non modificabile in stato confermato");
+        throw new IllegalStateException("Hackathon in corso");
     }
 
     @Override
     public void modificaDataInizio(Hackathon hackathon, LocalDateTime nuovaData) {
-        throw new IllegalStateException("Data non modificabile in stato confermato");
+        throw new IllegalStateException("Hackathon in corso");
     }
 
     @Override
     public void modificaDataFine(Hackathon hackathon, LocalDateTime nuovaDataFine) {
-        throw new IllegalStateException("Data non modificabile in stato confermato");
+        throw new IllegalStateException("Hackathon in corso");
     }
 
     @Override
     public void modificaLuogo(Hackathon hackathon, String nuovoLuogo) {
-        throw new IllegalStateException("Luogo non modificabile in stato confermato");
+        throw new IllegalStateException("Hackathon in corso");
     }
 
     @Override
     public void modificaScadenzaIscrizioni(Hackathon hackathon, LocalDateTime nuovaScadenza) {
-        throw new IllegalStateException("Scadenza non modificabile in stato confermato");
+        throw new IllegalStateException("Hackathon in corso");
     }
 
     @Override
     public void modificaQuotaIscrizione(Hackathon hackathon, double nuovaQuota) {
-        throw new IllegalStateException("Quota non modificabile in stato confermato");
+        throw new IllegalStateException("Hackathon in corso");
     }
 
     @Override
     public void modificaPremio(Hackathon hackathon, double nuovoPremio) {
-        throw new IllegalStateException("Premio non modificabile in stato confermato");
+        throw new IllegalStateException("Hackathon in corso");
     }
 
     @Override
     public void modificaDimMaxTeam(Hackathon hackathon, int nuovaDim) {
-        throw new IllegalStateException("Dimensione team non modificabile in stato confermato");
+        throw new IllegalStateException("Hackathon in corso");
     }
 
     @Override
     public void modificaNumMaxTeam(Hackathon hackathon, int nuovoNum) {
-        throw new IllegalStateException("Numero team non modificabile in stato confermato");
+        throw new IllegalStateException("Hackathon in corso");
     }
 
     @Override
     public void aggiungiMentore(Hackathon hackathon, Utente utente) {
-        // TODO
-
+        // TODO? O non se po fa? CI SONO DUE AGGIUNGI MENTORE AS USUAL
     }
 
     @Override
     public void aggiungiGiudice(Hackathon hackathon, Utente utente) {
-        // TODO
+        throw new IllegalStateException("Hackathon in corso");
     }
-
 
     @Override
     public void aggiungiMentore(Hackathon hackathon, RuoloPartecipazione mentore) {
-        hackathon.ruoli.add(mentore);
+        throw new IllegalStateException("Hackathon in corso");
+    }
+
+    public void aggiungiGiudice(Hackathon hackathon, Giudice giudice) {
+        throw new IllegalStateException("Hackathon in corso");
     }
 
     @Override
     public void invitaStaff(Hackathon hackathon, Utente utente, RuoliStaff tipoRuolo) {
-        throw new IllegalStateException("Non puoi invitare staff in stato confermato");
+        throw new IllegalStateException("Hackathon in corso");
     }
 
     @Override
     public void eliminaHackathon(Hackathon hackathon) {
-        // eliminazione consentita
-        // logica da implementare
+        throw new IllegalStateException("Non puoi eliminare un hackathon ancora in corso");
     }
 
     @Override
     public void confermaHackathon(Hackathon hackathon) {
-        throw new IllegalStateException("L'hackathon è già confermato");
+        throw new IllegalStateException("Hackathon ancora in corso");
     }
 
     @Override
     public boolean isStaffIncompleto(Hackathon hackathon) {
         return false;
     }
+
 }

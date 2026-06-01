@@ -19,7 +19,7 @@ public class Hackathon {
 
     private final String id;
 
-    protected HackState state;              // stato corrente
+    private HackState state;              // stato corrente
     protected String nome;
     protected InfoHack infoHack;
     public Stato stato;                  // enum: BOZZA, CONFERMATO, CONCLUSO
@@ -37,7 +37,6 @@ public class Hackathon {
     public Hackathon(InfoHack infoHack, String nome) {
         this.id = UUID.randomUUID().toString();
         this.infoHack = infoHack;
-        this.stato = Stato.BOZZA;
         this.numTeamIscritti = 0;
         this.nome = nome;
         this.ruoli = new ArrayList<>();

@@ -1,5 +1,7 @@
 package it.unicam.cs.ids.service;
 
+import it.unicam.cs.ids.handler.InvitiHandler;
+import it.unicam.cs.ids.model.hackathon.BozzaState;
 import it.unicam.cs.ids.model.hackathon.Hackathon;
 import it.unicam.cs.ids.model.hackathon.InfoHack;
 import it.unicam.cs.ids.model.hackathon.Stato;
@@ -14,12 +16,18 @@ import java.util.Map;
 public class HackathonService {
 
     private final Map<String, Hackathon> hackathonMap = new HashMap<>();
+    private final InvitiHandler invitiHandler;
+
+    public HackathonService(InvitiHandler invitiHandler) {
+        this.invitiHandler = invitiHandler;
+    }
 
     /**
      * Crea un nuovo hackathon e lo registra nel sistema.
      */
     public Hackathon creaHackathon(InfoHack info, String nome) {
         Hackathon h = new Hackathon(info, nome);
+        h.cambiaStato(new BozzaState(invitiHandler));
         hackathonMap.put(h.getHackathonID(), h);
         return h;
     }

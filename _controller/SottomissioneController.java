@@ -35,11 +35,15 @@ public class SottomissioneController {
     @PostMapping("/crea")
     public ResponseEntity<SottomissioneDTO> crea(@RequestBody CreaSottomissioneRequest req) {
 
+        // TODO nota Matteo
+        // le fa SpringBoot volendo <-- ???
         Team team = teamService.findById(req.teamId());
         Hackathon hack = hackService.getHackathonByID(req.hackathonId());
 
         Sottomissione s = sottomissioneHandler.creaSottomissione(team, hack, req.titolo(), req.descrizione(), req.linkRepository());
 
+        // TODO nota Matteo
+        // Non correttissimo, perché per forza ti dà l'ok. Se sotto va in errore, responseEntity deve dare errore
         return ResponseEntity.ok(SottomissioneDTO.from(s));
     }
 
@@ -58,6 +62,8 @@ public class SottomissioneController {
         return ResponseEntity.ok(SottomissioneDTO.from(s));
     }
 
+    // TODO nota Matteo
+    // MACELLO DA GESTIRE IL DOPPIO CAMPO NEL LINK
     @GetMapping("/hackathon/{hackathonId}")
     public ResponseEntity<List<SottomissioneDTO>> getByHackathon(@PathVariable String hackathonId) {
 

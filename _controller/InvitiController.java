@@ -1,11 +1,13 @@
 package it.unicam.cs.ids.controller;
 
+import it.unicam.cs.ids.dto.InvitaStaffRequest;
 import it.unicam.cs.ids.dto.InvitaTeamRequest;
 import it.unicam.cs.ids.dto.RispostaInvitoRequest;
 import it.unicam.cs.ids.handler.InvitiHandler;
 import it.unicam.cs.ids.model.Utente;
 import it.unicam.cs.ids.model.hackathon.Hackathon;
 import it.unicam.cs.ids.model.team.Team;
+import it.unicam.cs.ids.service.HackathonService;
 import it.unicam.cs.ids.service.team.TeamService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -22,12 +24,12 @@ public class InvitiController {
     private final InvitiHandler invitiHandler;
     private final UtenteService utenteService;
     private final TeamService teamService;
-    private final HackService hackService;
+    private final HackathonService hackService;
 
     public InvitiController(InvitiHandler invitiHandler,
                             UtenteService utenteService,
                             TeamService teamService,
-                            HackService hackService) {
+                            HackathonService hackService) {
         this.invitiHandler = invitiHandler;
         this.utenteService = utenteService;
         this.teamService = teamService;

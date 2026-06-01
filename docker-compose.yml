@@ -1,12 +1,27 @@
+##FILE YML PER CONFIG (Alpine container to hold secrets):
+#version: '3.8'
+#
+#services:
+#  config:
+#    image: alpine:latest
+#    env_file:
+#      - .env
+#    command: ["sleep", "infinity"]
+#
+#secrets:
+#  gmail_credentials:
+#    file: ./secrets/credentials.json
+
+
+#FILE YML PER IDS (Spring Boot application):
 version: '3.8'
 
 services:
-  config:
-    image: alpine:latest
+  hackhub:
+    build: .
+    ports:
+      - "8080:8080"
     env_file:
       - .env
-    command: ["sleep", "infinity"]
-
-secrets:
-  gmail_credentials:
-    file: ./secrets/credentials.json
+    environment:
+      SPRING_PROFILES_ACTIVE: docker

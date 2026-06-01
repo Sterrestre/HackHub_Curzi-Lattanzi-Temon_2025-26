@@ -13,13 +13,13 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/hackathon")
-public class HackathonController {
+public class HackController {
 
     // TODO rivedi questa classe e aggiungi i metodi mancanti in HackHandler. IGNORA I PROBLEMI CON UTENTE SERVICE (Ester)
 
     private final HackHandler hackHandler;
 
-    public HackathonController(HackHandler hackHandler) {
+    public HackController(HackHandler hackHandler) {
         this.hackHandler = hackHandler;
     }
 

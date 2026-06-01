@@ -34,6 +34,7 @@ public interface HackState {
 
     void modificaNumMaxTeam(Hackathon hackathon, int nuovoNum);
 
+    // TODO aggiungi mentore e giudice hanno come secondo paramentro l'utente o il RuoloPartecipazione?
     void aggiungiMentore(Hackathon hackathon, Utente utente);
 
     void aggiungiGiudice(Hackathon hackathon, Utente utente);
@@ -42,7 +43,10 @@ public interface HackState {
 
     void invitaStaff(Hackathon hackathon, Utente utente, RuoliStaff tipoRuolo);
 
-    void eliminaHackathon(Hackathon hackathon);
+    // TODO modificato per verificare che si potesse fare. Metodo commentato in ConclusoState <-- valuta cosa fare
+    default void eliminaHackathon(Hackathon hackathon){
+        throw new UnsupportedOperationException("Operazione non consentita in questo stato");
+    };
 
     void confermaHackathon(Hackathon hackathon);
 

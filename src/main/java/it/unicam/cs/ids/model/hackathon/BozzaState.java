@@ -7,7 +7,13 @@ import it.unicam.cs.ids.model.Utente;
 
 import java.time.LocalDateTime;
 
-public abstract class BozzaState implements HackState {
+public class BozzaState implements HackState {
+
+    protected final InvitiHandler invitiHandler;
+
+    public BozzaState(InvitiHandler invitiHandler) {
+        this.invitiHandler = invitiHandler;
+    }
 
     @Override
     public void setInfoHack(Hackathon hackathon, InfoHack info) {
@@ -59,6 +65,16 @@ public abstract class BozzaState implements HackState {
         hackathon.infoHack.setNumMaxTeam(nuovoNum);
     }
 
+    @Override
+    public void aggiungiMentore(Hackathon hackathon, Utente utente) {
+        // TODO
+    }
+
+    @Override
+    public void aggiungiGiudice(Hackathon hackathon, Utente utente) {
+        // TODO
+    }
+
 
     @Override
     public void aggiungiMentore(Hackathon hackathon, RuoloPartecipazione mentore) {
@@ -94,7 +110,7 @@ public abstract class BozzaState implements HackState {
                 }
             }
         }
-        InvitiHandler.creaInvitoStaff(hackathon.getOrganizzatore(), utente, hackathon, tipoRuolo);
+        invitiHandler.creaInvitoStaff(hackathon.getOrganizzatore(), utente, hackathon, tipoRuolo);;
 
     }
 

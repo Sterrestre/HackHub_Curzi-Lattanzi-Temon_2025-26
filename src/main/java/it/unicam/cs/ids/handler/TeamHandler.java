@@ -1,14 +1,17 @@
 package it.unicam.cs.ids.handler;
 
+import it.unicam.cs.ids.model.MetodoPagamento;
 import it.unicam.cs.ids.model.Utente;
 import it.unicam.cs.ids.model.hackathon.Hackathon;
 import it.unicam.cs.ids.model.team.MembroTeam;
+import it.unicam.cs.ids.model.team.MembroTeamIscritto;
 import it.unicam.cs.ids.model.team.Team;
 import it.unicam.cs.ids.model.team.TeamIscritto;
 import it.unicam.cs.ids.service.NotificationService;
 import it.unicam.cs.ids.service.team.TeamService;
 import org.springframework.stereotype.Service;
 
+import java.awt.event.MouseWheelEvent;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -84,5 +87,10 @@ public class TeamHandler {
         }
         invitiHandler.creaInvitoTeam(admin, utente);
         return "L'utente "+utente.getNickname()+" è stato invitato al team "+admin.getTeam().getNome();
+    }
+
+    public MembroTeamIscritto iscriviMembroTeam(MembroTeam membTeam, Hackathon hackathon) {
+        // TODO implementa sequence corrispondente. Return alla cazzo per farlo star buono, CORREGGI
+        return new MembroTeamIscritto(membTeam.getUtente(), new TeamIscritto(membTeam.getTeam(), hackathon, membTeam.getUtente()), MetodoPagamento.NON_SELEZIONATO);
     }
 }

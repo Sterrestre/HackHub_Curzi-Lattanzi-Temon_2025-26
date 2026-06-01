@@ -32,6 +32,8 @@ public class TeamController {
     @PostMapping("/crea")
     public ResponseEntity<TeamDTO> creaTeam(@RequestBody CreaTeamRequest request) {
 
+        // TODO nota Matteo
+        // CONTROLLO SU FIND BY ID (se passa null esplode) <-- controlla nel service che non restituisca null
         Utente admin = utenteService.findById(request.amministratoreId());
         Team team = teamHandler.creaTeam(request.nome(), admin);
 

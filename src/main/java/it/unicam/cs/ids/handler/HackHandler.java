@@ -11,6 +11,7 @@ import it.unicam.cs.ids.model.staff.RoleFactory;
 import it.unicam.cs.ids.model.staff.RuoliStaff;
 import it.unicam.cs.ids.model.staff.RuoloPartecipazione;
 import it.unicam.cs.ids.model.team.*;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -36,7 +37,9 @@ public class HackHandler {
         RuoloPartecipazione ruolo = roleFactory.creaERegistraRuolo(ORGANIZZATORE, utente, this.hackathon);
     }
 
-    int giorniScadenzaHackathon = Integer.parseInt(System.getenv("HACKATHON_SCAD_GG"));
+    @Value("${hackathon.scadenza.giorni}")
+    private int giorniScadenzaHackathon;
+
 
     public void setInfo(InfoHack info) {
         hackathon.setInfo(info);
@@ -135,6 +138,7 @@ public class HackHandler {
                 .filter(m -> m.getUtente().equals(mentore))
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("Mentore non trovato nel team"))
+                .getTeamIscritto()
                 .setMentoreAssegnato(mentore);
         //..?
 

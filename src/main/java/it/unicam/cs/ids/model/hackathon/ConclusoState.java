@@ -6,7 +6,7 @@ import it.unicam.cs.ids.model.Utente;
 
 import java.time.LocalDateTime;
 
-public abstract class ConclusoState implements HackState {
+public class ConclusoState implements HackState {
 
     @Override
     public void setInfoHack(Hackathon hackathon, InfoHack info) {
@@ -24,6 +24,51 @@ public abstract class ConclusoState implements HackState {
     }
 
     @Override
+    public void modificaDataFine(Hackathon hackathon, LocalDateTime nuovaDataFine) {
+        throw new IllegalStateException("Hackathon concluso: non modificabile");
+    }
+
+    @Override
+    public void modificaLuogo(Hackathon hackathon, String nuovoLuogo) {
+        throw new IllegalStateException("Hackathon concluso: non modificabile");
+    }
+
+    @Override
+    public void modificaScadenzaIscrizioni(Hackathon hackathon, LocalDateTime nuovaScadenza) {
+        throw new IllegalStateException("Hackathon concluso: non modificabile");
+    }
+
+    @Override
+    public void modificaQuotaIscrizione(Hackathon hackathon, double nuovaQuota) {
+        throw new IllegalStateException("Hackathon concluso: non modificabile");
+    }
+
+    @Override
+    public void modificaPremio(Hackathon hackathon, double nuovoPremio) {
+        throw new IllegalStateException("Hackathon concluso: non modificabile");
+    }
+
+    @Override
+    public void modificaDimMaxTeam(Hackathon hackathon, int nuovaDim) {
+        throw new IllegalStateException("Hackathon concluso: non modificabile");
+    }
+
+    @Override
+    public void modificaNumMaxTeam(Hackathon hackathon, int nuovoNum) {
+        throw new IllegalStateException("Hackathon concluso: non modificabile");
+    }
+
+    @Override
+    public void aggiungiMentore(Hackathon hackathon, Utente utente) {
+        throw new IllegalStateException("Hackathon concluso: non modificabile");
+    }
+
+    @Override
+    public void aggiungiGiudice(Hackathon hackathon, Utente utente) {
+        throw new IllegalStateException("Hackathon concluso: non modificabile");
+    }
+
+    @Override
     public void aggiungiMentore(Hackathon hackathon, RuoloPartecipazione mentore) {
         throw new IllegalStateException("Hackathon concluso");
     }
@@ -32,14 +77,19 @@ public abstract class ConclusoState implements HackState {
     public void invitaStaff(Hackathon hackathon, Utente utente, RuoliStaff tipoRuolo) {
         throw new IllegalStateException("Hackathon concluso");
     }
-
-    @Override
-    public void eliminaHackathon(Hackathon hackathon) {
-        throw new IllegalStateException("Non puoi eliminare un hackathon concluso");
-    }
+//
+//    @Override
+//    public void eliminaHackathon(Hackathon hackathon) {
+//        throw new IllegalStateException("Non puoi eliminare un hackathon concluso");
+//    }
 
     @Override
     public void confermaHackathon(Hackathon hackathon) {
         throw new IllegalStateException("Hackathon già concluso");
+    }
+
+    @Override
+    public boolean isStaffIncompleto(Hackathon hackathon) {
+        return false;
     }
 }

@@ -20,6 +20,10 @@ dependencies {
     // Spring Boot base
     implementation ("org.springframework.boot:spring-boot-starter-web")
 
+    // Database H2
+    implementation ("org.springframework.boot:spring-boot-starter-data-jpa")
+    runtimeOnly ("com.h2database:h2")
+
     // Validazioni (opzionale ma utile)
     implementation ("org.springframework.boot:spring-boot-starter-validation")
 

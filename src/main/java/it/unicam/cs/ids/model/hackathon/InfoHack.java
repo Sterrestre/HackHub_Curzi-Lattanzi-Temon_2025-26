@@ -2,6 +2,7 @@ package it.unicam.cs.ids.model.hackathon;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.chrono.ChronoLocalDate;
 
 
 public class InfoHack {
@@ -89,13 +90,13 @@ public class InfoHack {
         if (dataInizio == null) {
             throw new IllegalArgumentException("La data di inizio non può essere null");
         }
-        if (dataInizio.isBefore(LocalDate.now().plusDays(giorniScadenzaHackathon))) {
+        if (dataInizio.isBefore(LocalDateTime.now().plusDays(giorniScadenzaHackathon))) {
             throw new IllegalArgumentException("La data di inizio non può essere nel passato");
         }
         if (dataFine != null && !dataInizio.isBefore(dataFine)) {
             throw new IllegalArgumentException("La data di inizio deve essere antecedente alla data di fine");
         }
-        if (scadenzaIscrizioni != null && !scadenzaIscrizioni.toLocalDate().isBefore(dataInizio)) {
+        if (scadenzaIscrizioni != null && !scadenzaIscrizioni.toLocalDate().isBefore(ChronoLocalDate.from(dataInizio))) {
             throw new IllegalArgumentException("La scadenza delle iscrizioni deve essere antecedente alla data di inizio");
         }
         this.dataInizio = dataInizio;
@@ -138,7 +139,7 @@ public class InfoHack {
         if (scadenzaIscrizioni.isBefore(LocalDateTime.now())) {
             throw new IllegalArgumentException("La scadenza delle iscrizioni non può essere nel passato");
         }
-        if (dataInizio != null && !scadenzaIscrizioni.toLocalDate().isBefore(dataInizio)) {
+        if (dataInizio != null && !scadenzaIscrizioni.toLocalDate().isBefore(ChronoLocalDate.from(dataInizio))) {
             throw new IllegalArgumentException("La scadenza delle iscrizioni deve essere antecedente alla data di inizio");
         }
         this.scadenzaIscrizioni = scadenzaIscrizioni;
