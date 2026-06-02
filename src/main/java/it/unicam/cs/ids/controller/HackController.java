@@ -27,8 +27,7 @@ public class HackController {
 
         Utente organizzatore = utenteService.findById(req.organizzatoreId());
 
-        // TODO da risolvere questo errore
-        InfoHack info = new InfoHack.InfoHackBuilder()
+        InfoHack info = new InfoHack.Builder()
                 .regolamento(req.regolamento())
                 .dataInizio(req.dataInizio())
                 .dataFine(req.dataFine())
@@ -37,7 +36,7 @@ public class HackController {
                 .quotaIscrizione(req.quotaIscrizione())
                 .premio(req.premio())
                 .numMaxTeam(req.numMaxTeam())
-                .maxPartecipantiPerTeam(req.maxPartecipantiPerTeam())
+                .dimMaxTeam(req.maxPartecipantiPerTeam())
                 .build();
 
 

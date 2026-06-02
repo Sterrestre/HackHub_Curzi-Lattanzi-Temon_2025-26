@@ -30,4 +30,5 @@ public class RichiestaSupporto {
         return dettagli;
 
     }
+
 }

@@ -8,6 +8,7 @@ import it.unicam.cs.ids.handler.SupportoHandler;
 import it.unicam.cs.ids.model.RichiestaSupporto;
 import it.unicam.cs.ids.model.hackathon.Hackathon;
 import it.unicam.cs.ids.service.HackathonService;
+import it.unicam.cs.ids.service.RichiestaSupportoService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

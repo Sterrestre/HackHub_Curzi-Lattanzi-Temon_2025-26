@@ -225,7 +225,7 @@ public class HackHandler {
         hackathon.elimina();
     }
 
-    public Collection<Object> getAllHackathon() {
+    public List<Hackathon> getAllHackathon() {
         return List.of(hackathon);
     }
 }

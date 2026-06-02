@@ -97,6 +97,10 @@ public class SupportoHandler {
 
         return team.getRichiesteSupporto();
     }
+
+    public SistemaCall getSistemaCall() {
+        return sistemaCall;
+    }
 }
 
 
