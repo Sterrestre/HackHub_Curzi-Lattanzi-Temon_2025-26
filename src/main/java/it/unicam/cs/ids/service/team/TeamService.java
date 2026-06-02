@@ -12,11 +12,25 @@ import java.util.List;
 @Service
 public class TeamService {
 
+    private final java.util.Map<String, Team> teamMap = new java.util.HashMap<>();
+
     public Team creaTeam(String nome, Utente amministratore) {
         // TODO il costruttore vuole uno String ID prima del nome
         Team team = new Team(nome);
         MembroTeam creatore = team.aggiungiMembro(amministratore);
         team.rendiAmministratore(creatore);
+        teamMap.put(team.getTeamID(), team);
+        return team;
+    }
+
+    public Team findById(String teamId) {
+        if (teamId == null || teamId.isBlank()) {
+            throw new IllegalArgumentException("Team ID non può essere nullo o vuoto");
+        }
+        Team team = teamMap.get(teamId);
+        if (team == null) {
+            throw new IllegalArgumentException("Team non trovato con ID: " + teamId);
+        }
         return team;
     }
 
