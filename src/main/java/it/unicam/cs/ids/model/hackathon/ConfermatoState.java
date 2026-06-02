@@ -9,7 +9,9 @@ import java.time.LocalDateTime;
 public class ConfermatoState implements HackState {
 
     public ConfermatoState(Hackathon hackathon) {
-
+        if (hackathon == null) {
+            throw new IllegalArgumentException("L'hackathon non può essere null");
+        }
     }
 
     @Override
@@ -86,8 +88,23 @@ public class ConfermatoState implements HackState {
 
     @Override
     public void eliminaHackathon(Hackathon hackathon) {
-        // eliminazione consentita
-        // logica da implementare
+        if (hackathon == null) {
+            throw new IllegalArgumentException("L'hackathon non può essere null");
+        }
+/*
+        hackathon.getRuoli().clear();
+        hackathon.teamIscritti.clear();
+        hackathon.classifica.clear();
+        hackathon.sottomissioni.clear();
+        hackathon.penalizzazioni.clear();
+        hackathon.setInfoHack(null);
+        hackathon.setStaffIncompleto(null);
+        hackathon.teamVincitore = null;
+        hackathon.numTeamIscritti = 0;
+        hackathon.classificaConfermata = false;
+        hackathon.conto = null;
+        hackathon.stato = null;
+        hackathon.setState(null);*/
     }
 
     @Override

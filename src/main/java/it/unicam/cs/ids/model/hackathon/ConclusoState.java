@@ -77,15 +77,15 @@ public class ConclusoState implements HackState {
     public void invitaStaff(Hackathon hackathon, Utente utente, RuoliStaff tipoRuolo) {
         throw new IllegalStateException("Hackathon concluso");
     }
-//
-//    @Override
-//    public void eliminaHackathon(Hackathon hackathon) {
-//        throw new IllegalStateException("Non puoi eliminare un hackathon concluso");
-//    }
 
-    @Override
+  @Override
+  public void eliminaHackathon(Hackathon hackathon) {
+      throw new IllegalStateException("Non puoi eliminare un hackathon concluso");
+  }
+
+  @Override
     public void confermaHackathon(Hackathon hackathon) {
-        throw new IllegalStateException("Hackathon già concluso");
+      throw new IllegalStateException("Hackathon già concluso");
     }
 
     @Override

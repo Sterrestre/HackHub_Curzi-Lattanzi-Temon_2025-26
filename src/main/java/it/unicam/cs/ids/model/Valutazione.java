@@ -3,8 +3,8 @@ package it.unicam.cs.ids.model;
 import java.util.Objects;
 
 public class Valutazione {
-    private int voto;
-    private String giudizio;
+    public int voto;
+    public String giudizio;
 
     public Valutazione(int voto, String giudizio) {
         this.voto = voto;

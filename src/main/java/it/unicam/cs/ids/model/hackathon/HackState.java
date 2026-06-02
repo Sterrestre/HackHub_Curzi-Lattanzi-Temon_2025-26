@@ -43,12 +43,9 @@ public interface HackState {
 
     void invitaStaff(Hackathon hackathon, Utente utente, RuoliStaff tipoRuolo);
 
-    // TODO modificato per verificare che si potesse fare. Metodo commentato in ConclusoState <-- valuta cosa fare
-    default void eliminaHackathon(Hackathon hackathon){
-        throw new UnsupportedOperationException("Operazione non consentita in questo stato");
-    };
+     void eliminaHackathon(Hackathon hackathon);
 
-    void confermaHackathon(Hackathon hackathon);
+     void confermaHackathon(Hackathon hackathon);
 
     boolean isStaffIncompleto(Hackathon hackathon);
 }

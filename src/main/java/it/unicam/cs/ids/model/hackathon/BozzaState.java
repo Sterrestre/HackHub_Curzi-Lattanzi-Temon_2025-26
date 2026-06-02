@@ -116,6 +116,11 @@ public class BozzaState implements HackState {
 
     @Override
     public void eliminaHackathon(Hackathon hackathon) {
+        // Validazione: verifica che l'hackathon non sia null
+        if (hackathon == null) {
+            throw new IllegalArgumentException("L'hackathon non può essere null");
+        }
+
     }
 
     @Override

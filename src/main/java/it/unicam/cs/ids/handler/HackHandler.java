@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.List;
 
 import static it.unicam.cs.ids.model.staff.RuoliStaff.ORGANIZZATORE;
@@ -32,9 +33,10 @@ public class HackHandler {
 
     private Hackathon hackathon;
 
-    public void creaHackathon(Utente utente, String nome, InfoHack info) {
+    public Hackathon creaHackathon(Utente utente, String nome, InfoHack info) {
         this.hackathon = new Hackathon(info,nome);
         RuoloPartecipazione ruolo = roleFactory.creaERegistraRuolo(ORGANIZZATORE, utente, this.hackathon);
+        return null;
     }
 
     @Value("${hackathon.scadenza.giorni}")
@@ -205,4 +207,25 @@ public class HackHandler {
         } else return "Iscrizione fallita";
     }
 
+    public Hackathon getHackathonById(String id) {
+        return hackathon;
+    }
+
+    public void confermaHackathon(String id) {
+        if (hackathon == null || id == null || id.isBlank()) {
+            return;
+        }
+        hackathon.conferma();
+    }
+
+    public void eliminaHackathon(String id) {
+        if (hackathon == null || id == null || id.isBlank()) {
+            return;
+        }
+        hackathon.elimina();
+    }
+
+    public Collection<Object> getAllHackathon() {
+        return List.of(hackathon);
+    }
 }

@@ -8,10 +8,7 @@ import it.unicam.cs.ids.model.team.MembroTeamIscritto;
 import it.unicam.cs.ids.model.team.TeamIscritto;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 
 import static it.unicam.cs.ids.model.staff.RuoliStaff.ORGANIZZATORE;
 
@@ -22,7 +19,7 @@ public class Hackathon {
     private HackState state;              // stato corrente
     protected String nome;
     protected InfoHack infoHack;
-    public Stato stato;                  // enum: BOZZA, CONFERMATO, CONCLUSO
+    public Stato stato;                  // enum: BOZZA, CONFERMATO, CONCLUSO, IN CORSO
     public List<RuoloPartecipazione> ruoli; // public per essere visibile dalla roleFactory
     protected int numTeamIscritti;
     protected StaffIncompleto staffIncompleto;
@@ -92,7 +89,6 @@ public class Hackathon {
     }
 
 
-    // metodi da inserire in hackhandler?
     public void aggiungiMentore(Utente mentore) {
         if (mentore == null) {
             throw new IllegalArgumentException("Il mentore non puo essere null");
@@ -165,7 +161,7 @@ public class Hackathon {
     public StaffIncompleto getStaffIncompleto() { return this.staffIncompleto;}
 
     public Utente getOrganizzatore() {
-       return this.getRuoli().stream()
+        return this.getRuoli().stream()
                 .filter(rp -> rp.getTipoRuolo() == ORGANIZZATORE)
                 .map(RuoloPartecipazione::getUtente)
                 .findFirst()
@@ -258,7 +254,7 @@ public class Hackathon {
     public List<TeamIscritto> getTeamAssegnati(String mentoreID) {
         return teamIscritti.stream()
                 .filter(team -> team.getMentoreAssegnato() != null)
-                .filter(team -> team.getMentoreAssegnato().getMentoreID() == mentoreID)
+                .filter(team -> Objects.equals(team.getMentoreAssegnato().getMentoreID(), mentoreID))
                 .toList();
     }
 
@@ -267,4 +263,7 @@ public class Hackathon {
         penalizzazioni.add(p);
     }
 
+    public List<Sottomissione> getSottomissioni() {
+        return sottomissioni;
+    }
 }
