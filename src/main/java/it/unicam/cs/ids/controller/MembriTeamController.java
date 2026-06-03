@@ -6,6 +6,7 @@ import it.unicam.cs.ids.dto.MembroTeamDTO;
 import it.unicam.cs.ids.handler.MembriTeamHandler;
 import it.unicam.cs.ids.model.team.MembroTeam;
 import it.unicam.cs.ids.model.team.Team;
+import it.unicam.cs.ids.service.UtenteService;
 import it.unicam.cs.ids.service.team.TeamService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -33,8 +34,8 @@ public class MembriTeamController {
     @PostMapping("/lascia")
     public ResponseEntity<String> lasciaTeam(@RequestBody LasciaTeamRequest request) {
 
-        MembroTeam membro = membriTeamHandler.findById(request.membroId());
-        membriTeamHandler.lasciaTeam(membro);;
+//        MembroTeam membro = membriTeamHandler.findById(request.membroId());
+//        membriTeamHandler.rimuoviMembroTeam(membro);;
 
         return ResponseEntity.ok("Il membro ha lasciato il team");
     }
@@ -42,14 +43,16 @@ public class MembriTeamController {
     @PostMapping("/cambia-ruolo")
     public ResponseEntity<MembroTeamDTO> cambiaRuolo(@RequestBody CambiaRuoloRequest request) {
 
-        MembroTeam membro = membriTeamHandler.findById(request.membroId());
-        MembroTeam aggiornato = membriTeamHandler.cambiaRuolo(membro, request.nuovoStatoAmministratore());
+//        MembroTeam membro = membriTeamHandler.findById(request.membroId());
+//        MembroTeam aggiornato = membriTeamHandler.rendiAmministratore(membro, request.nuovoStatoAmministratore());
 
-        return ResponseEntity.ok(MembroTeamDTO.from(aggiornato));
+//        return ResponseEntity.ok(MembroTeamDTO.from(aggiornato));
+        // ELIMINA QUESTO SOTTO QUANDO HAI RISOLTO QUELLO SOPRA:
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping("/team/{teamId}")
-    public ResponseEntity<List<MembroTeamDTO>> getMembriTeam(@PathVariable Long teamId) {
+    public ResponseEntity<List<MembroTeamDTO>> getMembriTeam(@PathVariable String teamId) {
 
         Team team = teamService.findById(teamId);
 
@@ -63,8 +66,11 @@ public class MembriTeamController {
     @GetMapping("/{membroId}")
     public ResponseEntity<MembroTeamDTO> getMembro(@PathVariable Long membroId) {
 
-        MembroTeam membro = membriTeamHandler.findById(membroId);
-        return ResponseEntity.ok(MembroTeamDTO.from(membro));
+//        MembroTeam membro = membriTeamHandler.findById(membroId);
+
+ //       return ResponseEntity.ok(MembroTeamDTO.from(membro));
+        // ELIMINA QUESTO SOTTO QUANDO HAI RISOLTO QUELLO SOPRA:
+        return ResponseEntity.ok().build();
     }
 }
 

@@ -1,16 +1,28 @@
 package it.unicam.cs.ids.model.team;
 
 import it.unicam.cs.ids.model.Utente;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
 
 import java.util.UUID;
 
+@Entity
 public class MembroTeam {
+
+    @Id
     private String membroTeamId;
-    private String utenteId;
+
+    @ManyToOne(optional = false)
     private Utente utente;
+
+    @ManyToOne(optional = false)
     private Team team;
+
     private boolean amministratore = false;
 
+    // COSTRUTTORE JPA
+    protected MembroTeam() {}
 
     /**
      * Costruttore per creare un nuovo membro del team. L'utente e il team non possono essere null.

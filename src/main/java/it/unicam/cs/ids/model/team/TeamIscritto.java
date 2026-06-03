@@ -1,18 +1,30 @@
 package it.unicam.cs.ids.model.team;
 
+import it.unicam.cs.ids.model.Penalizzazione;
 import it.unicam.cs.ids.model.RichiestaSupporto;
 import it.unicam.cs.ids.model.Sottomissione;
 import it.unicam.cs.ids.model.Utente;
 import it.unicam.cs.ids.model.hackathon.Hackathon;
 import it.unicam.cs.ids.model.staff.Mentore;
+import jakarta.persistence.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Entity
 public class TeamIscritto {
+
+    // TODO: basta GeneratedValue? o UUID...
+    @Id
+    @GeneratedValue
+    private String id;
+
+    @ManyToOne
     private Team team;
+
+    @ManyToOne
     private Hackathon hackathon;
     private Utente amministratore;
     private List<MembroTeamIscritto> elencoIscritti = new ArrayList<>();
@@ -20,6 +32,13 @@ public class TeamIscritto {
     private Mentore mentoreAssegnato;
     private Map<RichiestaSupporto, Boolean> richiesteSupporto = new HashMap<>();
 
+    @Embedded
+    @AttributeOverrides({
+            @AttributeOverride(name = "teamID", column = @Column(name = "pen_team_id")),
+            @AttributeOverride(name = "tipoIntervento", column = @Column(name = "pen_tipo")),
+            @AttributeOverride(name = "motivazione", column = @Column(name = "pen_motivazione"))
+    })
+    private Penalizzazione penalizzazione;
 
     public TeamIscritto(Team team, Hackathon hackathon, Utente amministratore) {
         this.team = team;

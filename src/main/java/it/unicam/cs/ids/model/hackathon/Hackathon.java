@@ -6,30 +6,57 @@ import it.unicam.cs.ids.model.staff.RuoliStaff;
 import it.unicam.cs.ids.model.staff.RuoloPartecipazione;
 import it.unicam.cs.ids.model.team.MembroTeamIscritto;
 import it.unicam.cs.ids.model.team.TeamIscritto;
+import it.unicam.cs.ids.service.HackathonService;
+import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
 import java.util.*;
 
 import static it.unicam.cs.ids.model.staff.RuoliStaff.ORGANIZZATORE;
 
+@Entity
 public class Hackathon {
 
-    private final String id;
+    @Id
+    private String id;
 
+    @Transient
     private HackState state;              // stato corrente
+
     protected String nome;
+
+    @Embedded
     protected InfoHack infoHack;
-    public Stato stato;                  // enum: BOZZA, CONFERMATO, CONCLUSO, IN CORSO
+
+    @Enumerated(EnumType.STRING)
+    public Stato stato = Stato.BOZZA;                  // enum: BOZZA, CONFERMATO, CONCLUSO, IN CORSO
+
     public List<RuoloPartecipazione> ruoli; // public per essere visibile dalla roleFactory
+
     protected int numTeamIscritti;
+
     protected StaffIncompleto staffIncompleto;
+
+    // Conto su cui versare la quota di partecipazione all'hackathon (se richiesta)
+    @Embedded
     protected Conto conto;
+
+    @OneToMany(mappedBy = "hackathon", cascade = CascadeType.ALL)
     protected List<Sottomissione> sottomissioni = new ArrayList<>();
+
+    @OneToMany(mappedBy = "hackathon", cascade = CascadeType.ALL, orphanRemoval = true)
     protected List<TeamIscritto> teamIscritti = new ArrayList<>();
+
+    @Transient
     protected List<TeamIscritto> classifica = new ArrayList<>();
+
+    @OneToOne(optional = true)
     protected TeamIscritto teamVincitore;
     protected boolean classificaConfermata = false;
     protected List<Penalizzazione> penalizzazioni = new ArrayList<>();
+
+    // COSTRUTTORE PER JPA
+    protected Hackathon() {}
 
     public Hackathon(InfoHack infoHack, String nome) {
         this.id = UUID.randomUUID().toString();
@@ -38,11 +65,6 @@ public class Hackathon {
         this.nome = nome;
         this.ruoli = new ArrayList<>();
     }
-
-    public void setState(HackState newState) {
-        this.state = newState;
-    }
-
 
     public void setInfoHack(InfoHack infoHack) {
         this.infoHack = infoHack;
@@ -134,6 +156,7 @@ public class Hackathon {
             this.stato = Stato.IN_CORSO;
         }
     }
+
     public Stato getStato() {
         return stato;
     }

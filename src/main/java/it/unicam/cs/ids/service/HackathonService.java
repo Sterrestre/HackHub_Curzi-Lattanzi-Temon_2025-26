@@ -1,10 +1,7 @@
 package it.unicam.cs.ids.service;
 
 import it.unicam.cs.ids.handler.InvitiHandler;
-import it.unicam.cs.ids.model.hackathon.BozzaState;
-import it.unicam.cs.ids.model.hackathon.Hackathon;
-import it.unicam.cs.ids.model.hackathon.InfoHack;
-import it.unicam.cs.ids.model.hackathon.Stato;
+import it.unicam.cs.ids.model.hackathon.*;
 import it.unicam.cs.ids.model.team.TeamIscritto;
 import org.springframework.stereotype.Service;
 
@@ -28,6 +25,7 @@ public class HackathonService {
     public Hackathon creaHackathon(InfoHack info, String nome) {
         Hackathon h = new Hackathon(info, nome);
         h.cambiaStato(new BozzaState(invitiHandler));
+        ricostruisciState(h);
         hackathonMap.put(h.getHackathonID(), h);
         return h;
     }
@@ -40,6 +38,7 @@ public class HackathonService {
         if (h == null) {
             throw new IllegalArgumentException("Hackathon non trovato: " + id);
         }
+        ricostruisciState(h);
         return h;
     }
 
@@ -56,6 +55,7 @@ public class HackathonService {
     public void aggiornaStato(String id, Stato nuovoStato) {
         Hackathon h = getHackathonByID(id);
         h.stato = nuovoStato;
+        ricostruisciState(h);
     }
 
     /**
@@ -72,5 +72,19 @@ public class HackathonService {
     public void eliminaHackathon(String id) {
         hackathonMap.remove(id);
     }
+
+    private void ricostruisciState(Hackathon h) {
+        Stato stato = h.getStato();
+
+        HackState state = switch (stato) {
+            case BOZZA -> new BozzaState(invitiHandler);
+            case CONFERMATO -> new ConfermatoState(h);
+            case IN_CORSO -> new InCorsoState();
+            case CONCLUSO -> new ConclusoState();
+        };
+
+        h.cambiaStato(state);
+    }
+
 }
 

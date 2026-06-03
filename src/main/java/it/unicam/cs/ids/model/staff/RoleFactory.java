@@ -3,7 +3,10 @@ package it.unicam.cs.ids.model.staff;
 import it.unicam.cs.ids.model.Utente;
 import it.unicam.cs.ids.model.hackathon.Hackathon;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.stereotype.Component;
 
+@Component
 public class RoleFactory {
 
     public RuoloPartecipazione creaERegistraRuolo(RuoliStaff ruoloStaff, Utente utente, Hackathon hackathon) {

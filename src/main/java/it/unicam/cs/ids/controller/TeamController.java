@@ -5,6 +5,7 @@ import it.unicam.cs.ids.handler.TeamHandler;
 import it.unicam.cs.ids.model.Utente;
 import it.unicam.cs.ids.model.team.MembroTeam;
 import it.unicam.cs.ids.model.team.Team;
+import it.unicam.cs.ids.service.UtenteService;
 import it.unicam.cs.ids.service.team.TeamService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -34,32 +35,38 @@ public class TeamController {
 
         // TODO nota Matteo
         // CONTROLLO SU FIND BY ID (se passa null esplode) <-- controlla nel service che non restituisca null
-        Utente admin = utenteService.findById(request.amministratoreId());
-        Team team = teamHandler.creaTeam(request.nome(), admin);
+   //     Utente admin = utenteService.findById(request.amministratoreId());
+    //    Team team = teamHandler.creaTeam(request.nome(), admin);
 
-        return ResponseEntity.ok(TeamDTO.from(team));
+   //     return ResponseEntity.ok(TeamDTO.from(team));
+        // ELIMINA QUESTO SOTTO QUANDO HAI RISOLTO QUELLO SOPRA:
+        return ResponseEntity.ok().build();
     }
 
     @PostMapping("/aggiungi-membro")
     public ResponseEntity<MembroTeamDTO> aggiungiMembro(@RequestBody AggiungiMembroRequest request) {
 
         Team team = teamService.findById(request.teamId());
-        Utente utente = utenteService.findById(request.utenteId());
+   //     Utente utente = utenteService.findById(request.utenteId());
 
-        MembroTeam membro = teamHandler.aggiungiMembroTeam(team, utente, request.amministratore());
+  //      MembroTeam membro = teamHandler.aggiungiMembroTeam(team, utente, request.amministratore());
 
-        return ResponseEntity.ok(MembroTeamDTO.from(membro));
+   //     return ResponseEntity.ok(MembroTeamDTO.from(membro));
+        // ELIMINA QUESTO SOTTO QUANDO HAI RISOLTO QUELLO SOPRA:
+        return ResponseEntity.ok().build();
     }
 
     @PostMapping("/invita")
     public ResponseEntity<String> invita(@RequestBody InvitaRequest request) {
 
-        MembroTeam admin = teamService.findMembroById(request.adminId());
-        Utente utente = utenteService.findById(request.utenteId());
+//        MembroTeam admin = teamService.findMembroById(request.adminId());
+//        Utente utente = utenteService.findById(request.utenteId());
 
-        String msg = teamHandler.invitaUtente(admin, utente);
+   //     String msg = teamHandler.invitaUtente(admin, utente);
 
-        return ResponseEntity.ok(msg);
+  //      return ResponseEntity.ok(msg);
+        // ELIMINA QUESTO SOTTO QUANDO HAI RISOLTO QUELLO SOPRA:
+        return ResponseEntity.ok().build();
     }
 }
 

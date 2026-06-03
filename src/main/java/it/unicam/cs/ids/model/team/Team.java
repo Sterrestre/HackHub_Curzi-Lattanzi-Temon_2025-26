@@ -2,16 +2,32 @@ package it.unicam.cs.ids.model.team;
 
 import it.unicam.cs.ids.model.Utente;
 import it.unicam.cs.ids.model.team.MembroTeam;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+@Entity
 public class Team {
+    @Id
     private String teamID;
     private String nome;
+
+    @OneToMany(
+            mappedBy = "team",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
     private List<MembroTeam> membriTeam = new ArrayList<>();
+
+    // COSTRUTTORE PER JPA
+    protected Team() {}
+
 
     /**
      * Crea un team, associandogli il nome corrispondente e un ID univoco.

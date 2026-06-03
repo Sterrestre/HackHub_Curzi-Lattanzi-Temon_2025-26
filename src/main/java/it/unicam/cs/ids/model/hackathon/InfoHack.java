@@ -1,9 +1,12 @@
 package it.unicam.cs.ids.model.hackathon;
 
-import java.time.LocalDate;
+import jakarta.persistence.Embeddable;
+import jakarta.persistence.Embedded;
+
 import java.time.LocalDateTime;
 import java.time.chrono.ChronoLocalDate;
 
+@Embeddable
 public class InfoHack {
 
     private String nome;
@@ -16,6 +19,9 @@ public class InfoHack {
     private double premio;
     private int dimMaxTeam;
     private int numMaxTeam;
+
+    // COSTRUTTORE JPA
+    protected InfoHack() {}
 
     // ── getter ──────────────────────────────────────────────────────────────
 

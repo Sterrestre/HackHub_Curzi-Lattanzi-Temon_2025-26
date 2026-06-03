@@ -8,6 +8,7 @@ import it.unicam.cs.ids.model.hackathon.InfoHack;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -25,7 +26,9 @@ public class HackController {
     @PostMapping("/crea")
     public ResponseEntity<HackathonDTO> crea(@RequestBody CreaHackathonRequest req) {
 
-        Utente organizzatore = utenteService.findById(req.organizzatoreId());
+    //    Utente organizzatore = utenteService.findById(req.organizzatoreId());ù
+        // ELIMINA QUESTO SOTTO QUANDO HAI RISOLTO QUELLO SOPRA:
+        Utente organizzatore = new Utente("fiewo", "huo", "huo", "hui", "nono", "hui", LocalDate.now());
 
         InfoHack info = new InfoHack.Builder()
                 .regolamento(req.regolamento())
@@ -74,6 +77,13 @@ public class HackController {
         hackHandler.confermaHackathon(id);
         return ResponseEntity.ok("Hackathon confermato");
     }
+
+    @PostMapping("/{id}/stato")
+    public ResponseEntity<?> cambiaStato(@PathVariable String id, @RequestBody Stato nuovoStato) {
+        hackHandler.cambiaStato(id, nuovoStato);
+        return ResponseEntity.ok().build();
+    }
+
 
     @DeleteMapping("/{id}")
     public ResponseEntity<String> elimina(@PathVariable String id) {

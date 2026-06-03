@@ -1,7 +1,13 @@
 package it.unicam.cs.ids.model;
 
+import it.unicam.cs.ids.model.hackathon.Hackathon;
 import it.unicam.cs.ids.model.team.TeamIscritto;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 
+import javax.net.ssl.HandshakeCompletedEvent;
 import java.io.File;
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -10,8 +16,10 @@ import java.util.Objects;
  * Rappresenta una sottomissione di un team a un hackathon.
  * Gestisce il file submitted, lo stato della valutazione, la data di caricamento e la relativa valutazione.
  */
+@Entity
 public class Sottomissione {
     /** Identificatore univoco della sottomissione */
+    @Id
     private final String sottomissioneID;
 
     /** File della sottomissione */
@@ -28,6 +36,10 @@ public class Sottomissione {
 
     /** Team associato alla sottomissione */
     private TeamIscritto team;
+
+    /** Hckathon per cui è stata effettuata la sottomissione */
+    @ManyToOne
+    private Hackathon hackathon;
 
     /**
      * Costruisce una nuova Sottomissione con l'ID specificato.

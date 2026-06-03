@@ -25,10 +25,12 @@ public class HackHandler {
 
     private final RoleFactory roleFactory;
     private final TeamHandler teamHandler;
+    private final InvitiHandler invitiHandler;
 
-    public  HackHandler(RoleFactory roleFactory, TeamHandler teamHandler) {
+    public  HackHandler(RoleFactory roleFactory, TeamHandler teamHandler, InvitiHandler invitiHandler) {
         this.roleFactory = roleFactory;
         this.teamHandler = teamHandler;
+        this.invitiHandler = invitiHandler;
     }
 
     private Hackathon hackathon;

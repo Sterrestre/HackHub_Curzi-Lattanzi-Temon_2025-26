@@ -48,6 +48,28 @@ public class SottomissioneHandler {
         sottomissione.setStatoSottomissione(StatoSottomissione.CARICATA);
     }
 
+
+    // TODO: creare SottomissioneService --> controlla il permesso di valutare la sottomissione, prende in input il voto e il giudizio, fa i controlli come da sequence e crea la valutazione. POi la passa qua all'handler per salvarla.
+//    🟦 SottomissioneService
+//      → livello applicativo
+//      → implementa il caso d’uso
+//      → riflette il sequence diagram
+//      → valida input, crea Valutazione, gestisce errori
+
+    // A titolo esemplificativo del controllo sul ruolo per il permesso:
+//    public void valuta(String utenteId, String sottomissioneId, double voto, String giudizio) {
+//        Utente u = utenteRepo.findById(utenteId);
+//        Hackathon h = hackathonRepo.findById(hackID)
+//
+//        if (!u.puoValutare(h)) {
+//            throw new UnauthorizedException("Non sei un giudice");
+//        }
+//
+//      TeamIscritto t = teamRepo.findById(teamId);
+//      Valutazione v = new Valutazione(voto, giudizio);
+//
+//      sottomissioneHandler.valutaSottomissione(t, v);
+//      }
     /**
      * Valuta una sottomissione di un team iscritto.
      * La sottomissione deve essere stata precedentemente caricata e non deve essere nello stato MANCANTE.
