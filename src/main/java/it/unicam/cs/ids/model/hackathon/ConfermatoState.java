@@ -92,6 +92,7 @@ public class ConfermatoState implements HackState {
             throw new IllegalArgumentException("L'hackathon non può essere null");
         }
 /*
+// logica da implementare?
         hackathon.getRuoli().clear();
         hackathon.teamIscritti.clear();
         hackathon.classifica.clear();

@@ -197,8 +197,6 @@ public class Sottomissione {
         return sottomissioneID;
     }
 
-// generati da copilot TODO CONTROLLARE
-//collegati a sottomissioneDTO
     public String titolo() { return file != null ? file.getName() : null; }
 
     public String descrizione() { return file != null ? file.getAbsolutePath() : null; }

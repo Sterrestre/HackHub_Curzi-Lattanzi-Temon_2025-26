@@ -7,8 +7,9 @@ import org.springframework.stereotype.Service;
 public class RichiestaSupportoService {
 
     private String richiestaSuppID;
+    private RichiestaSupporto richiesta;
 
     public RichiestaSupporto findById(String s) {
-        return richiestaSuppID;
+        return richiesta;
     }
 }
