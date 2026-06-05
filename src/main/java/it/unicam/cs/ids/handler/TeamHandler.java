@@ -8,12 +8,8 @@ import it.unicam.cs.ids.model.team.MembroTeamIscritto;
 import it.unicam.cs.ids.model.team.Team;
 import it.unicam.cs.ids.model.team.TeamIscritto;
 import it.unicam.cs.ids.service.NotificationService;
-import it.unicam.cs.ids.service.team.TeamService;
+import it.unicam.cs.ids.service.TeamService;
 import org.springframework.stereotype.Service;
-
-import java.awt.event.MouseWheelEvent;
-import java.time.LocalDateTime;
-import java.util.List;
 
 @Service
 public class TeamHandler {
@@ -52,25 +48,15 @@ public class TeamHandler {
     }
 
     //TODO la parte che riguarda il membro può essere delegata a MembriTeamHandler
-    public void aggiungiMembroTeam(Team team, Utente utente, boolean amministratore) {
+    public MembroTeam aggiungiMembroTeam(Team team, Utente utente, boolean amministratore) {
         MembroTeam nuovo = teamService.aggiungiMembro(team, utente, amministratore);
     //    notificationService.inviaNotificaAggiuntaMemebro(?);
+        return nuovo;
     }
 
 
     public TeamIscritto iscriviTeam(Team team, Hackathon hackathon, MembroTeam amministratore) {
-        LocalDateTime scadIscr = hackathon.getInfoHack().getScadenzaIscrizioni();
-        if (scadIscr.isBefore(LocalDateTime.now())) {
-            throw new Scaduto();
-        }
-        int numMax = hackathon.getInfoHack().getNumMaxTeam();
-
-        if (numMax < hackathon.getTeamIscritti().stream().count()) {
-            throw new HackCompleto();
-        }
-
-        List<MembroTeam> membroTeamRuolo = team.getMembri().stream().toList();
-        return null;
+        return new TeamIscritto(team, hackathon, amministratore.getUtente());
     }
 
 
@@ -82,10 +68,11 @@ public class TeamHandler {
      * @return messaggio di conferma dell'invio.
      */
     public String invitaUtente(MembroTeam admin, Utente utente) {
-        if (utente.getTeam() == admin.getTeam()) {
+        Team newTeam = admin.getTeam();
+        if (utente.getTeam() == newTeam) {
             throw new IllegalStateException("L'utente è già membro del team");
         }
-        invitiHandler.creaInvitoTeam(admin, utente);
+        invitiHandler.creaInvitoTeam(admin, utente, newTeam);
         return "L'utente "+utente.getNickname()+" è stato invitato al team "+admin.getTeam().getNome();
     }
 

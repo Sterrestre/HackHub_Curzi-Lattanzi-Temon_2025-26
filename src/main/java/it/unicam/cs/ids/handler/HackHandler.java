@@ -3,10 +3,7 @@ package it.unicam.cs.ids.handler;
 import it.unicam.cs.ids.model.Sottomissione;
 import it.unicam.cs.ids.model.Utente;
 import it.unicam.cs.ids.model.hackathon.*;
-import it.unicam.cs.ids.model.staff.Mentore;
-import it.unicam.cs.ids.model.staff.RoleFactory;
-import it.unicam.cs.ids.model.staff.RuoliStaff;
-import it.unicam.cs.ids.model.staff.RuoloPartecipazione;
+import it.unicam.cs.ids.model.staff.*;
 import it.unicam.cs.ids.model.team.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -27,11 +24,13 @@ public class HackHandler {
     private final RoleFactory roleFactory;
     private final TeamHandler teamHandler;
     private final InvitiHandler invitiHandler;
+    private final SottomissioneHandler sottomissioneHandler;
 
-    public HackHandler(RoleFactory roleFactory, TeamHandler teamHandler, InvitiHandler invitiHandler) {
+    public HackHandler(RoleFactory roleFactory, TeamHandler teamHandler, InvitiHandler invitiHandler, SottomissioneHandler sottomissioneHandler) {
         this.roleFactory = roleFactory;
         this.teamHandler = teamHandler;
         this.invitiHandler = invitiHandler;
+        this.sottomissioneHandler = sottomissioneHandler;
     }
 
     private Hackathon hackathon;
@@ -173,6 +172,50 @@ public class HackHandler {
 
     public void applicaPenalizzazione(long teamID, String tipoIntervento, String motivazione) {
         hackathon.applicaPenalizzazione(teamID, tipoIntervento, motivazione);
+    }
+
+    // Implementazione del CU "IscriviTeam" - It2
+    public TeamIscritto iscriviTeam(Team team, Hackathon hackathon, MembroTeam amministratore) {
+
+        // Prerequisito: controllo che il membro del team che vuole iscrivere il team sia un amministratore
+        if (!amministratore.isAmministratore()) {
+            throw new DomainException("Solo un amministratore del team può iscrivere il team all'hackathon");
+        }
+
+        // Controllo che la scadenza per iscriversi non sia stata raggiunta
+        LocalDateTime scadIscr = hackathon.getInfoHack().getScadenzaIscrizioni();
+        if (scadIscr.isBefore(LocalDateTime.now())) {
+            throw new Scaduto();
+        }
+
+        // Controllo che ci sia ancora posto per un altro team
+        int numMax = hackathon.getInfoHack().getNumMaxTeam();
+        if (hackathon.getTeamIscritti().size() >= numMax) {
+            throw new HackCompleto();
+        }
+
+        // Controllo che nessun membro del team sia organizzatore o giudice dell'hackathon
+        List<MembroTeam> membroTeamRuolo = team.getMembri().stream().toList();
+        for (MembroTeam m : membroTeamRuolo) {
+            RuoloPartecipazione ruolo = m.getUtente().getRuoloHackathon(hackathon);
+            if (ruolo instanceof Organizzatore || ruolo instanceof Giudice) {
+                throw new DomainException("Il team non può iscriversi all'hackathon: almeno un membro del team risulta organizzatore o giudice dell'hackathon");
+            }
+        }
+
+        // Controllo se c'è una quota di iscrizione
+        if (hackathon.getInfoHack().getQuotaIscrizione() > 0) {
+            // TODO futuri: collegare il sistema di pagamento
+            throw new DomainException("Funzionalità non implementata: pagamento richiesto");
+        }
+
+        // Iscrivo il team
+        TeamIscritto newTeam= teamHandler.iscriviTeam(team, hackathon, amministratore);
+        if (newTeam != null) {
+            hackathon.aggiungiTeamIscritto(newTeam);
+            newTeam.setSottomissione(sottomissioneHandler.creaSottomissione(newTeam));
+        }
+        return null;
     }
 
     // Implementazione del CU "Iscriviti" - It2

@@ -9,6 +9,8 @@ import it.unicam.cs.ids.model.inviti.InvitoTeam;
 import it.unicam.cs.ids.model.staff.RoleFactory;
 import it.unicam.cs.ids.model.staff.RuoliStaff;
 import it.unicam.cs.ids.model.team.MembroTeam;
+import it.unicam.cs.ids.model.team.Team;
+import it.unicam.cs.ids.repository.InvitoRepository;
 import it.unicam.cs.ids.service.InvitoService;
 import it.unicam.cs.ids.service.NotificationService;
 import org.springframework.stereotype.Service;
@@ -28,12 +30,14 @@ import static it.unicam.cs.ids.model.hackathon.Stato.BOZZA;
 public class InvitiHandler {
 
     private final InvitoService invitoService;
+    private final InvitoRepository invitoRepository;
     private final NotificationService notificationService;
     private final RoleFactory roleFactory;
 
 
-    public InvitiHandler(InvitoService invitoService, NotificationService notificationService, RoleFactory roleFactory) {
+    public InvitiHandler(InvitoService invitoService, InvitoRepository invitoRepository, NotificationService notificationService, RoleFactory roleFactory) {
         this.invitoService = invitoService;
+        this.invitoRepository = invitoRepository;
         this.notificationService = notificationService;
         this.roleFactory = roleFactory;
     }
@@ -43,12 +47,13 @@ public class InvitiHandler {
         int giorniScadenza = Integer.parseInt(System.getenv("INVITO_SCAD_GG"));
         LocalDateTime scadenza = LocalDateTime.now().plusDays(giorniScadenza);
         InvitoHackathon invito = new InvitoHackathon(organizzatore, destinatario, hackathon, ruolo, scadenza);
-        invitoService.salva(invito);
+        invitoService.salva(invito);;
         notificationService.inviaInvito(invito);
     }
 
     // TODO?
-    public void creaInvitoTeam(MembroTeam mittente, Utente destinatario) {}
+    public void creaInvitoTeam(MembroTeam mittente, Utente destinatario, Team team) {
+    }
 
 
     public void rispostaInvito(Invito invito, boolean accetta) {
@@ -146,7 +151,7 @@ public class InvitiHandler {
      * Qualora l'hackathon per cui era stato mandato l'invito sia ancora in stato di BOZZA, avvisa l'organizzatore.
      */
     public void verificaScadenze() {
-        List<InvitoHackathon> scaduti = invitoService.getInviti().stream()
+        List<InvitoHackathon> scaduti = invitoRepository.findAll().stream()
                 .filter(InvitoHackathon.class::isInstance)
                 .map(InvitoHackathon.class::cast)
                 .filter(i -> i.getScadenza().isBefore(LocalDateTime.now()))
@@ -171,7 +176,7 @@ public class InvitiHandler {
     }
 
     private int getInvitiMentori(Hackathon hack) {
-        return Math.toIntExact(invitoService.getInviti().stream()
+        return Math.toIntExact(invitoRepository.findAll().stream()
                 .filter(inv -> inv instanceof InvitoHackathon)
                 .map(inv -> (InvitoHackathon) inv)
                 .filter(inv -> inv.getHackathon().equals(hack))

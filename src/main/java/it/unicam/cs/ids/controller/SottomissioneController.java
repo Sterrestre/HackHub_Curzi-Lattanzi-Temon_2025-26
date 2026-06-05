@@ -6,9 +6,9 @@ import it.unicam.cs.ids.dto.ValutaSottomissioneRequest;
 import it.unicam.cs.ids.handler.SottomissioneHandler;
 import it.unicam.cs.ids.model.Sottomissione;
 import it.unicam.cs.ids.model.hackathon.Hackathon;
-import it.unicam.cs.ids.model.team.Team;
+import it.unicam.cs.ids.model.team.TeamIscritto;
 import it.unicam.cs.ids.service.HackathonService;
-import it.unicam.cs.ids.service.team.TeamService;
+import it.unicam.cs.ids.service.TeamService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,6 +19,10 @@ import java.util.List;
 public class SottomissioneController {
 
     // TODO revisionare il controller.
+    // Non esiste sottomissioneId (niente repository, si recuepera da hackathon --> teamIscritto) <-- MODIFICARE IN MODO COERENTE QUESTA CLASSE
+    // Fai parlare il controller SOLO con i Service --> i service chiamano gli Handler che contengono la logica di dominio.
+    // Ricordarsi di salvare l'entity alla fine dei metodi del service che lo richiedono
+    // Fare i try catch per ogni PostMapping
 
     private final SottomissioneHandler sottomissioneHandler;
     private final TeamService teamService;
@@ -37,10 +41,12 @@ public class SottomissioneController {
 
         // TODO nota Matteo
         // le fa SpringBoot volendo <-- ???
-        Team team = teamService.findById(req.teamId());
+        // TODO controlla che recuperi anche i TeamIscritti
+        TeamIscritto team = teamService.findTeamIscrittoById(req.teamIscrittoId());
         Hackathon hack = hackService.getHackathonByID(req.hackathonId());
 
-        Sottomissione s = sottomissioneHandler.creaSottomissione(team, hack, req.titolo(), req.descrizione(), req.linkRepository());
+        // TODO
+        Sottomissione s = sottomissioneHandler.creaSottomissione(team, hack, req.titolo(), req.descrizione());
 
         // TODO nota Matteo
         // Non correttissimo, perché per forza ti dà l'ok. Se sotto va in errore, responseEntity deve dare errore

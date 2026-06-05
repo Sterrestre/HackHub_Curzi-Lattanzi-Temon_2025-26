@@ -1,26 +1,29 @@
 package it.unicam.cs.ids.service;
 
 import it.unicam.cs.ids.model.inviti.Invito;
+import it.unicam.cs.ids.repository.InvitoRepository;
 import org.springframework.stereotype.Service;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 @Service
 public class InvitoService {
 
-    private final List<Invito> inviti = new ArrayList<>();
+    private final InvitoRepository invitoRepository;
 
-    public void salva(Invito invito) {
-        inviti.add(invito);
+    public InvitoService(InvitoRepository invitoRepository) {
+        this.invitoRepository = invitoRepository;
+    }
+
+    public Invito salva(Invito invito) {
+        return invitoRepository.save(invito);
     }
 
     public void elimina(Invito invito) {
-        inviti.remove(invito);
+        invitoRepository.delete(invito);
     }
 
-    public List<Invito> getInviti() {
-        return Collections.unmodifiableList(inviti);
+    public Invito findById(String id) {
+        return invitoRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Invito non trovato"));
     }
 }
+

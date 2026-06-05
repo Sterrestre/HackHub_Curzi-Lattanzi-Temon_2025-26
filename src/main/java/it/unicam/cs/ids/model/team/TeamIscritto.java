@@ -9,7 +9,9 @@ import it.unicam.cs.ids.model.staff.Mentore;
 import jakarta.persistence.*;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Entity
 public class TeamIscritto {
@@ -42,11 +44,13 @@ public class TeamIscritto {
     })
     private Penalizzazione penalizzazione;
 
+    // COSTRUTTORE PER JPA
     protected TeamIscritto() {}
 
     public TeamIscritto(Team team, Hackathon hackathon, Utente amministratore) {
         this.team = team;
         this.hackathon = hackathon;
+        // TODO iscrivere amministratore come MembroTeamIscritto
         this.amministratore = amministratore;
     }
 

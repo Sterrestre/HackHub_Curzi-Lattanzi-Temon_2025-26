@@ -65,6 +65,17 @@ public class Utente {
         return ruoli;
     }
 
+    public RuoloPartecipazione getRuoloHackathon(Hackathon hackathon) {
+        if (!this.isMembroDiStaff()) {
+            RuoloPartecipazione ruolo = this.getRuoli().stream()
+                    .filter(r -> r.getHackathon().equals(hackathon))
+                    .findFirst()
+                    .orElseThrow(() -> new IllegalStateException("L'utente non ha un ruolo per questo hackathon"));
+            return ruolo;
+        }
+        return null;
+    }
+
     public String getNickname() {
         return nickname;
     }

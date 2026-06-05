@@ -3,6 +3,7 @@ package it.unicam.cs.ids.service;
 import it.unicam.cs.ids.handler.InvitiHandler;
 import it.unicam.cs.ids.model.hackathon.*;
 import it.unicam.cs.ids.model.team.TeamIscritto;
+import it.unicam.cs.ids.repository.HackathonRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
@@ -12,10 +13,11 @@ import java.util.Map;
 @Service
 public class HackathonService {
 
-    private final Map<String, Hackathon> hackathonMap = new HashMap<>();
+    private final HackathonRepository hackathonRepository;
     private final InvitiHandler invitiHandler;
 
-    public HackathonService(InvitiHandler invitiHandler) {
+    public HackathonService(HackathonRepository hackathonRepository, InvitiHandler invitiHandler) {
+        this.hackathonRepository = hackathonRepository;
         this.invitiHandler = invitiHandler;
     }
 
@@ -26,7 +28,7 @@ public class HackathonService {
         Hackathon h = new Hackathon(info, nome);
         h.cambiaStato(new BozzaState(invitiHandler));
         ricostruisciState(h);
-        hackathonMap.put(h.getHackathonID(), h);
+        hackathonRepository.save(h);
         return h;
     }
 
@@ -34,10 +36,8 @@ public class HackathonService {
      * Recupera un hackathon tramite il suo ID.
      */
     public Hackathon getHackathonByID(String id) {
-        Hackathon h = hackathonMap.get(id);
-        if (h == null) {
-            throw new IllegalArgumentException("Hackathon non trovato: " + id);
-        }
+        Hackathon h = hackathonRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Hackathon non trovato"));
         ricostruisciState(h);
         return h;
     }
@@ -46,7 +46,7 @@ public class HackathonService {
      * Restituisce tutti gli hackathon registrati.
      */
     public Collection<Hackathon> getTutti() {
-        return hackathonMap.values();
+        return hackathonRepository.findAll();
     }
 
     /**
@@ -56,23 +56,26 @@ public class HackathonService {
         Hackathon h = getHackathonByID(id);
         h.stato = nuovoStato;
         ricostruisciState(h);
+        hackathonRepository.save(h);
     }
 
     /**
      * Aggiunge un team iscritto a un hackathon.
      */
-    public void aggiungiTeam(String id, TeamIscritto team) {
+    public void aggiungiTeamIscritto(String id, TeamIscritto team) {
         Hackathon h = getHackathonByID(id);
         h.getTeamIscritti().add(team);
+        hackathonRepository.save(h);
     }
 
     /**
      * Rimuove un hackathon dal sistema.
      */
     public void eliminaHackathon(String id) {
-        hackathonMap.remove(id);
+        hackathonRepository.deleteById(id);
     }
 
+    // Helper per ricostruire lo State partendo dallo stato salvato nel Repository
     private void ricostruisciState(Hackathon h) {
         Stato stato = h.getStato();
 
@@ -85,6 +88,16 @@ public class HackathonService {
 
         h.cambiaStato(state);
     }
+
+    public Hackathon salva(Hackathon hackathon) {
+        return hackathonRepository.save(hackathon);
+    }
+
+
+    public void elimina(String id) {
+        hackathonRepository.deleteById(id);
+    }
+
 
 }
 

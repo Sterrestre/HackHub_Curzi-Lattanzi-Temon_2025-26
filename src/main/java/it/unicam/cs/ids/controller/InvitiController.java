@@ -12,7 +12,7 @@ import it.unicam.cs.ids.model.team.Team;
 import it.unicam.cs.ids.service.HackathonService;
 import it.unicam.cs.ids.service.InvitoService;
 import it.unicam.cs.ids.service.UtenteService;
-import it.unicam.cs.ids.service.team.TeamService;
+import it.unicam.cs.ids.service.TeamService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -46,10 +46,10 @@ public class InvitiController {
     public ResponseEntity<String> invitaStaff(@RequestBody InvitaStaffRequest req) {
 
         Hackathon hack = hackService.getHackathonByID(req.hackathonId());
-     //   Utente utente = utenteService.findById(req.utenteId());
-     //   Utente organizzatore = utenteService.findById(req.organizzatoreId());
+        Utente utente = utenteService.findById(req.utenteId());
+        Utente organizzatore = utenteService.findById(req.organizzatoreId());
 
-    //    invitiHandler.creaInvitoStaff(organizzatore, utente, hack, req.ruolo());
+        invitiHandler.creaInvitoStaff(organizzatore, utente, hack, req.ruolo());
 
         return ResponseEntity.ok("Invito staff inviato");
     }
@@ -57,20 +57,23 @@ public class InvitiController {
     @PostMapping("/team")
     public ResponseEntity<String> invitaTeam(@RequestBody InvitaTeamRequest req) {
 
-        // MEMBRO TEAM TODO
-    //    MembroTeam team = teamService.findById(req.teamId());
-    //    Utente utente = utenteService.findById(req.utenteId());
+        MembroTeam membroTeam = teamService.findMembroTeamById(req.teamId(), req.mittenteId());
+        Utente utente = utenteService.findById(req.utenteId());
+        Team team = teamService.findTeamById(req.teamId());
 
-    //    invitiHandler.creaInvitoTeam(team, utente);
+        if (!membroTeam.isAmministratore()) {
+            return ResponseEntity.badRequest().body("Solo un amministratore del team può inviare inviti");
+        }
 
+        invitiHandler.creaInvitoTeam(membroTeam, utente, team);
         return ResponseEntity.ok("Invito inviato al membro del team");
     }
 
     @PostMapping("/rispondi")
     public ResponseEntity<String> rispondi(@RequestBody RispostaInvitoRequest req) {
-    //    Invito invito = invitoService.findById(req.invitoId());
+        Invito invito = invitoService.findById(req.invitoId());
 
-    //    invitiHandler.rispostaInvito(invito, req.accetta());
+        invitiHandler.rispostaInvito(invito, req.accetta());
 
         return ResponseEntity.ok("Risposta registrata");
     }

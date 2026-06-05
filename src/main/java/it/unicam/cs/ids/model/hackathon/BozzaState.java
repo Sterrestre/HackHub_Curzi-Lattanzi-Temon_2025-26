@@ -65,20 +65,17 @@ public class BozzaState implements HackState {
         hackathon.infoHack.setNumMaxTeam(nuovoNum);
     }
 
-    @Override
-    public void aggiungiMentore(Hackathon hackathon, Utente utente) {
-        // TODO
-    }
 
     @Override
-    public void aggiungiGiudice(Hackathon hackathon, Utente utente) {
-        // TODO
+    public void aggiungiGiudice(Hackathon hackathon, RuoloPartecipazione giudice) {
+        // TODO --> Rolefactory, assegnaGiudice (controlla, più probabile creaRuolo)
     }
 
 
     @Override
     public void aggiungiMentore(Hackathon hackathon, RuoloPartecipazione mentore) {
         hackathon.ruoli.add(mentore);
+        // TODO --> Rolefactory, assegnaMentore (controlla)
     }
 
     @Override
@@ -120,7 +117,7 @@ public class BozzaState implements HackState {
         if (hackathon == null) {
             throw new IllegalArgumentException("L'hackathon non può essere null");
         }
-        // TODO
+        hackathon.elimina();
     }
 
     @Override

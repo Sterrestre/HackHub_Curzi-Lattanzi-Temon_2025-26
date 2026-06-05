@@ -6,7 +6,7 @@ import it.unicam.cs.ids.model.team.MembroTeam;
 import it.unicam.cs.ids.model.team.MembroTeamIscritto;
 import it.unicam.cs.ids.model.team.Team;
 import it.unicam.cs.ids.model.team.TeamIscritto;
-import it.unicam.cs.ids.service.team.TeamService;
+import it.unicam.cs.ids.service.TeamService;
 import org.springframework.stereotype.Service;
 
 @Service

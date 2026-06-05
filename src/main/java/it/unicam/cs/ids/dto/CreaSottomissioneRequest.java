@@ -1,7 +1,7 @@
 package it.unicam.cs.ids.dto;
 
 public record CreaSottomissioneRequest(
-        String teamId,
+        String teamIscrittoId,
         String hackathonId,
         String titolo,
         String descrizione,

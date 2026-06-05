@@ -4,10 +4,9 @@ import it.unicam.cs.ids.dto.CambiaRuoloRequest;
 import it.unicam.cs.ids.dto.LasciaTeamRequest;
 import it.unicam.cs.ids.dto.MembroTeamDTO;
 import it.unicam.cs.ids.handler.MembriTeamHandler;
-import it.unicam.cs.ids.model.team.MembroTeam;
 import it.unicam.cs.ids.model.team.Team;
 import it.unicam.cs.ids.service.UtenteService;
-import it.unicam.cs.ids.service.team.TeamService;
+import it.unicam.cs.ids.service.TeamService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -54,7 +53,7 @@ public class MembriTeamController {
     @GetMapping("/team/{teamId}")
     public ResponseEntity<List<MembroTeamDTO>> getMembriTeam(@PathVariable String teamId) {
 
-        Team team = teamService.findById(teamId);
+        Team team = teamService.findTeamById(teamId);
 
         List<MembroTeamDTO> membri = team.getMembri().stream()
                 .map(MembroTeamDTO::from)
@@ -64,7 +63,7 @@ public class MembriTeamController {
     }
 
     @GetMapping("/{membroId}")
-    public ResponseEntity<MembroTeamDTO> getMembro(@PathVariable Long membroId) {
+    public ResponseEntity<MembroTeamDTO> getMembro(@PathVariable String membroId) {
 
 //        MembroTeam membro = membriTeamHandler.findById(membroId);
 

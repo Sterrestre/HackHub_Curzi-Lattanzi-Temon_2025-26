@@ -6,7 +6,6 @@ import it.unicam.cs.ids.model.staff.RuoliStaff;
 import it.unicam.cs.ids.model.staff.RuoloPartecipazione;
 import it.unicam.cs.ids.model.team.MembroTeamIscritto;
 import it.unicam.cs.ids.model.team.TeamIscritto;
-import it.unicam.cs.ids.service.HackathonService;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
@@ -130,6 +129,12 @@ public class Hackathon {
         state.aggiungiGiudice(this, ruoloGiudice.getUtente());
     }
 
+    // TODO: mi serviva questo metodo e l'ho aggiunto, non so se è necessario cambiare qualcosa negli State a riguardo
+    //  (si può fare solo se hackathon è in stato confermato)
+    public void aggiungiTeamIscritto(TeamIscritto newTeam) {
+        this.teamIscritti.add(newTeam);
+    }
+
 
     public void invitaStaff(Utente utente, RuoliStaff tipoRuolo) {
         state.invitaStaff(this, utente, tipoRuolo);
@@ -195,11 +200,12 @@ public class Hackathon {
         return this.teamIscritti;
     }
 
-    private TeamIscritto getTeamById(String id) {
+
+    public TeamIscritto getTeamIscrittoById(String id) {
         return getTeamIscritti().stream()
                 .filter(t -> t.getTeam().getTeamID().equals(id))
                 .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("Team non trovato"));
+                .orElseThrow(() -> new IllegalArgumentException("Il team non è iscritto a questo hackathon"));
     }
 
     public List<Sottomissione> getSottomissioniValutate() {
@@ -242,7 +248,7 @@ public class Hackathon {
         List<TeamIscritto> nuova = new ArrayList<>();
 
         for (String id : nuovoOrdineTeam) {
-            nuova.add(getTeamById(id));
+            nuova.add(getTeamIscrittoById(id));
         }
 
         this.classifica = nuova;

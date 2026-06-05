@@ -2,8 +2,8 @@ package it.unicam.cs.ids.handler;
 
 import it.unicam.cs.ids.model.Sottomissione;
 import it.unicam.cs.ids.model.StatoSottomissione;
+import it.unicam.cs.ids.model.Utente;
 import it.unicam.cs.ids.model.hackathon.Hackathon;
-import it.unicam.cs.ids.model.team.Team;
 import it.unicam.cs.ids.model.team.TeamIscritto;
 import it.unicam.cs.ids.model.Valutazione;
 import org.springframework.stereotype.Service;
@@ -40,7 +40,7 @@ public class SottomissioneHandler {
 
         Sottomissione sottomissione = teamIscritto.getSottomissione();
         if (sottomissione == null) {
-            sottomissione = new Sottomissione(teamIscritto.toString());
+            sottomissione = new Sottomissione(teamIscritto);
             teamIscritto.setSottomissione(sottomissione);
         }
 
@@ -49,32 +49,51 @@ public class SottomissioneHandler {
         sottomissione.setStatoSottomissione(StatoSottomissione.CARICATA);
     }
 
+    // TODO commento non coerente con il metodo
     /**
      * Valuta una sottomissione di un team iscritto.
      * La sottomissione deve essere stata precedentemente caricata e non deve essere nello stato MANCANTE.
      * La verifica dei permessi e la costruzione della Valutazione competono a SottomissioneService.
      *
      * @param teamIscritto il team iscritto cui appartiene la sottomissione
-     * @param valutazione  l'oggetto Valutazione contenente voto e giudizio
      * @throws IllegalArgumentException se teamIscritto o valutazione sono nulli
      * @throws IllegalStateException    se la sottomissione non è stata caricata o è nello stato MANCANTE
      */
-    public void valutaSottomissione(TeamIscritto teamIscritto, Valutazione valutazione) {
-        if (teamIscritto == null) {
-            throw new IllegalArgumentException("TeamIscritto nullo");
-        }
+    public void valutaSottomissione(Utente utente, Hackathon hackathon, TeamIscritto teamIscritto, double voto, String giudizio) {
+        {
+            if (utente == null) throw new IllegalArgumentException("Utente nullo");
+            if (hackathon == null) throw new IllegalArgumentException("Hackathon nullo");
+            if (teamIscritto == null) throw new IllegalArgumentException("TeamIscritto nullo");
 
-        Sottomissione sottomissione = teamIscritto.getSottomissione();
-        if (sottomissione == null || sottomissione.getStatoSottomissione() == StatoSottomissione.MANCANTE) {
-            throw new IllegalStateException("Impossibile valutare: sottomissione mancante");
-        }
+            // Controllo del permesso
+            if (!utente.puoValutare(hackathon)) {
+                throw new SecurityException("L'utente non può valutare in questo hackathon");
+            }
 
-        if (valutazione == null) {
-            throw new IllegalArgumentException("Valutazione nulla");
-        }
+            // Validazione voto e giudizio
+            if (voto < 0 || voto > 10) {
+                throw new IllegalArgumentException("Voto fuori range");
+            }
+            if (giudizio == null || giudizio.isBlank()) {
+                throw new IllegalArgumentException("Giudizio vuoto");
+            }
 
-        sottomissione.setValutazione(valutazione);
-        sottomissione.setStatoSottomissione(StatoSottomissione.VALUTATA);
+
+            Sottomissione sottomissione = teamIscritto.getSottomissione();
+            if (sottomissione == null || sottomissione.getStatoSottomissione() == StatoSottomissione.MANCANTE) {
+                throw new IllegalStateException("Impossibile valutare: sottomissione mancante");
+            }
+
+            if (sottomissione.getStatoSottomissione() == StatoSottomissione.VALUTATA) {
+                throw new IllegalStateException("La sottomissione è già stata valutata");
+            }
+
+            // Creazione della valutazione e aggiornamento della valutazione
+            Valutazione valutazione = new Valutazione((int) Math.round(voto), giudizio);
+
+            sottomissione.setValutazione(valutazione);
+            sottomissione.setStatoSottomissione(StatoSottomissione.VALUTATA);
+        }
     }
 
     /**
@@ -109,50 +128,16 @@ public class SottomissioneHandler {
 
     /**
      * Crea una nuova sottomissione per un team in un hackathon.
-     * La sottomissione viene inizializzata nello stato MANCANTE.
      *
      * @param team        il team per il quale creare la sottomissione
-     * @param hack        l'hackathon a cui appartiene la sottomissione
-     * @param titolo      il titolo della sottomissione
-     * @param descrizione la descrizione della sottomissione
-     * @param s           l'ID della sottomissione
      * @return la sottomissione creata nello stato MANCANTE
-     * @throws IllegalArgumentException se team, hack o s sono nulli/vuoti
      */
-    public Sottomissione creaSottomissione(Team team, Hackathon hack, String titolo, String descrizione, String s) {
+    public Sottomissione creaSottomissione(TeamIscritto team) {
         if (team == null) {
             throw new IllegalArgumentException("Team nullo");
         }
-        if (hack == null) {
-            throw new IllegalArgumentException("Hackathon nullo");
-        }
-        if (s == null || s.isBlank()) {
-            throw new IllegalArgumentException("Id sottomissione nullo");
-        }
 
-        Sottomissione sottomissione = new Sottomissione(s);
-        sottomissione.setStatoSottomissione(StatoSottomissione.MANCANTE);
-        return sottomissione;
-    }
-
-    /**
-     * Crea una sottomissione già valutata con voto e giudizio.
-     *
-     * @param s       l'ID della sottomissione
-     * @param voto    il voto numerico (verrà arrotondato a intero)
-     * @param giudizio il giudizio testuale
-     * @return la sottomissione creata e valutata
-     * @throws IllegalArgumentException se s è nullo o vuoto
-     */
-    // TODO: creare SottomissioneService --> controlla il permesso di valutare la sottomissione, prende in input il voto e il giudizio, fa i controlli come da sequence e crea la valutazione. POi la passa qua all'handler per salvarla.
-    public Sottomissione valutaSottomissione(String s, double voto, String giudizio) {
-        if (s == null || s.isBlank()) {
-            throw new IllegalArgumentException("Id sottomissione nullo");
-        }
-
-        Sottomissione sottomissione = new Sottomissione(s);
-        sottomissione.setValutazione(new Valutazione((int) Math.round(voto), giudizio));
-        sottomissione.setStatoSottomissione(StatoSottomissione.VALUTATA);
+        Sottomissione sottomissione = new Sottomissione(team);
         return sottomissione;
     }
 
@@ -160,14 +145,16 @@ public class SottomissioneHandler {
      * Recupera una sottomissione per ID.
      *
      * @param sottomissioneId l'ID della sottomissione da recuperare
-     * @return una nuova istanza di Sottomissione con l'ID fornito
-     * @throws IllegalArgumentException se sottomissioneId è nullo o vuoto
+     * @return la Sottomissione con l'ID fornito
+     * @throws IllegalArgumentException se sottomissioneId è nullo o vuoto o se non esiste
      */
     public Sottomissione getSottomissione(String sottomissioneId) {
         if (sottomissioneId == null || sottomissioneId.isBlank()) {
             throw new IllegalArgumentException("Id sottomissione nullo");
         }
 
-        return new Sottomissione(sottomissioneId);
+        // TODO
+
+        return sottomissioneRepository.findByID(sottomissioneId);
     }
 }

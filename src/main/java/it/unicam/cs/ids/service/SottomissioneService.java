@@ -7,6 +7,7 @@ import it.unicam.cs.ids.model.Utente;
 import it.unicam.cs.ids.model.Valutazione;
 import it.unicam.cs.ids.model.hackathon.Hackathon;
 import it.unicam.cs.ids.model.team.TeamIscritto;
+import it.unicam.cs.ids.repository.HackathonRepository;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -40,29 +41,19 @@ public class SottomissioneService {
      * Verifica che il team appartenga all'hackathon specificato prima di procedere.
      *
      * @param hackathonId     ID dell'hackathon
-     * @param teamIscritto    team che carica la sottomissione
      * @param sottomissioneFile file da caricare
      * @throws IllegalArgumentException se i parametri sono null o il team non appartiene all'hackathon
      */
-    public void caricaSottomissione(String hackathonId, TeamIscritto teamIscritto, File sottomissioneFile) {
-        if (hackathonId == null || hackathonId.isBlank()) {
-            throw new IllegalArgumentException("ID hackathon non può essere null o vuoto.");
-        }
-        if (teamIscritto == null) {
-            throw new IllegalArgumentException("TeamIscritto non può essere null.");
-        }
+    public void caricaSottomissione(String hackathonId, String teamIscrittoId, File sottomissioneFile) {
         if (sottomissioneFile == null) {
             throw new IllegalArgumentException("File sottomissione non può essere null.");
         }
 
         Hackathon hackathon = hackathonService.getHackathonByID(hackathonId);
-
-        boolean teamAppartiene = hackathon.getTeamIscritti().contains(teamIscritto);
-        if (!teamAppartiene) {
-            throw new IllegalStateException("Il team non è iscritto a questo hackathon.");
-        }
+        TeamIscritto teamIscritto = hackathon.getTeamIscrittoById(teamIscrittoId);
 
         sottomissioneHandler.caricaSottomissione(teamIscritto, sottomissioneFile);
+        hackathonService.salva(hackathon);
     }
 
     /**
@@ -85,47 +76,9 @@ public class SottomissioneService {
      */
     public void valutaSottomissione(Utente utente, String hackathonId,
                                     TeamIscritto teamIscritto, double voto, String giudizio) {
-        if (utente == null) {
-            throw new IllegalArgumentException("Utente non può essere null.");
-        }
-        if (hackathonId == null || hackathonId.isBlank()) {
-            throw new IllegalArgumentException("ID hackathon non può essere null o vuoto.");
-        }
-        if (teamIscritto == null) {
-            throw new IllegalArgumentException("TeamIscritto non può essere null.");
-        }
-
-        //  Recupera l'hackathon e verifica il permesso
         Hackathon hackathon = hackathonService.getHackathonByID(hackathonId);
-
-        if (!utente.puoValutare(hackathon)) {
-            throw new SecurityException(
-                    "L'utente " + utente.getNickname() + " non ha il permesso di valutare in questo hackathon."
-            );
-        }
-
-        // Valida il voto
-        if (voto < 0 || voto > 10) {
-            throw new IllegalArgumentException("Il voto deve essere compreso tra 0 e 10, ricevuto: " + voto);
-        }
-
-        // Valida il giudizio
-        if (giudizio == null || giudizio.isBlank()) {
-            throw new IllegalArgumentException("Il giudizio non può essere null o vuoto.");
-        }
-
-        //  Controlla che la sottomissione sia nello stato CARICATA
-        Sottomissione sottomissione = teamIscritto.getSottomissione();
-        if (sottomissione == null || sottomissione.getStatoSottomissione() == StatoSottomissione.MANCANTE) {
-            throw new IllegalStateException("Impossibile valutare: la sottomissione non è stata caricata.");
-        }
-        if (sottomissione.getStatoSottomissione() == StatoSottomissione.VALUTATA) {
-            throw new IllegalStateException("La sottomissione è già stata valutata.");
-        }
-
-        // Costruisce la Valutazione e delega all'handler
-        Valutazione valutazione = new Valutazione((int) Math.round(voto), giudizio);
-        sottomissioneHandler.valutaSottomissione(teamIscritto, valutazione);
+        sottomissioneHandler.valutaSottomissione(utente, hackathon, teamIscritto, voto, giudizio);
+        hackathonService.salva(hackathon);
     }
 
     /**

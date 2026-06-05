@@ -17,6 +17,7 @@ import java.util.Objects;
 public class Sottomissione {
     /** Identificatore univoco della sottomissione */
     @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
     private String sottomissioneID;
 
     /** File della sottomissione */
@@ -34,7 +35,7 @@ public class Sottomissione {
     private LocalDateTime dataCaricamento;
 
     /** Team associato alla sottomissione */
-    @ManyToOne
+    @OneToOne
     @JoinColumn(name = "team_id")
     private TeamIscritto team;
 
@@ -47,6 +48,16 @@ public class Sottomissione {
     protected Sottomissione() {
     }
 
+    /**
+     * Costruisce una nuova Sottomissione associata al team iscritto corrispondente.
+     *
+     * @param teamIscritto il team iscritto a cui è associata la sottomissione
+     * @throws IllegalArgumentException se sottomissioneID è null
+     */
+    public Sottomissione(TeamIscritto teamIscritto) {
+        this.team = teamIscritto;
+    }
+
     public TeamIscritto getTeam() {
         return team;
     }
@@ -55,18 +66,6 @@ public class Sottomissione {
         this.team = team;
     }
 
-    /**
-     * Costruisce una nuova Sottomissione con l'ID specificato.
-     *
-     * @param sottomissioneID identificatore univoco della sottomissione
-     * @throws IllegalArgumentException se sottomissioneID è null
-     */
-    public Sottomissione(String sottomissioneID) {
-        if (sottomissioneID == null) {
-            throw new IllegalArgumentException("L'ID della sottomissione non può essere null.");
-        }
-        this.sottomissioneID = sottomissioneID;
-    }
 
     /**
      * Restituisce l'identificatore univoco della sottomissione.
