@@ -1,7 +1,6 @@
 package it.unicam.cs.ids.model.hackathon;
 
 import it.unicam.cs.ids.model.Utente;
-import it.unicam.cs.ids.model.staff.Giudice;
 import it.unicam.cs.ids.model.staff.RuoliStaff;
 import it.unicam.cs.ids.model.staff.RuoloPartecipazione;
 
@@ -60,22 +59,13 @@ public class InCorsoState implements HackState {
     }
 
     @Override
-    public void aggiungiMentore(Hackathon hackathon, Utente utente) {
-        // TODO? O non se po fa? CI SONO DUE AGGIUNGI MENTORE AS USUAL
-    }
-
-    @Override
-    public void aggiungiGiudice(Hackathon hackathon, Utente utente) {
-        throw new IllegalStateException("Hackathon in corso");
-    }
-
-    @Override
     public void aggiungiMentore(Hackathon hackathon, RuoloPartecipazione mentore) {
-        throw new IllegalStateException("Hackathon in corso");
+        throw new IllegalStateException("Hackathon in corso: non modificabile");
     }
 
-    public void aggiungiGiudice(Hackathon hackathon, Giudice giudice) {
-        throw new IllegalStateException("Hackathon in corso");
+    @Override
+    public void aggiungiGiudice(Hackathon hackathon, RuoloPartecipazione giudice) {
+        throw new IllegalStateException("Hackathon in corso: non modificabile");
     }
 
     @Override

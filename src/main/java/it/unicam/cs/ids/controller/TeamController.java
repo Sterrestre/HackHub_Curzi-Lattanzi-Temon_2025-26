@@ -13,11 +13,15 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * Controller per la gestione dei team.
+ * Recupera le entità tramite UtenteService e TeamService,
+ * delega la logica di dominio a TeamHandler.
+ */
 @RestController
 @RequestMapping("/team")
 public class TeamController {
 
-    // TODO Implementa UtenteService e rivedi questa classe
     private final TeamHandler teamHandler;
     private final UtenteService utenteService;
     private final TeamService teamService;
@@ -31,37 +35,43 @@ public class TeamController {
     }
 
     @PostMapping("/crea")
-    public ResponseEntity<TeamDTO> creaTeam(@RequestBody CreaTeamRequest request) {
-
-        // TODO nota Matteo
-        // CONTROLLO SU FIND BY ID (se passa null esplode) <-- controlla nel service che non restituisca null
-        Utente admin = utenteService.findById(request.amministratoreId());
-        Team team = teamHandler.creaTeam(request.nome(), admin);
-
-        return ResponseEntity.ok(TeamDTO.from(team));
+    public ResponseEntity<?> creaTeam(@RequestBody CreaTeamRequest request) {
+        try {
+            Utente admin = utenteService.findById(request.amministratoreId());
+            Team team = teamHandler.creaTeam(request.nome(), admin);
+            return ResponseEntity.ok(TeamDTO.from(team));
+        } catch (IllegalArgumentException | IllegalStateException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body("Errore interno: " + e.getMessage());
+        }
     }
 
     @PostMapping("/aggiungi-membro")
-    public ResponseEntity<MembroTeamDTO> aggiungiMembro(@RequestBody AggiungiMembroRequest request) {
-
-        Team team = teamService.findTeamById(request.teamId());
-        Utente utente = utenteService.findById(request.utenteId());
-
-        MembroTeam membro = teamHandler.aggiungiMembroTeam(team, utente, request.amministratore());
-
-        return ResponseEntity.ok(MembroTeamDTO.from(membro));
+    public ResponseEntity<?> aggiungiMembro(@RequestBody AggiungiMembroRequest request) {
+        try {
+            Team team = teamService.findTeamById(request.teamId());
+            Utente utente = utenteService.findById(request.utenteId());
+            MembroTeam membro = teamHandler.aggiungiMembroTeam(team, utente, request.amministratore());
+            return ResponseEntity.ok(MembroTeamDTO.from(membro));
+        } catch (IllegalArgumentException | IllegalStateException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body("Errore interno: " + e.getMessage());
+        }
     }
 
     @PostMapping("/invita")
-    public ResponseEntity<String> invita(@RequestBody InvitaRequest request) {
-
-        // TODO correggi
-        MembroTeam admin = teamService.findMembroTeamById(request.teamId(), request.adminId());
-        Utente utente = utenteService.findById(request.utenteId());
-
-        String msg = teamHandler.invitaUtente(admin, utente);
-
-        return ResponseEntity.ok(msg);
+    public ResponseEntity<?> invita(@RequestBody InvitaRequest request) {
+        try {
+            MembroTeam admin = teamService.findMembroTeamById(request.teamId(), request.adminId());
+            Utente utente = utenteService.findById(request.utenteId());
+            String msg = teamHandler.invitaUtente(admin, utente);
+            return ResponseEntity.ok(msg);
+        } catch (IllegalArgumentException | IllegalStateException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body("Errore interno: " + e.getMessage());
+        }
     }
 }
-

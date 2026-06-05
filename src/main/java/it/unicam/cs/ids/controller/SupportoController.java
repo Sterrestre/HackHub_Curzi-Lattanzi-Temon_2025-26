@@ -14,11 +14,14 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+/**
+ * Controller per la gestione del supporto ai team durante un hackathon.
+ * Parla con RichiestaSupportoService e HackathonService per recuperare le entità,
+ * e con SupportoHandler per la logica di dominio.
+ */
 @RestController
 @RequestMapping("/supporto")
 public class SupportoController {
-
-    // TODO crea RichiestaSupportoService e controlla questo controller
 
     private final SupportoHandler supportoHandler;
     private final RichiestaSupportoService richiestaSupportoService;
@@ -40,32 +43,43 @@ public class SupportoController {
 
     @PostMapping("/rispondi")
     public ResponseEntity<String> rispondi(@RequestBody RispondiSupportoRequest req) {
-
-        RichiestaSupporto richiesta = richiestaSupportoService.findById(req.richiestaId());
-        supportoHandler.rispondiAllaRichiesta(richiesta);
-
-        return ResponseEntity.ok("Richiesta di supporto risolta");
+        try {
+            RichiestaSupporto richiesta = richiestaSupportoService.findById(req.richiestaId());
+            supportoHandler.rispondiAllaRichiesta(richiesta);
+            return ResponseEntity.ok("Richiesta di supporto risolta");
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body("Errore interno: " + e.getMessage());
+        }
     }
 
     @PostMapping("/proponi-call")
     public ResponseEntity<String> proponiCall(@RequestBody ProponiCallRequest req) {
-
-        RichiestaSupporto richiesta = richiestaSupportoService.findById(req.richiestaId());
-        Hackathon hack = hackathonService.getHackathonByID(richiesta.getHackathonId());
-
-        supportoHandler.richiestaProponiCall(
-                req.dataOra(),
-                richiesta,
-                hack.getInfoHack().getDataFine()
-        );
-
-        return ResponseEntity.ok("Proposta di call inviata");
+        try {
+            RichiestaSupporto richiesta = richiestaSupportoService.findById(req.richiestaId());
+            Hackathon hack = hackathonService.getHackathonByID(richiesta.getHackathonId());
+            supportoHandler.richiestaProponiCall(
+                    req.dataOra(),
+                    richiesta,
+                    hack.getInfoHack().getDataFine()
+            );
+            return ResponseEntity.ok("Proposta di call inviata");
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body("Errore interno: " + e.getMessage());
+        }
     }
 
     @PostMapping("/annulla-call")
     public ResponseEntity<String> annullaCall() {
-        supportoHandler.annullaCall();
-        return ResponseEntity.ok("Call annullata");
+        try {
+            supportoHandler.annullaCall();
+            return ResponseEntity.ok("Call annullata");
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body("Errore interno: " + e.getMessage());
+        }
     }
 
     @GetMapping("/team-assegnati/{hackathonId}/{mentoreId}")
@@ -87,7 +101,6 @@ public class SupportoController {
             @PathVariable String teamId) {
 
         List<RichiestaSupportoDTO> lista = supportoHandler.getRichiesteSupporto(teamId, hackathonId)
-                .entrySet()
                 .stream()
                 .map(RichiestaSupportoDTO::from)
                 .toList();
@@ -95,4 +108,3 @@ public class SupportoController {
         return ResponseEntity.ok(lista);
     }
 }
-

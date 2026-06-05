@@ -2,21 +2,19 @@ package it.unicam.cs.ids.repository;
 
 import it.unicam.cs.ids.model.inviti.Invito;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 
-@Service
+/**
+ * Repository JPA per la gestione della persistenza degli inviti.
+ * Spring Data genera automaticamente le implementazioni dei metodi dichiarati.
+ */
 public interface InvitoRepository extends JpaRepository<Invito, String> {
 
-    // Viene creato in automatico:
-//    List<Invito> findAll();
+    /**
+     * Restituisce tutti gli inviti destinati a un utente specifico.
+     * Il nome del metodo rispecchia il percorso: destinatario → utenteID (campo in Utente).
+     */
+    List<Invito> findByDestinatarioUtenteID(String utenteID);
 
-    List<Invito> findByDestinatarioId(String destinatarioId);
-
-    default List<Invito> findInvitiPerDestinatario(String destinatarioId) {
-        List<Invito> inviti = findByDestinatarioId(destinatarioId);
-        return inviti != null ? inviti : new ArrayList<>();
-    }
 }

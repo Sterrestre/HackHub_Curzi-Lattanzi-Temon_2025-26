@@ -19,11 +19,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * Controller per la gestione degli inviti staff e team.
+ * Recupera le entità tramite i service e delega la logica a InvitiHandler.
+ */
 @RestController
 @RequestMapping("/inviti")
 public class InvitiController {
-
-    // TODO revisionare il controller
 
     private final InvitiHandler invitiHandler;
     private final UtenteService utenteService;
@@ -34,7 +36,8 @@ public class InvitiController {
     public InvitiController(InvitiHandler invitiHandler,
                             UtenteService utenteService,
                             TeamService teamService,
-                            HackathonService hackService, InvitoService invitoService) {
+                            HackathonService hackService,
+                            InvitoService invitoService) {
         this.invitiHandler = invitiHandler;
         this.utenteService = utenteService;
         this.teamService = teamService;
@@ -44,38 +47,49 @@ public class InvitiController {
 
     @PostMapping("/staff")
     public ResponseEntity<String> invitaStaff(@RequestBody InvitaStaffRequest req) {
-
-        Hackathon hack = hackService.getHackathonByID(req.hackathonId());
-        Utente utente = utenteService.findById(req.utenteId());
-        Utente organizzatore = utenteService.findById(req.organizzatoreId());
-
-        invitiHandler.creaInvitoStaff(organizzatore, utente, hack, req.ruolo());
-
-        return ResponseEntity.ok("Invito staff inviato");
+        try {
+            Hackathon hack = hackService.getHackathonByID(req.hackathonId());
+            Utente utente = utenteService.findById(req.utenteId());
+            Utente organizzatore = utenteService.findById(req.organizzatoreId());
+            invitiHandler.creaInvitoStaff(organizzatore, utente, hack, req.ruolo());
+            return ResponseEntity.ok("Invito staff inviato");
+        } catch (IllegalArgumentException | IllegalStateException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body("Errore interno: " + e.getMessage());
+        }
     }
 
     @PostMapping("/team")
     public ResponseEntity<String> invitaTeam(@RequestBody InvitaTeamRequest req) {
+        try {
+            MembroTeam membroTeam = teamService.findMembroTeamById(req.teamId(), req.mittenteId());
+            Utente utente = utenteService.findById(req.utenteId());
+            Team team = teamService.findTeamById(req.teamId());
 
-        MembroTeam membroTeam = teamService.findMembroTeamById(req.teamId(), req.mittenteId());
-        Utente utente = utenteService.findById(req.utenteId());
-        Team team = teamService.findTeamById(req.teamId());
+            if (!membroTeam.isAmministratore()) {
+                return ResponseEntity.badRequest().body("Solo un amministratore del team può inviare inviti");
+            }
 
-        if (!membroTeam.isAmministratore()) {
-            return ResponseEntity.badRequest().body("Solo un amministratore del team può inviare inviti");
+            invitiHandler.creaInvitoTeam(membroTeam, utente, team);
+            return ResponseEntity.ok("Invito inviato al membro del team");
+        } catch (IllegalArgumentException | IllegalStateException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body("Errore interno: " + e.getMessage());
         }
-
-        invitiHandler.creaInvitoTeam(membroTeam, utente, team);
-        return ResponseEntity.ok("Invito inviato al membro del team");
     }
 
     @PostMapping("/rispondi")
     public ResponseEntity<String> rispondi(@RequestBody RispostaInvitoRequest req) {
-        Invito invito = invitoService.findById(req.invitoId());
-
-        invitiHandler.rispostaInvito(invito, req.accetta());
-
-        return ResponseEntity.ok("Risposta registrata");
+        try {
+            Invito invito = invitoService.findById(req.invitoId());
+            invitiHandler.rispostaInvito(invito, req.accetta());
+            return ResponseEntity.ok("Risposta registrata");
+        } catch (IllegalArgumentException | IllegalStateException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body("Errore interno: " + e.getMessage());
+        }
     }
 }
-

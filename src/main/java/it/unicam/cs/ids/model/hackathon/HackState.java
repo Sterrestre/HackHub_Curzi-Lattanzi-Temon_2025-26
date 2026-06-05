@@ -34,7 +34,6 @@ public interface HackState {
 
     void modificaNumMaxTeam(Hackathon hackathon, int nuovoNum);
 
-    // TODO aggiungi mentore e giudice che hanno come secondo paramentro RuoloPartecipazione?
     void aggiungiGiudice(Hackathon hackathon, RuoloPartecipazione giudice);
 
     void aggiungiMentore(Hackathon hackathon, RuoloPartecipazione mentore);

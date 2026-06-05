@@ -1,39 +1,45 @@
 package it.unicam.cs.ids.service;
 
+import it.unicam.cs.ids.handler.HackHandler;
 import it.unicam.cs.ids.handler.InvitiHandler;
+import it.unicam.cs.ids.model.Utente;
 import it.unicam.cs.ids.model.hackathon.*;
 import it.unicam.cs.ids.model.team.TeamIscritto;
 import it.unicam.cs.ids.repository.HackathonRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
 
+/**
+ * Service per la gestione degli hackathon.
+ * Coordina il recupero delle entità dal repository, delega la logica
+ * di dominio all'HackHandler e si occupa della persistenza.
+ */
 @Service
 public class HackathonService {
 
     private final HackathonRepository hackathonRepository;
     private final InvitiHandler invitiHandler;
+    private final HackHandler hackHandler;
 
-    public HackathonService(HackathonRepository hackathonRepository, InvitiHandler invitiHandler) {
+    public HackathonService(HackathonRepository hackathonRepository, InvitiHandler invitiHandler, HackHandler hackHandler) {
         this.hackathonRepository = hackathonRepository;
         this.invitiHandler = invitiHandler;
+        this.hackHandler = hackHandler;
     }
 
     /**
-     * Crea un nuovo hackathon e lo registra nel sistema.
+     * Crea un nuovo hackathon, delega la logica all'handler e salva.
      */
-    public Hackathon creaHackathon(InfoHack info, String nome) {
-        Hackathon h = new Hackathon(info, nome);
+    public Hackathon creaHackathon(Utente organizzatore, String nome, InfoHack info) {
+        Hackathon h = hackHandler.creaHackathon(organizzatore, nome, info);
         h.cambiaStato(new BozzaState(invitiHandler));
-        ricostruisciState(h);
         hackathonRepository.save(h);
         return h;
     }
 
     /**
-     * Recupera un hackathon tramite il suo ID.
+     * Recupera un hackathon per ID e ricostruisce il suo stato.
      */
     public Hackathon getHackathonByID(String id) {
         Hackathon h = hackathonRepository.findById(id)
@@ -71,8 +77,7 @@ public class HackathonService {
     /**
      * Rimuove un hackathon dal sistema.
      */
-    public void eliminaHackathon(String id) {
-        hackathonRepository.deleteById(id);
+    public void eliminaHackathon(String id) {hackathonRepository.deleteById(id);
     }
 
     // Helper per ricostruire lo State partendo dallo stato salvato nel Repository
@@ -92,12 +97,5 @@ public class HackathonService {
     public Hackathon salva(Hackathon hackathon) {
         return hackathonRepository.save(hackathon);
     }
-
-
-    public void elimina(String id) {
-        hackathonRepository.deleteById(id);
-    }
-
-
 }
 

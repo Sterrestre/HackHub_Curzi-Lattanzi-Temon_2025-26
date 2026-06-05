@@ -68,14 +68,12 @@ public class BozzaState implements HackState {
 
     @Override
     public void aggiungiGiudice(Hackathon hackathon, RuoloPartecipazione giudice) {
-        // TODO --> Rolefactory, assegnaGiudice (controlla, più probabile creaRuolo)
+        hackathon.ruoli.add(giudice);
     }
-
 
     @Override
     public void aggiungiMentore(Hackathon hackathon, RuoloPartecipazione mentore) {
         hackathon.ruoli.add(mentore);
-        // TODO --> Rolefactory, assegnaMentore (controlla)
     }
 
     @Override

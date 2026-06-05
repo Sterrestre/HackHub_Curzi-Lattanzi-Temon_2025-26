@@ -1,6 +1,7 @@
 package it.unicam.cs.ids.model.inviti;
 
 import it.unicam.cs.ids.model.Utente;
+import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
 
@@ -11,9 +12,24 @@ import java.time.LocalDateTime;
  * (ad esempio il destinatario e la data di creazione) e dichiara i
  * comportamenti astratti che le sottoclassi devono implementare:
  */
+
+@Entity
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "tipo_invito", discriminatorType = DiscriminatorType.STRING)
 public abstract class Invito {
+    /** ID univoco generato automaticamente da JPA. */
+    @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private String id;
+
+    /** Utente destinatario dell'invito. */
+    @ManyToOne
+    @JoinColumn(name = "destinatario_id")
     protected Utente destinatario;
     protected LocalDateTime dataCreazione;
+
+    // COSTRUTTORE PER JPA
+    protected Invito() {}
 
     /**
      * Costruttore per creare un invito.
@@ -28,6 +44,14 @@ public abstract class Invito {
         this.dataCreazione = LocalDateTime.now();
     }
 
+    /**
+     * Restituisce l'ID univoco dell'invito.
+     *
+     * @return l'ID dell'invito
+     */
+    public String getId() {
+        return id;
+    }
 
     /**
      * Restituisce il destinatario dell'invito.

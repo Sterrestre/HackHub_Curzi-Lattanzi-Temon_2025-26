@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Gestisce le operazioni legate alle richieste di supporto e alle call.
@@ -88,7 +87,7 @@ public class SupportoHandler {
         return h.getTeamAssegnati(mentoreID);
     }
 
-    public Map<RichiestaSupporto, Boolean> getRichiesteSupporto(String teamID, String hackathonID) {
+    public List<RichiestaSupporto> getRichiesteSupporto(String teamID, String hackathonID) {
         Hackathon h = hackathonService.getHackathonByID(hackathonID);
         TeamIscritto team = h.getTeamIscritti().stream()
                 .filter(t -> t.getTeam().getTeamID().equals(teamID))

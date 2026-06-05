@@ -1,17 +1,13 @@
 package it.unicam.cs.ids.model.team;
 
-import it.unicam.cs.ids.model.Penalizzazione;
-import it.unicam.cs.ids.model.RichiestaSupporto;
-import it.unicam.cs.ids.model.Sottomissione;
-import it.unicam.cs.ids.model.Utente;
+import it.unicam.cs.ids.model.*;
 import it.unicam.cs.ids.model.hackathon.Hackathon;
 import it.unicam.cs.ids.model.staff.Mentore;
+import it.unicam.cs.ids.model.MetodoPagamento;
 import jakarta.persistence.*;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Entity
 public class TeamIscritto {
@@ -45,13 +41,15 @@ public class TeamIscritto {
     private Penalizzazione penalizzazione;
 
     // COSTRUTTORE PER JPA
-    protected TeamIscritto() {}
+    protected TeamIscritto() {
+    }
 
     public TeamIscritto(Team team, Hackathon hackathon, Utente amministratore) {
         this.team = team;
         this.hackathon = hackathon;
-        // TODO iscrivere amministratore come MembroTeamIscritto
         this.amministratore = amministratore;
+        MembroTeamIscritto membroAdmin = new MembroTeamIscritto(amministratore, this, MetodoPagamento.NON_SELEZIONATO);
+        this.elencoIscritti.add(membroAdmin);
     }
 
 
@@ -59,15 +57,21 @@ public class TeamIscritto {
         return team;
     }
 
-    public Hackathon getHackathon() {return hackathon;}
+    public Hackathon getHackathon() {
+        return hackathon;
+    }
 
-    public Utente getAmministratore() {return amministratore;}
+    public Utente getAmministratore() {
+        return amministratore;
+    }
 
     public List<MembroTeamIscritto> getElencoIscritti() {
         return elencoIscritti;
     }
 
-    public Sottomissione getSottomissione() {return sottomissione;}
+    public Sottomissione getSottomissione() {
+        return sottomissione;
+    }
 
     public void aggiungiIscritto(MembroTeamIscritto membro) {
         if (!elencoIscritti.contains(membro)) {
@@ -91,8 +95,12 @@ public class TeamIscritto {
         this.sottomissione = sottomissione;
     }
 
+    public String getTeamIscrittoId() {
+        return id;
+    }
+
     public String getId() {
-        return team.getTeamID();
+        return id;
     }
 
     public Mentore getMentoreAssegnato() {

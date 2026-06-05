@@ -30,7 +30,8 @@ public class Hackathon {
     @Enumerated(EnumType.STRING)
     public Stato stato = Stato.BOZZA;                  // enum: BOZZA, CONFERMATO, CONCLUSO, IN CORSO
 
-    public List<RuoloPartecipazione> ruoli; // public per essere visibile dalla roleFactory
+    @OneToMany(mappedBy = "hackathon", cascade = CascadeType.ALL, orphanRemoval = true)
+    public List<RuoloPartecipazione> ruoli = new ArrayList<>(); // public per essere visibile dalla roleFactory
 
     protected int numTeamIscritti;
 
@@ -52,6 +53,7 @@ public class Hackathon {
     @OneToOne(optional = true)
     protected TeamIscritto teamVincitore;
     protected boolean classificaConfermata = false;
+    @ElementCollection
     protected List<Penalizzazione> penalizzazioni = new ArrayList<>();
 
     // COSTRUTTORE PER JPA
@@ -116,7 +118,7 @@ public class Hackathon {
         }
         RoleFactory factory = new RoleFactory();
         RuoloPartecipazione ruoloMentore = factory.assegnaMentore(mentore, this);
-        state.aggiungiMentore(this, ruoloMentore.getUtente());
+        state.aggiungiMentore(this, ruoloMentore);
     }
 
 
@@ -126,15 +128,12 @@ public class Hackathon {
         }
         RoleFactory factory = new RoleFactory();
         RuoloPartecipazione ruoloGiudice = factory.assegnaGiudice(giudice, this);
-        state.aggiungiGiudice(this, ruoloGiudice.getUtente());
+        state.aggiungiGiudice(this, ruoloGiudice);
     }
 
-    // TODO: mi serviva questo metodo e l'ho aggiunto, non so se è necessario cambiare qualcosa negli State a riguardo
-    //  (si può fare solo se hackathon è in stato confermato)
     public void aggiungiTeamIscritto(TeamIscritto newTeam) {
         this.teamIscritti.add(newTeam);
     }
-
 
     public void invitaStaff(Utente utente, RuoliStaff tipoRuolo) {
         state.invitaStaff(this, utente, tipoRuolo);

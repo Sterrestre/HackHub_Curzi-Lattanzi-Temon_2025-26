@@ -6,14 +6,11 @@ public record SottomissioneDTO(
         String id,
         String titolo,
         String descrizione,
-        Object linkRepository,
+        String linkRepository,
         boolean valutata,
         Integer voto,
         String giudizio
 ) {
-
-
-    // TODO revisionare e correggere le chiamate ai metodi
     public static SottomissioneDTO from(Sottomissione s) {
         return new SottomissioneDTO(
                 s.getId(),
@@ -26,4 +23,3 @@ public record SottomissioneDTO(
         );
     }
 }
-

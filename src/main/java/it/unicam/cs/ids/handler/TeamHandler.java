@@ -1,6 +1,5 @@
 package it.unicam.cs.ids.handler;
 
-import it.unicam.cs.ids.model.MetodoPagamento;
 import it.unicam.cs.ids.model.Utente;
 import it.unicam.cs.ids.model.hackathon.Hackathon;
 import it.unicam.cs.ids.model.team.MembroTeam;
@@ -11,47 +10,58 @@ import it.unicam.cs.ids.service.NotificationService;
 import it.unicam.cs.ids.service.TeamService;
 import org.springframework.stereotype.Service;
 
+/**
+ * Handler per la logica di dominio dei team.
+ */
 @Service
 public class TeamHandler {
 
     private final TeamService teamService;
     private final NotificationService notificationService;
     private final InvitiHandler invitiHandler;
+    private final MembriTeamHandler membriTeamHandler;
 
-    public TeamHandler(TeamService teamService, NotificationService notificationService, InvitiHandler invitiHandler) {
+    public TeamHandler(TeamService teamService, NotificationService notificationService, InvitiHandler invitiHandler, MembriTeamHandler membriTeamHandler) {
         this.teamService = teamService;
         this.notificationService = notificationService;
         this.invitiHandler = invitiHandler;
+        this.membriTeamHandler = membriTeamHandler;
     }
 
     /**
-     * Crea un nuovo team con il nome specificato e l'utente amministratore. L'utente amministratore diventa automaticamente membro del team.
-     * @param nome del team che si vuole creare
-     * @param amministratore l'utente che crea il team. Non deve appartenere a nessun altro team.
+     * Crea un nuovo team con il nome specificato e l'utente amministratore.
+     * L'utente amministratore diventa automaticamente membro del team.
+     *
+     * @param nome           il nome del team
+     * @param amministratore l'utente che crea il team; non deve appartenere a nessun altro team
      * @return il nuovo team
+     * @throws IllegalStateException    se l'utente è già membro di un team
+     * @throws IllegalArgumentException se il nome è null o vuoto
      */
     public Team creaTeam(String nome, Utente amministratore) {
-        //TODO implementare il catch dell'eccezione che implementi l'opt team != null
         if (amministratore.getTeam() != null) {
             throw new IllegalStateException("L'utente è già membro di un team");
         };
-
-        //TODO form con i dati da inserire
-        //Validazioni di input
         if (nome == null || nome.isBlank()) {
             throw new IllegalArgumentException("Nome team obbligatorio");
         }
 
-        Team team = teamService.creaTeam(nome, amministratore);
-        System.out.println("Team " + team.getNome() + " creato con successo. Amministratore: " + amministratore.getNickname());
-        return team;
+        return teamService.creaTeam(nome, amministratore);
     }
 
-    //TODO la parte che riguarda il membro può essere delegata a MembriTeamHandler
+    /**
+     * Aggiunge un membro al team.
+     * La parte relativa alla gestione del membro è delegata a TeamService.
+     *
+     * @param team           il team a cui aggiungere il membro
+     * @param utente         l'utente da aggiungere
+     * @param amministratore true se il nuovo membro deve essere amministratore
+     * @return il nuovo MembroTeam creato
+     */
     public MembroTeam aggiungiMembroTeam(Team team, Utente utente, boolean amministratore) {
-        MembroTeam nuovo = teamService.aggiungiMembro(team, utente, amministratore);
-    //    notificationService.inviaNotificaAggiuntaMemebro(?);
-        return nuovo;
+        return teamService.aggiungiMembro(team, utente, amministratore);
+        // TODO futuro: notificationService.inviaNotificaAggiuntaMembro(utente, team)
+        // quando il metodo sarà aggiunto a NotificationService
     }
 
 
@@ -76,8 +86,14 @@ public class TeamHandler {
         return "L'utente "+utente.getNickname()+" è stato invitato al team "+admin.getTeam().getNome();
     }
 
+    /**
+     * Iscrive un membro del team a un hackathon delegando a MembriTeamHandler.
+     *
+     * @param membTeam  il membro del team da iscrivere
+     * @param hackathon l'hackathon a cui iscriversi
+     * @return il nuovo MembroTeamIscritto creato
+     */
     public MembroTeamIscritto iscriviMembroTeam(MembroTeam membTeam, Hackathon hackathon) {
-        // TODO implementa sequence corrispondente. Return alla cazzo per farlo star buono, CORREGGI
-        return new MembroTeamIscritto(membTeam.getUtente(), new TeamIscritto(membTeam.getTeam(), hackathon, membTeam.getUtente()), MetodoPagamento.NON_SELEZIONATO);
+        return membriTeamHandler.iscriviMembroTeam(membTeam, hackathon);
     }
 }

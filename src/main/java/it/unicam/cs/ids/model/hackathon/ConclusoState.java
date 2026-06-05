@@ -59,18 +59,13 @@ public class ConclusoState implements HackState {
     }
 
     @Override
-    public void aggiungiMentore(Hackathon hackathon, Utente utente) {
-        throw new IllegalStateException("Hackathon concluso: non modificabile");
-    }
-
-    @Override
-    public void aggiungiGiudice(Hackathon hackathon, Utente utente) {
-        throw new IllegalStateException("Hackathon concluso: non modificabile");
-    }
-
-    @Override
     public void aggiungiMentore(Hackathon hackathon, RuoloPartecipazione mentore) {
-        throw new IllegalStateException("Hackathon concluso");
+        throw new IllegalStateException("Hackathon concluso: non modificabile");
+    }
+
+    @Override
+    public void aggiungiGiudice(Hackathon hackathon, RuoloPartecipazione giudice) {
+        throw new IllegalStateException("Hackathon concluso: non modificabile");
     }
 
     @Override

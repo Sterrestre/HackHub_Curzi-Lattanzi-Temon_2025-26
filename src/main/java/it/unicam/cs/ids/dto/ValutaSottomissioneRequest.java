@@ -1,7 +1,9 @@
 package it.unicam.cs.ids.dto;
 
 public record ValutaSottomissioneRequest(
-        String sottomissioneId,
+        String giudiceId,
+        String hackathonId,
+        String teamIscrittoId,
         double voto,
         String giudizio
 ) {}

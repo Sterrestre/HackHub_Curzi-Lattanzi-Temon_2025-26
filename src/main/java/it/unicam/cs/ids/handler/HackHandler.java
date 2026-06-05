@@ -5,19 +5,17 @@ import it.unicam.cs.ids.model.Utente;
 import it.unicam.cs.ids.model.hackathon.*;
 import it.unicam.cs.ids.model.staff.*;
 import it.unicam.cs.ids.model.team.*;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import it.unicam.cs.ids.model.hackathon.BozzaState;
-import it.unicam.cs.ids.model.hackathon.ConfermatoState;
-import it.unicam.cs.ids.model.hackathon.InCorsoState;
-import it.unicam.cs.ids.model.hackathon.Stato;
 
 import java.time.LocalDateTime;
-import java.util.Collection;
 import java.util.List;
 
 import static it.unicam.cs.ids.model.staff.RuoliStaff.ORGANIZZATORE;
 
+/**
+ * Handler per la logica di dominio degli hackathon.
+ * Non gestisce persistenza — quella è responsabilità di HackathonService.
+ */
 @Service
 public class HackHandler {
 
@@ -26,37 +24,56 @@ public class HackHandler {
     private final InvitiHandler invitiHandler;
     private final SottomissioneHandler sottomissioneHandler;
 
-    public HackHandler(RoleFactory roleFactory, TeamHandler teamHandler, InvitiHandler invitiHandler, SottomissioneHandler sottomissioneHandler) {
+    public HackHandler(RoleFactory roleFactory, TeamHandler teamHandler,
+                       InvitiHandler invitiHandler, SottomissioneHandler sottomissioneHandler) {
         this.roleFactory = roleFactory;
         this.teamHandler = teamHandler;
         this.invitiHandler = invitiHandler;
         this.sottomissioneHandler = sottomissioneHandler;
     }
 
-    private Hackathon hackathon;
-
+    /**
+     * Crea un nuovo hackathon e registra l'organizzatore.
+     * La persistenza è delegata a HackathonService.
+     */
     public Hackathon creaHackathon(Utente utente, String nome, InfoHack info) {
         if (!utente.isMembroDiStaff()) {
             throw new IllegalArgumentException("Solo i membri di staff possono creare un hackathon");
         }
-        this.hackathon = new Hackathon(info, nome);
-        roleFactory.creaERegistraRuolo(ORGANIZZATORE, utente, this.hackathon);
-        return this.hackathon;
+        Hackathon hackathon = new Hackathon(info, nome);
+        roleFactory.creaERegistraRuolo(ORGANIZZATORE, utente, hackathon);
+        return hackathon;
     }
 
-    @Value("${hackathon.scadenza.giorni}")
-    private int giorniScadenzaHackathon;
+    /** Conferma un hackathon delegando al suo stato corrente. */
+    public void confermaHackathon(Hackathon hackathon) {
+        hackathon.conferma();
+    }
 
+    /** Elimina un hackathon delegando al suo stato corrente. */
+    public void eliminaHackathon(Hackathon hackathon) {
+        hackathon.elimina();
+    }
 
-    public void setInfo(InfoHack info) {
+    /** Cambia lo stato di un hackathon. */
+    public void cambiaStato(Hackathon hackathon, Stato nuovoStato) {
+        switch (nuovoStato) {
+            case BOZZA -> hackathon.cambiaStato(new BozzaState(invitiHandler));
+            case CONFERMATO -> hackathon.cambiaStato(new ConfermatoState(hackathon));
+            case IN_CORSO -> hackathon.cambiaStato(new InCorsoState());
+            case CONCLUSO -> hackathon.cambiaStato(new ConclusoState());
+        }
+    }
+
+    public void setInfo(Hackathon hackathon, InfoHack info) {
         hackathon.setInfo(info);
     }
 
-    public void modificaRegolamento(String nuovoRegolamento) {
+    public void modificaRegolamento(Hackathon hackathon, String nuovoRegolamento) {
         hackathon.modificaRegolamento(nuovoRegolamento);
     }
 
-    public void modificaDataInizio(LocalDateTime nuovaData) {
+    public void modificaDataInizio(Hackathon hackathon, LocalDateTime nuovaData) {
         hackathon.modificaDataInizio(nuovaData);
     }
 
@@ -72,59 +89,51 @@ public class HackHandler {
         hackathon.setStaffIncompleto(staffIncompleto);
     }
 
-    public void invitaStaff(Utente utente, RuoliStaff tipoRuolo) {
+    public void invitaStaff(Hackathon hackathon, Utente utente, RuoliStaff tipoRuolo) {
         hackathon.invitaStaff(utente, tipoRuolo);
     }
 
-    public void conferma() {
-        hackathon.conferma();
-    }
-
-    public void elimina() {
-        hackathon.elimina();
-    }
-
-    public List<Sottomissione> getSottomissioniValutate() {
+    public List<Sottomissione> getSottomissioniValutate(Hackathon hackathon) {
         return hackathon.getSottomissioniValutate();
     }
 
-    public List<TeamIscritto> calcolaClassificaPreliminare() {
+    public List<TeamIscritto> calcolaClassificaPreliminare(Hackathon hackathon) {
         return hackathon.calcolaClassificaPreliminare();
     }
 
-    public List<TeamIscritto> visualizzaClassifica() {
+    public List<TeamIscritto> visualizzaClassifica(Hackathon hackathon) {
         return hackathon.getClassificaCorrente();
     }
 
-    public Sottomissione getDettagli(String sottomissioneID) {
+    public Sottomissione getDettagli(Hackathon hackathon, String sottomissioneID) {
         return hackathon.getDettagliSottomissione(sottomissioneID);
     }
 
-    public String getGiudizio(Sottomissione sottomissione) {
+    public String getGiudizio(Hackathon hackathon, Sottomissione sottomissione) {
         return hackathon.getGiudizioSottomissione(sottomissione);
     }
 
-    public void aggiornaClassifica(List<String> nuovoOrdineTeam) {
+    public void aggiornaClassifica(Hackathon hackathon, List<String> nuovoOrdineTeam) {
         hackathon.aggiornaClassifica(nuovoOrdineTeam);
     }
 
-    public void confermaClassifica() {
+    public void confermaClassifica(Hackathon hackathon) {
         hackathon.confermaClassifica();
     }
 
-    public void setTeamVincitore(TeamIscritto team) {
+    public void setTeamVincitore(Hackathon hackathon, TeamIscritto team) {
         hackathon.setTeamVincitore(team);
     }
 
-    public double getPremioInDenaro() {
+    public double getPremioInDenaro(Hackathon hackathon) {
         return hackathon.getPremioInDenaro();
     }
 
-    public void concludiHackathon() {
+    public void concludiHackathon(Hackathon hackathon) {
         hackathon.cambiaStato(new ConclusoState());
     }
 
-    public List<TeamIscritto> getTeamIscritti() {
+    public List<TeamIscritto> getTeamIscritti(Hackathon hackathon) {
         return hackathon.getTeamIscritti();
     }
 
@@ -132,12 +141,11 @@ public class HackHandler {
         return team.getElencoIscritti();
     }
 
-    public void validaPresenze() {
-        // delega a Hackathon
+    public void validaPresenze(Hackathon hackathon) {
         hackathon.validaPresenze();
     }
 
-    public void salvaPresenze() {
+    public void salvaPresenze(Hackathon hackathon) {
         hackathon.salvaPresenze();
     }
 
@@ -150,27 +158,23 @@ public class HackHandler {
         membro.setPresenza(presenza);
     }
 
+    /** Alias di impostaPresenza, mantenuto per compatibilità. */
     public void setPresente(MembroTeamIscritto membro, boolean presente) {
         membro.setPresenza(presente);
     }
 
-    public List<TeamIscritto> getTeamIscritti(long hackID) {
-        return hackathon.getTeamIscritti();
-    }
-
-    public boolean validaDati(String teamID, String tipoIntervento, String motivazione) {
-
+    public boolean validaDati(Hackathon hackathon, String teamID,
+                              String tipoIntervento, String motivazione) {
         boolean teamEsiste = hackathon.getTeamIscritti().stream()
                 .anyMatch(t -> t.getTeam().getTeamID().equals(teamID));
-
         if (!teamEsiste) return false;
         if (tipoIntervento == null || tipoIntervento.isBlank()) return false;
         if (motivazione == null || motivazione.isBlank()) return false;
-
         return true;
     }
 
-    public void applicaPenalizzazione(long teamID, String tipoIntervento, String motivazione) {
+    public void applicaPenalizzazione(Hackathon hackathon, long teamID,
+                                      String tipoIntervento, String motivazione) {
         hackathon.applicaPenalizzazione(teamID, tipoIntervento, motivazione);
     }
 
@@ -195,11 +199,10 @@ public class HackHandler {
         }
 
         // Controllo che nessun membro del team sia organizzatore o giudice dell'hackathon
-        List<MembroTeam> membroTeamRuolo = team.getMembri().stream().toList();
-        for (MembroTeam m : membroTeamRuolo) {
+        for (MembroTeam m : team.getMembri()) {
             RuoloPartecipazione ruolo = m.getUtente().getRuoloHackathon(hackathon);
             if (ruolo instanceof Organizzatore || ruolo instanceof Giudice) {
-                throw new DomainException("Il team non può iscriversi all'hackathon: almeno un membro del team risulta organizzatore o giudice dell'hackathon");
+                throw new DomainException("Il team non può iscriversi: almeno un membro è organizzatore o giudice");
             }
         }
 
@@ -210,12 +213,10 @@ public class HackHandler {
         }
 
         // Iscrivo il team
-        TeamIscritto newTeam= teamHandler.iscriviTeam(team, hackathon, amministratore);
-        if (newTeam != null) {
-            hackathon.aggiungiTeamIscritto(newTeam);
-            newTeam.setSottomissione(sottomissioneHandler.creaSottomissione(newTeam));
-        }
-        return null;
+        TeamIscritto newTeam = teamHandler.iscriviTeam(team, hackathon, amministratore);
+        hackathon.aggiungiTeamIscritto(newTeam);
+        newTeam.setSottomissione(sottomissioneHandler.creaSottomissione(newTeam));
+        return newTeam;
     }
 
     // Implementazione del CU "Iscriviti" - It2
@@ -239,45 +240,13 @@ public class HackHandler {
         }
 
         // Controllo che non sia un mentore
-        if (membTeam.getUtente().getRuoli().stream().anyMatch(r -> r.getHackathon() == hackathon && r.getTipoRuolo() == RuoliStaff.MENTORE)) {
+        if (membTeam.getUtente().getRuoli().stream()
+                .anyMatch(r -> r.getHackathon() == hackathon && r.getTipoRuolo() == RuoliStaff.MENTORE)) {
             return "I mentori non possono iscriversi come membri del team";
         }
 
-        // Delego la logica di iscrizione al service
+        // Delego la logica di iscrizione al teamHandler
         MembroTeamIscritto nuovoIscritto = teamHandler.iscriviMembroTeam(membTeam, hackathon);
-        if (nuovoIscritto != null) {
-            return "Iscrizione avvenuta con successo";
-        } else return "Iscrizione fallita";
-    }
-
-    public Hackathon getHackathonById(String id) {
-        return hackathon;
-    }
-
-    public void confermaHackathon(String id) {
-        if (hackathon == null || id == null || id.isBlank()) {
-            return;
-        }
-        hackathon.conferma();
-    }
-
-    public void eliminaHackathon(String id) {
-        if (hackathon == null || id == null || id.isBlank()) {
-            return;
-        }
-        hackathon.elimina();
-    }
-
-    public List<Hackathon> getAllHackathon() {
-        return List.of(hackathon);
-    }
-
-    public void cambiaStato(String id, Stato nuovoStato) {
-        switch (nuovoStato) {
-            case BOZZA -> hackathon.cambiaStato(new BozzaState(invitiHandler));
-            case CONFERMATO -> hackathon.cambiaStato(new ConfermatoState(hackathon));
-            case IN_CORSO -> hackathon.cambiaStato(new InCorsoState());
-            case CONCLUSO -> hackathon.cambiaStato(new ConclusoState());
-        }
+        return nuovoIscritto != null ? "Iscrizione avvenuta con successo" : "Iscrizione fallita";
     }
 }

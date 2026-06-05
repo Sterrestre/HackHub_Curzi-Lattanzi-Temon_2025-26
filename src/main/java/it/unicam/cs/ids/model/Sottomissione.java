@@ -4,24 +4,30 @@ import it.unicam.cs.ids.model.hackathon.Hackathon;
 import it.unicam.cs.ids.model.team.TeamIscritto;
 import jakarta.persistence.*;
 
-import javax.net.ssl.HandshakeCompletedEvent;
-import java.io.File;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
 /**
  * Rappresenta una sottomissione di un team a un hackathon.
- * Gestisce il file submitted, lo stato della valutazione, la data di caricamento e la relativa valutazione.
+ * Gestisce titolo, descrizione, link repository, lo stato della valutazione,
+ * la data di caricamento e la relativa valutazione.
  */
 @Entity
 public class Sottomissione {
+
     /** Identificatore univoco della sottomissione */
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private String sottomissioneID;
 
-    /** File della sottomissione */
-    private File file;
+    /** Titolo della sottomissione */
+    private String titolo;
+
+    /** Descrizione della sottomissione */
+    private String descrizione;
+
+    /** Link al repository del progetto */
+    private String linkRepository;
 
     /** Stato corrente della sottomissione */
     @Enumerated(EnumType.STRING)
@@ -44,15 +50,13 @@ public class Sottomissione {
     @JoinColumn(name = "hackathon_id")
     private Hackathon hackathon;
 
-    //costruttore per JPA
-    protected Sottomissione() {
-    }
+    // COSTRUTTORE PER JPA
+    protected Sottomissione() {}
 
     /**
      * Costruisce una nuova Sottomissione associata al team iscritto corrispondente.
      *
      * @param teamIscritto il team iscritto a cui è associata la sottomissione
-     * @throws IllegalArgumentException se sottomissioneID è null
      */
     public Sottomissione(TeamIscritto teamIscritto) {
         this.team = teamIscritto;
@@ -66,7 +70,6 @@ public class Sottomissione {
         this.team = team;
     }
 
-
     /**
      * Restituisce l'identificatore univoco della sottomissione.
      *
@@ -74,28 +77,6 @@ public class Sottomissione {
      */
     public String getSottomissioneID() {
         return sottomissioneID;
-    }
-
-    /**
-     * Restituisce il file della sottomissione.
-     *
-     * @return il file della sottomissione, o null se non impostato
-     */
-    public File getFile() {
-        return file;
-    }
-
-    /**
-     * Imposta il file della sottomissione.
-     *
-     * @param file il file della sottomissione
-     * @throws IllegalArgumentException se file è null
-     */
-    public void setFile(File file) {
-        if (file == null) {
-            throw new IllegalArgumentException("Il file della sottomissione non può essere null.");
-        }
-        this.file = file;
     }
 
     /**
@@ -119,12 +100,13 @@ public class Sottomissione {
         }
         this.statoSottomissione = statoSottomissione;
     }
+
     /**
      * Restituisce la data e l'ora del caricamento della sottomissione.
      *
      * @return la data di caricamento, o null se non impostata
      */
-    public LocalDateTime getDataCaricamento(){
+    public LocalDateTime getDataCaricamento() {
         return dataCaricamento;
     }
 
@@ -134,12 +116,13 @@ public class Sottomissione {
      * @param dataCaricamento la data di caricamento
      * @throws IllegalArgumentException se dataCaricamento è null
      */
-    public void setDataCaricamento(LocalDateTime dataCaricamento){
+    public void setDataCaricamento(LocalDateTime dataCaricamento) {
         if (dataCaricamento == null) {
             throw new IllegalArgumentException("La data di caricamento della sottomissione non può essere null.");
         }
         this.dataCaricamento = dataCaricamento;
     }
+
     /**
      * Restituisce la valutazione associata alla sottomissione.
      *
@@ -148,6 +131,7 @@ public class Sottomissione {
     public Valutazione getValutazione() {
         return valutazione;
     }
+
     public void setValutazione(Valutazione valutazione) {
         if (valutazione == null) {
             throw new IllegalArgumentException("La valutazione della sottomissione non può essere null.");
@@ -166,39 +150,24 @@ public class Sottomissione {
 
     /**
      * Confronta due sottomissioni in base al loro identificatore univoco.
-     *
-     * @param o oggetto da confrontare con questa sottomissione
-     * @return {@code true} se gli ID coincidono, altrimenti {@code false}
      */
     @Override
     public boolean equals(Object o) {
-        if(!(o instanceof Sottomissione other)) {
+        if (!(o instanceof Sottomissione other)) {
             return false;
         }
         return Objects.equals(sottomissioneID, other.sottomissioneID);
     }
 
-    /**
-     * Restituisce l'hash code coerente con l'implementazione di {@link #equals(Object)}.
-     *
-     * @return hash code calcolato a partire da {@code sottomissioneID}
-     */
     @Override
     public int hashCode() {
         return Objects.hash(sottomissioneID);
     }
 
-
-    /**
-     * Restituisce una rappresentazione testuale sintetica della sottomissione.
-     *
-     * @return stringa con ID, stato e data di caricamento
-     */
     @Override
     public String toString() {
         return "Sottomissione{id='" + sottomissioneID + "', stato=" + statoSottomissione + ", data=" + dataCaricamento + "}";
     }
-
 
     /**
      * Restituisce il giudizio della valutazione associata.
@@ -215,16 +184,26 @@ public class Sottomissione {
 
     /**
      * Restituisce l'identificatore univoco della sottomissione.
-     *
-     * @return ID della sottomissione
      */
     public String getId() {
         return sottomissioneID;
     }
 
-    public String titolo() { return file != null ? file.getName() : null; }
+    public String getTitolo() { return titolo; }
 
-    public String descrizione() { return file != null ? file.getAbsolutePath() : null; }
+    public void setTitolo(String titolo) { this.titolo = titolo; }
 
-    public Object linkRepository() { return null; }
+    public String getDescrizione() { return descrizione; }
+
+    public void setDescrizione(String descrizione) { this.descrizione = descrizione; }
+
+    public String getLinkRepository() { return linkRepository; }
+
+    public void setLinkRepository(String linkRepository) { this.linkRepository = linkRepository; }
+
+    public String titolo() { return titolo; }
+
+    public String descrizione() { return descrizione; }
+
+    public String linkRepository() { return linkRepository; }
 }

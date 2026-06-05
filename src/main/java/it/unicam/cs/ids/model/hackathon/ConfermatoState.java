@@ -65,16 +65,9 @@ public class ConfermatoState implements HackState {
     }
 
     @Override
-    public void aggiungiMentore(Hackathon hackathon, Utente utente) {
-        // TODO
-
+    public void aggiungiGiudice(Hackathon hackathon, RuoloPartecipazione giudice) {
+        throw new IllegalStateException("Non puoi aggiungere giudici in stato confermato");
     }
-
-    @Override
-    public void aggiungiGiudice(Hackathon hackathon, Utente utente) {
-        // TODO
-    }
-
 
     @Override
     public void aggiungiMentore(Hackathon hackathon, RuoloPartecipazione mentore) {

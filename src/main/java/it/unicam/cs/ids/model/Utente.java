@@ -73,7 +73,7 @@ public class Utente {
                     .orElseThrow(() -> new IllegalStateException("L'utente non ha un ruolo per questo hackathon"));
             return ruolo;
         }
-        return null;
+        throw new IllegalStateException("I membri di staff non hanno un ruolo partecipante per questo hackathon");
     }
 
     public String getNickname() {

@@ -1,5 +1,6 @@
 package it.unicam.cs.ids.model.hackathon;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.Embedded;
 
@@ -8,7 +9,7 @@ import java.time.chrono.ChronoLocalDate;
 
 @Embeddable
 public class InfoHack {
-
+    @Column(name = "info_nome")
     private String nome;
     private String regolamento;
     private LocalDateTime dataInizio;
@@ -88,7 +89,9 @@ public class InfoHack {
      * @throws IllegalArgumentException se la data è null, già passata o viola la coerenza temporale
      */
     public void setDataInizio(LocalDateTime dataInizio) {
-        int giorniScadenzaHackathon = Integer.parseInt(System.getenv("HACKATHON_SCAD_GG"));
+        int giorniScadenzaHackathon = Integer.parseInt(
+                System.getProperty("crea.hack.giorni", "14")
+        );
 
         if (dataInizio == null) {
             throw new IllegalArgumentException("La data di inizio non può essere null");

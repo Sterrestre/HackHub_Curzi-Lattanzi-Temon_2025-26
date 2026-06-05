@@ -26,7 +26,7 @@ public class MembriTeamHandler {
      * @throws IllegalArgumentException se l'utente che vuole rendere amministratore un altro membro non è amministratore o se il membro da rendere amministratore non appartiene allo stesso team dell'amministratore o se il membro da rendere amministratore è già amministratore
      * @return un messaggio di successo
      */
-    public String rendiAmministratore(MembroTeam admin, MembroTeam membroTeam) {
+    public MembroTeam rendiAmministratore(MembroTeam admin, MembroTeam membroTeam) {
         if (!admin.isAmministratore()) {
             throw new IllegalArgumentException("Solo un amministratore può rendere un altro membro amministratore.");
         }
@@ -36,10 +36,9 @@ public class MembriTeamHandler {
                 throw new IllegalArgumentException("Il membro è già amministratore");
             }
             membroTeam.setAmministratore(true);
-            // TODO invia notifica
-            // notificationService.inviaNotificaAmministratore();
+            // TODO invia notifica — da implementare quando sarà aggiunto a NotificationService
         }
-        return "Il membro del team "+membroTeam.getUtente().getNickname()+" è ora amministratore";
+        return membroTeam;
     }
 
 

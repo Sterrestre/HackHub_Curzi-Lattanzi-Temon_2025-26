@@ -1,96 +1,111 @@
 package it.unicam.cs.ids.controller;
+
 import it.unicam.cs.ids.dto.CreaHackathonRequest;
 import it.unicam.cs.ids.dto.HackathonDTO;
-import it.unicam.cs.ids.handler.HackHandler;
 import it.unicam.cs.ids.model.Utente;
-import it.unicam.cs.ids.model.hackathon.Hackathon;
 import it.unicam.cs.ids.model.hackathon.InfoHack;
 import it.unicam.cs.ids.model.hackathon.Stato;
+import it.unicam.cs.ids.service.HackathonService;
+import it.unicam.cs.ids.service.UtenteService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
 import java.util.List;
 
+/**
+ * Controller per la gestione degli hackathon.
+ * Parla con HackathonService e UtenteService per recuperare le entità.
+ */
 @RestController
 @RequestMapping("/hackathon")
 public class HackController {
 
-    // TODO rivedi questa classe e aggiungi i metodi mancanti in HackHandler.
+    private final HackathonService hackathonService;
+    private final UtenteService utenteService;
 
-    private final HackHandler hackHandler;
-
-    public HackController(HackHandler hackHandler) {
-        this.hackHandler = hackHandler;
+    public HackController(HackathonService hackathonService, UtenteService utenteService) {
+        this.hackathonService = hackathonService;
+        this.utenteService = utenteService;
     }
 
     @PostMapping("/crea")
-    public ResponseEntity<HackathonDTO> crea(@RequestBody CreaHackathonRequest req) {
+    public ResponseEntity<?> crea(@RequestBody CreaHackathonRequest req) {
+        try {
+            Utente organizzatore = utenteService.findById(req.organizzatoreId());
 
-    //    Utente organizzatore = utenteService.findById(req.organizzatoreId());ù
-        // ELIMINA QUESTO SOTTO QUANDO HAI RISOLTO QUELLO SOPRA:
-        Utente organizzatore = new Utente("fiewo", "huo", "huo", "hui", "nono", "hui", LocalDate.now());
+            InfoHack info = new InfoHack.Builder()
+                    .regolamento(req.regolamento())
+                    .dataInizio(req.dataInizio())
+                    .dataFine(req.dataFine())
+                    .scadenzaIscrizioni(req.scadenzaIscrizioni())
+                    .luogo(req.luogo())
+                    .quotaIscrizione(req.quotaIscrizione())
+                    .premio(req.premio())
+                    .numMaxTeam(req.numMaxTeam())
+                    .dimMaxTeam(req.maxPartecipantiPerTeam())
+                    .build();
 
-        InfoHack info = new InfoHack.Builder()
-                .regolamento(req.regolamento())
-                .dataInizio(req.dataInizio())
-                .dataFine(req.dataFine())
-                .scadenzaIscrizioni(req.scadenzaIscrizioni())
-                .luogo(req.luogo())
-                .quotaIscrizione(req.quotaIscrizione())
-                .premio(req.premio())
-                .numMaxTeam(req.numMaxTeam())
-                .dimMaxTeam(req.maxPartecipantiPerTeam())
-                .build();
-
-
-        Hackathon h = hackHandler.creaHackathon(
-                organizzatore,
-                req.nome(),
-                info
-        );
-
-        return ResponseEntity.ok(HackathonDTO.from(h));
+            return ResponseEntity.ok(HackathonDTO.from(
+                    hackathonService.creaHackathon(organizzatore, req.nome(), info)
+            ));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body("Errore interno: " + e.getMessage());
+        }
     }
 
-
     @GetMapping("/{id}")
-    public ResponseEntity<HackathonDTO> getHackathon(@PathVariable String id) {
-
-        Hackathon h = hackHandler.getHackathonById(id);
-        return ResponseEntity.ok(HackathonDTO.from(h));
+    public ResponseEntity<?> getHackathon(@PathVariable String id) {
+        try {
+            return ResponseEntity.ok(HackathonDTO.from(hackathonService.getHackathonByID(id)));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
     @GetMapping("/all")
     public ResponseEntity<List<HackathonDTO>> getAll() {
-
-        List<HackathonDTO> lista = hackHandler.getAllHackathon()
+        List<HackathonDTO> lista = hackathonService.getTutti()
                 .stream()
                 .map(HackathonDTO::from)
                 .toList();
-
         return ResponseEntity.ok(lista);
     }
 
     @PostMapping("/{id}/conferma")
-    public ResponseEntity<String> conferma(@PathVariable String id) {
-
-        hackHandler.confermaHackathon(id);
-        return ResponseEntity.ok("Hackathon confermato");
+    public ResponseEntity<?> conferma(@PathVariable String id) {
+        try {
+            hackathonService.aggiornaStato(id, Stato.CONFERMATO);
+            return ResponseEntity.ok("Hackathon confermato");
+        } catch (IllegalArgumentException | IllegalStateException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body("Errore interno: " + e.getMessage());
+        }
     }
 
     @PostMapping("/{id}/stato")
     public ResponseEntity<?> cambiaStato(@PathVariable String id, @RequestBody Stato nuovoStato) {
-        hackHandler.cambiaStato(id, nuovoStato);
-        return ResponseEntity.ok().build();
+        try {
+            hackathonService.aggiornaStato(id, nuovoStato);
+            return ResponseEntity.ok().build();
+        } catch (IllegalArgumentException | IllegalStateException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body("Errore interno: " + e.getMessage());
+        }
     }
-
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> elimina(@PathVariable String id) {
-
-        hackHandler.eliminaHackathon(id);
-        return ResponseEntity.ok("Hackathon eliminato");
+    public ResponseEntity<?> elimina(@PathVariable String id) {
+        try {
+            hackathonService.eliminaHackathon(id);
+            return ResponseEntity.ok("Hackathon eliminato");
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body("Errore interno: " + e.getMessage());
+        }
     }
 }
-
