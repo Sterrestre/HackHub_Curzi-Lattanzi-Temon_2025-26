@@ -2,10 +2,7 @@ package it.unicam.cs.ids.handler;
 
 import it.unicam.cs.ids.model.Sottomissione;
 import it.unicam.cs.ids.model.Utente;
-import it.unicam.cs.ids.model.hackathon.ConclusoState;
-import it.unicam.cs.ids.model.hackathon.Hackathon;
-import it.unicam.cs.ids.model.hackathon.InfoHack;
-import it.unicam.cs.ids.model.hackathon.StaffIncompleto;
+import it.unicam.cs.ids.model.hackathon.*;
 import it.unicam.cs.ids.model.staff.Mentore;
 import it.unicam.cs.ids.model.staff.RoleFactory;
 import it.unicam.cs.ids.model.staff.RuoliStaff;
@@ -13,6 +10,10 @@ import it.unicam.cs.ids.model.staff.RuoloPartecipazione;
 import it.unicam.cs.ids.model.team.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import it.unicam.cs.ids.model.hackathon.BozzaState;
+import it.unicam.cs.ids.model.hackathon.ConfermatoState;
+import it.unicam.cs.ids.model.hackathon.InCorsoState;
+import it.unicam.cs.ids.model.hackathon.Stato;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
@@ -229,5 +230,14 @@ public class HackHandler {
 
     public List<Hackathon> getAllHackathon() {
         return List.of(hackathon);
+    }
+
+    public void cambiaStato(String id, Stato nuovoStato) {
+        switch (nuovoStato) {
+            case BOZZA -> hackathon.cambiaStato(new BozzaState(invitiHandler));
+            case CONFERMATO -> hackathon.cambiaStato(new ConfermatoState(hackathon));
+            case IN_CORSO -> hackathon.cambiaStato(new InCorsoState());
+            case CONCLUSO -> hackathon.cambiaStato(new ConclusoState());
+        }
     }
 }

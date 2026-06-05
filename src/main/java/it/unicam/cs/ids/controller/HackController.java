@@ -5,6 +5,7 @@ import it.unicam.cs.ids.handler.HackHandler;
 import it.unicam.cs.ids.model.Utente;
 import it.unicam.cs.ids.model.hackathon.Hackathon;
 import it.unicam.cs.ids.model.hackathon.InfoHack;
+import it.unicam.cs.ids.model.hackathon.Stato;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

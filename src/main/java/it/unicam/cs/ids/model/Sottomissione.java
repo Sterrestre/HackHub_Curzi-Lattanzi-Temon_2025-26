@@ -2,10 +2,7 @@ package it.unicam.cs.ids.model;
 
 import it.unicam.cs.ids.model.hackathon.Hackathon;
 import it.unicam.cs.ids.model.team.TeamIscritto;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.*;
 
 import javax.net.ssl.HandshakeCompletedEvent;
 import java.io.File;
@@ -20,26 +17,43 @@ import java.util.Objects;
 public class Sottomissione {
     /** Identificatore univoco della sottomissione */
     @Id
-    private final String sottomissioneID;
+    private String sottomissioneID;
 
     /** File della sottomissione */
     private File file;
 
     /** Stato corrente della sottomissione */
+    @Enumerated(EnumType.STRING)
     private StatoSottomissione statoSottomissione = StatoSottomissione.MANCANTE;
 
     /** Valutazione associata alla sottomissione */
+    @Embedded
     private Valutazione valutazione;
 
     /** Data e ora del caricamento del file */
     private LocalDateTime dataCaricamento;
 
     /** Team associato alla sottomissione */
+    @ManyToOne
+    @JoinColumn(name = "team_id")
     private TeamIscritto team;
 
-    /** Hckathon per cui è stata effettuata la sottomissione */
+    /** Hackathon per cui è stata effettuata la sottomissione */
     @ManyToOne
+    @JoinColumn(name = "hackathon_id")
     private Hackathon hackathon;
+
+    //costruttore per JPA
+    protected Sottomissione() {
+    }
+
+    public TeamIscritto getTeam() {
+        return team;
+    }
+
+    public void setTeam(TeamIscritto team) {
+        this.team = team;
+    }
 
     /**
      * Costruisce una nuova Sottomissione con l'ID specificato.

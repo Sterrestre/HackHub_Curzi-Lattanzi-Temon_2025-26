@@ -23,8 +23,6 @@ public class InfoHack {
     // COSTRUTTORE JPA
     protected InfoHack() {}
 
-    // ── getter ──────────────────────────────────────────────────────────────
-
     public String getRegolamento() {
         return regolamento;
     }

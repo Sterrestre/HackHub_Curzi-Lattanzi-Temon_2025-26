@@ -120,7 +120,7 @@ public class BozzaState implements HackState {
         if (hackathon == null) {
             throw new IllegalArgumentException("L'hackathon non può essere null");
         }
-
+        // TODO
     }
 
     @Override
