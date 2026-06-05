@@ -9,7 +9,7 @@ import jakarta.persistence.*;
 public abstract class RuoloPartecipazione {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
     @ManyToOne(optional = false)
@@ -37,7 +37,6 @@ public abstract class RuoloPartecipazione {
     public abstract RuoliStaff getTipoRuolo();
 
     // Permessi
-    public boolean puoCreareHackathon() { return false; }
     public boolean puoValutare() { return false; }
     public boolean puoMentorare() { return false; }
     public boolean puoPenalizzare() { return false; }

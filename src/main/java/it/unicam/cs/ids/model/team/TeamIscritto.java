@@ -9,16 +9,13 @@ import it.unicam.cs.ids.model.staff.Mentore;
 import jakarta.persistence.*;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Entity
 public class TeamIscritto {
 
-    // TODO: basta GeneratedValue? o UUID...
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
     @ManyToOne
@@ -26,11 +23,16 @@ public class TeamIscritto {
 
     @ManyToOne
     private Hackathon hackathon;
+    @ManyToOne
     private Utente amministratore;
+    @OneToMany(mappedBy = "teamIscritto", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<MembroTeamIscritto> elencoIscritti = new ArrayList<>();
+    @OneToOne(cascade = CascadeType.ALL)
     private Sottomissione sottomissione;
+    @ManyToOne
     private Mentore mentoreAssegnato;
-    private Map<RichiestaSupporto, Boolean> richiesteSupporto = new HashMap<>();
+    @OneToMany(mappedBy = "teamIscritto", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<RichiestaSupporto> richiesteSupporto = new ArrayList<>();
 
     @Embedded
     @AttributeOverrides({
@@ -39,6 +41,8 @@ public class TeamIscritto {
             @AttributeOverride(name = "motivazione", column = @Column(name = "pen_motivazione"))
     })
     private Penalizzazione penalizzazione;
+
+    protected TeamIscritto() {}
 
     public TeamIscritto(Team team, Hackathon hackathon, Utente amministratore) {
         this.team = team;
@@ -95,16 +99,15 @@ public class TeamIscritto {
         this.mentoreAssegnato = mentore;
     }
 
-    public Map<RichiestaSupporto, Boolean> getRichiesteSupporto() {
+    public List<RichiestaSupporto> getRichiesteSupporto() {
         return richiesteSupporto;
     }
 
     public void aggiungiRichiestaSupporto(RichiestaSupporto richiesta) {
-        richiesteSupporto.put(richiesta, false); // false = non visualizzata
+        richiesteSupporto.add(richiesta);
     }
 
     public void segnaRichiestaVisualizzata(RichiestaSupporto richiesta) {
-        richiesteSupporto.put(richiesta, true);
         richiesta.modificaStato(true);
     }
 }

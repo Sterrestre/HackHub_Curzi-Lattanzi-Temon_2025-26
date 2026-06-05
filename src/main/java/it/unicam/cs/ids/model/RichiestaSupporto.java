@@ -4,12 +4,19 @@ import it.unicam.cs.ids.model.team.TeamIscritto;
 
 import java.util.UUID;
 
+import jakarta.persistence.*;
+
+@Entity
 public class RichiestaSupporto {
 
+    @Id
     private String richiestaSuppID;
     private String dettagli;
     private boolean visualizzata = false; // false = non visualizzata
+    @ManyToOne
     private TeamIscritto teamIscritto;
+
+    protected RichiestaSupporto() {}
 
     public RichiestaSupporto(String dettagli, TeamIscritto teamIscritto) {
         this.richiestaSuppID = UUID.randomUUID().toString();

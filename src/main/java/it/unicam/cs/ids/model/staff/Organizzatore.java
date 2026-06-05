@@ -21,11 +21,6 @@ public class Organizzatore extends RuoloPartecipazione {
         return RuoliStaff.ORGANIZZATORE;
     }
 
-    // TODO: controlla questo permesso. Da noi un utente che era precedentemente stato membro di staff in un hackathon
-    //  può creare un hackathon, e al momento della creazione diventa ORGANIZZATORE. Ha senso questo permesso?
-    @Override
-    public boolean puoCreareHackathon() { return true; }
-
     @Override
     public boolean puoGestireSottomissioni() { return true; }
 }

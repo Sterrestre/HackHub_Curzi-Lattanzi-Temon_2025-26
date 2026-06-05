@@ -28,7 +28,7 @@ public class HackHandler {
     private final TeamHandler teamHandler;
     private final InvitiHandler invitiHandler;
 
-    public  HackHandler(RoleFactory roleFactory, TeamHandler teamHandler, InvitiHandler invitiHandler) {
+    public HackHandler(RoleFactory roleFactory, TeamHandler teamHandler, InvitiHandler invitiHandler) {
         this.roleFactory = roleFactory;
         this.teamHandler = teamHandler;
         this.invitiHandler = invitiHandler;
@@ -37,9 +37,12 @@ public class HackHandler {
     private Hackathon hackathon;
 
     public Hackathon creaHackathon(Utente utente, String nome, InfoHack info) {
-        this.hackathon = new Hackathon(info,nome);
-        RuoloPartecipazione ruolo = roleFactory.creaERegistraRuolo(ORGANIZZATORE, utente, this.hackathon);
-        return null;
+        if (!utente.isMembroDiStaff()) {
+            throw new IllegalArgumentException("Solo i membri di staff possono creare un hackathon");
+        }
+        this.hackathon = new Hackathon(info, nome);
+        roleFactory.creaERegistraRuolo(ORGANIZZATORE, utente, this.hackathon);
+        return this.hackathon;
     }
 
     @Value("${hackathon.scadenza.giorni}")
@@ -65,6 +68,7 @@ public class HackHandler {
     public void aggiungiGiudice(Utente giudice, Hackathon hackathon) {
         hackathon.aggiungiGiudice(giudice);
     }
+
     public static void setStaffIncompleto(Hackathon hackathon, StaffIncompleto staffIncompleto) {
         hackathon.setStaffIncompleto(staffIncompleto);
     }
@@ -139,15 +143,8 @@ public class HackHandler {
     }
 
     public void assegnaMentore(TeamIscritto team, Mentore mentore) {
-        team.getElencoIscritti().stream()
-                .filter(m -> m.getUtente().equals(mentore))
-                .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("Mentore non trovato nel team"))
-                .getTeamIscritto()
-                .setMentoreAssegnato(mentore);
-        //..?
-
-        // TODO setMentoreAssegnato è solo qua. Finire di implementare, inserendo il team nella lista del mentore, e il mentore nel TeamIscritto
+        team.setMentoreAssegnato(mentore);
+        mentore.aggiungiTeamAssegnato(team);
     }
 
     public void impostaPresenza(MembroTeamIscritto membro, boolean presenza) {
@@ -179,7 +176,7 @@ public class HackHandler {
     }
 
     // Implementazione del CU "Iscriviti" - It2
-    public String iscriviMembroteam(MembroTeam membTeam, Hackathon hackathon){
+    public String iscriviMembroteam(MembroTeam membTeam, Hackathon hackathon) {
 
         // Controllo che la data di scadenza delle iscrizioni non sia stata superata
         LocalDateTime scad = hackathon.getInfoHack().getScadenzaIscrizioni();
@@ -190,7 +187,7 @@ public class HackHandler {
         // Controllo che il num max di iscritti per quel team non sia già stato raggiunto
         int dimMax = hackathon.getInfoHack().getDimMaxTeam();
         Team team = membTeam.getTeam();
-        int iscritti = hackathon.getTeamIscritti()                .stream()
+        int iscritti = hackathon.getTeamIscritti().stream()
                 .filter(t -> t.getTeam().equals(team))
                 .mapToInt(TeamIscritto::getNumIscritti)
                 .sum();
