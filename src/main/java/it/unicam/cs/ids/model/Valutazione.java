@@ -11,7 +11,7 @@ import java.util.Objects;
 @Embeddable
 public class Valutazione {
 
-    public int voto;
+    public Integer voto;
     public String giudizio;
 
     /**
@@ -19,12 +19,12 @@ public class Valutazione {
      */
     protected Valutazione() {}
 
-    public Valutazione(int voto, String giudizio) {
+    public Valutazione(Integer voto, String giudizio) {
         this.voto = voto;
         this.giudizio = giudizio;
     }
 
-    public int getVoto() {
+    public Integer getVoto() {
         return voto;
     }
 
@@ -32,7 +32,7 @@ public class Valutazione {
         return giudizio;
     }
 
-    public void setVoto(int voto) {
+    public void setVoto(Integer voto) {
         if (voto < 0 || voto > 10) {
             throw new IllegalArgumentException("Il voto deve essere compreso tra 0 e 10.");
         }

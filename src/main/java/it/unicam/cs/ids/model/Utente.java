@@ -26,7 +26,7 @@ public class Utente {
 
     private boolean membroDiStaff = false;
 
-    @ManyToOne(optional = true)
+    @ManyToOne(optional = true, cascade = CascadeType.MERGE)
     private Team team = null;
 
     @Embedded

@@ -8,6 +8,7 @@ import it.unicam.cs.ids.model.hackathon.Hackathon;
 import it.unicam.cs.ids.service.HackathonService;
 import it.unicam.cs.ids.service.SottomissioneService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,6 +20,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/sottomissioni")
+@Transactional
 public class SottomissioneController {
 
     private final SottomissioneService sottomissioneService;

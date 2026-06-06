@@ -12,7 +12,7 @@ public abstract class RuoloPartecipazione {
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, cascade = CascadeType.MERGE)
     protected Utente utente;
 
     @ManyToOne(optional = false)
@@ -35,6 +35,8 @@ public abstract class RuoloPartecipazione {
     }
 
     public abstract RuoliStaff getTipoRuolo();
+
+    public String getId() { return id; }
 
     // Permessi
     public boolean puoValutare() { return false; }

@@ -1,15 +1,14 @@
 package it.unicam.cs.ids.controller;
 
-import it.unicam.cs.ids.dto.ProponiCallRequest;
-import it.unicam.cs.ids.dto.RichiestaSupportoDTO;
-import it.unicam.cs.ids.dto.RispondiSupportoRequest;
-import it.unicam.cs.ids.dto.TeamAssegnatoDTO;
+import it.unicam.cs.ids.dto.*;
 import it.unicam.cs.ids.handler.SupportoHandler;
 import it.unicam.cs.ids.model.RichiestaSupporto;
 import it.unicam.cs.ids.model.hackathon.Hackathon;
+import it.unicam.cs.ids.model.team.TeamIscritto;
 import it.unicam.cs.ids.service.HackathonService;
 import it.unicam.cs.ids.service.RichiestaSupportoService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,6 +20,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/supporto")
+@Transactional
 public class SupportoController {
 
     private final SupportoHandler supportoHandler;
@@ -106,5 +106,20 @@ public class SupportoController {
                 .toList();
 
         return ResponseEntity.ok(lista);
+    }
+
+    @PostMapping("/richiedi")
+    public ResponseEntity<String> richiedi(@RequestBody CreaRichiestaSupportoRequest req) {
+        try {
+            Hackathon hack = hackathonService.getHackathonByID(req.hackathonId());
+            TeamIscritto team = hack.getTeamIscrittoById(req.teamId());
+            RichiestaSupporto richiesta = new RichiestaSupporto(req.dettagli(), team);
+            richiestaSupportoService.salva(richiesta);
+            return ResponseEntity.ok("Richiesta di supporto inviata con ID: " + richiesta.getRichiestaSuppID());
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body("Errore interno: " + e.getMessage());
+        }
     }
 }

@@ -158,7 +158,6 @@ public class HackHandler {
         membro.setPresenza(presenza);
     }
 
-    /** Alias di impostaPresenza, mantenuto per compatibilità. */
     public void setPresente(MembroTeamIscritto membro, boolean presente) {
         membro.setPresenza(presente);
     }
@@ -173,7 +172,7 @@ public class HackHandler {
         return true;
     }
 
-    public void applicaPenalizzazione(Hackathon hackathon, long teamID,
+    public void applicaPenalizzazione(Hackathon hackathon, String teamID,
                                       String tipoIntervento, String motivazione) {
         hackathon.applicaPenalizzazione(teamID, tipoIntervento, motivazione);
     }
@@ -184,6 +183,13 @@ public class HackHandler {
         // Prerequisito: controllo che il membro del team che vuole iscrivere il team sia un amministratore
         if (!amministratore.isAmministratore()) {
             throw new DomainException("Solo un amministratore del team può iscrivere il team all'hackathon");
+        }
+
+        // Controllo che il team non sia già iscritto
+        boolean giaIscritto = hackathon.getTeamIscritti().stream()
+                .anyMatch(t -> t.getTeam().getTeamID().equals(team.getTeamID()));
+        if (giaIscritto) {
+            throw new DomainException("Il team è già iscritto a questo hackathon");
         }
 
         // Controllo che la scadenza per iscriversi non sia stata raggiunta
@@ -200,8 +206,10 @@ public class HackHandler {
 
         // Controllo che nessun membro del team sia organizzatore o giudice dell'hackathon
         for (MembroTeam m : team.getMembri()) {
-            RuoloPartecipazione ruolo = m.getUtente().getRuoloHackathon(hackathon);
-            if (ruolo instanceof Organizzatore || ruolo instanceof Giudice) {
+            boolean isOrganizzatoreOGiudice = m.getUtente().getRuoli().stream()
+                    .filter(r -> r.getHackathon().equals(hackathon))
+                    .anyMatch(r -> r instanceof Organizzatore || r instanceof Giudice);
+            if (isOrganizzatoreOGiudice) {
                 throw new DomainException("Il team non può iscriversi: almeno un membro è organizzatore o giudice");
             }
         }

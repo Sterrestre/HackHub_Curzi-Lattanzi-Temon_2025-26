@@ -30,8 +30,8 @@ public class Hackathon {
     @Enumerated(EnumType.STRING)
     public Stato stato = Stato.BOZZA;                  // enum: BOZZA, CONFERMATO, CONCLUSO, IN CORSO
 
-    @OneToMany(mappedBy = "hackathon", cascade = CascadeType.ALL, orphanRemoval = true)
-    public List<RuoloPartecipazione> ruoli = new ArrayList<>(); // public per essere visibile dalla roleFactory
+    @OneToMany(mappedBy = "hackathon", cascade = {CascadeType.ALL}, orphanRemoval = true, fetch = FetchType.EAGER)
+    public List<RuoloPartecipazione> ruoli = new ArrayList<>();
 
     protected int numTeamIscritti;
 
@@ -44,7 +44,7 @@ public class Hackathon {
     @OneToMany(mappedBy = "hackathon", cascade = CascadeType.ALL)
     protected List<Sottomissione> sottomissioni = new ArrayList<>();
 
-    @OneToMany(mappedBy = "hackathon", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "hackathon", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     protected List<TeamIscritto> teamIscritti = new ArrayList<>();
 
     @Transient
@@ -282,11 +282,11 @@ public class Hackathon {
     public List<TeamIscritto> getTeamAssegnati(String mentoreID) {
         return teamIscritti.stream()
                 .filter(team -> team.getMentoreAssegnato() != null)
-                .filter(team -> Objects.equals(team.getMentoreAssegnato().getMentoreID(), mentoreID))
+                .filter(team -> Objects.equals(team.getMentoreAssegnato().getId(), mentoreID))
                 .toList();
     }
 
-    public void applicaPenalizzazione(long teamID, String tipoIntervento, String motivazione) {
+    public void applicaPenalizzazione(String teamID, String tipoIntervento, String motivazione) {
         Penalizzazione p = new Penalizzazione(teamID, tipoIntervento, motivazione);
         penalizzazioni.add(p);
     }

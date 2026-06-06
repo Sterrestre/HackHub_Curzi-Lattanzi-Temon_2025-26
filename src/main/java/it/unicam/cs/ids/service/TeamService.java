@@ -29,9 +29,11 @@ public class TeamService {
 
     public Team creaTeam(String nome, Utente amministratore) {
         Team team = new Team(nome);
-        MembroTeam creatore = team.aggiungiMembro(amministratore);
+        teamRepository.save(team); // salva il team prima
+        MembroTeam creatore = team.aggiungiMembro(amministratore); // setta utente.team = team
         team.rendiAmministratore(creatore);
-        teamRepository.save(team);
+        utenteRepository.save(amministratore); // salva l'utente aggiornato
+        teamRepository.save(team); // salva il team con il membro
         return team;
     }
 

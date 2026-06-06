@@ -9,6 +9,7 @@ import it.unicam.cs.ids.model.team.Team;
 import it.unicam.cs.ids.service.TeamService;
 import it.unicam.cs.ids.service.UtenteService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,6 +20,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/membri")
+@Transactional
 public class MembriTeamController {
 
     private final MembriTeamHandler membriTeamHandler;

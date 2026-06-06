@@ -3,6 +3,8 @@ package it.unicam.cs.ids.service;
 import it.unicam.cs.ids.model.Utente;
 import it.unicam.cs.ids.model.team.Team;
 import it.unicam.cs.ids.repository.UtenteRepository;
+import it.unicam.cs.ids.dto.RegistraUtenteRequest;
+import java.util.UUID;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -40,5 +42,23 @@ public class UtenteService {
         Utente u = findById(utenteId);
         u.setTeam(team);
         utenteRepository.save(u);
+    }
+
+    public Utente registra(RegistraUtenteRequest req) {
+        Utente utente = new Utente(
+                UUID.randomUUID().toString(),
+                req.nome(),
+                req.cognome(),
+                req.email(),
+                req.nickname(),
+                req.biografia(),
+                req.dataDiNascita()
+        );
+        utente.setMembroDiStaff(req.membroDiStaff());
+        return utenteRepository.save(utente);
+    }
+
+    public List<Utente> findAll() {
+        return utenteRepository.findAll();
     }
 }
