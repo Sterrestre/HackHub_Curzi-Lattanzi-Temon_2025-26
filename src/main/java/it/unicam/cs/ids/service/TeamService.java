@@ -1,6 +1,5 @@
 package it.unicam.cs.ids.service;
 
-import it.unicam.cs.ids.handler.TeamHandler;
 import it.unicam.cs.ids.model.Utente;
 import it.unicam.cs.ids.model.team.MembroTeam;
 import it.unicam.cs.ids.model.team.Team;
@@ -10,32 +9,33 @@ import it.unicam.cs.ids.repository.TeamRepository;
 import it.unicam.cs.ids.repository.UtenteRepository;
 import org.springframework.stereotype.Service;
 
-/**
- * Service per la gestione dei team e dei loro membri.
- * Si occupa di recuperare le entità dal repository e delegare
- * la logica di dominio agli handler.
- */
 @Service
 public class TeamService {
 
     private final TeamRepository teamRepository;
     private final UtenteRepository utenteRepository;
     private final HackathonRepository hackathonRepository;
-    private final TeamHandler teamHandler;
 
-    public TeamService(TeamRepository teamRepository, UtenteRepository utenteRepository, HackathonRepository hackathonRepository, TeamHandler teamHandler) {
+    public TeamService(TeamRepository teamRepository, UtenteRepository utenteRepository,
+                       HackathonRepository hackathonRepository) {
         this.teamRepository = teamRepository;
         this.utenteRepository = utenteRepository;
         this.hackathonRepository = hackathonRepository;
-        this.teamHandler = teamHandler;
     }
 
     public Team creaTeam(String nome, Utente amministratore) {
-        Team team = teamHandler.creaTeam(nome); // valida i dati e lancia eccezioni se non validi
-        teamRepository.save(team); // salva il team prima
-        teamHandler.aggiungiMembroTeam(team, amministratore, true); // aggiunge l'amministratore come membro del team
-        utenteRepository.save(amministratore); // salva l'utente aggiornato
-        teamRepository.save(team); // salva il team con il membro
+        if (nome == null || nome.isBlank()) {
+            throw new IllegalArgumentException("Nome team obbligatorio");
+        }
+        if (amministratore.getTeam() != null) {
+            throw new IllegalStateException("L'utente è già membro di un team");
+        }
+        Team team = new Team(nome);
+        teamRepository.save(team);
+        MembroTeam nuovoMembro = team.aggiungiMembro(amministratore);
+        team.rendiAmministratore(nuovoMembro);
+        utenteRepository.save(amministratore);
+        teamRepository.save(team);
         return team;
     }
 
@@ -58,7 +58,13 @@ public class TeamService {
     }
 
     public MembroTeam aggiungiMembro(Team team, Utente utente, boolean amministratore) {
-        MembroTeam nuovoMembro = teamHandler.aggiungiMembroTeam(team, utente, amministratore);
+        if (utente.getTeam() != null) {
+            throw new IllegalStateException("L'utente è già membro di un team");
+        }
+        MembroTeam nuovoMembro = team.aggiungiMembro(utente);
+        if (amministratore) {
+            team.rendiAmministratore(nuovoMembro);
+        }
         teamRepository.save(team);
         return nuovoMembro;
     }
