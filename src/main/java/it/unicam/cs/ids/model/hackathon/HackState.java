@@ -12,6 +12,7 @@ import java.time.LocalDateTime;
  * L'interfaccia implementa il pattern State.
  */
 
+// Pattern: State
 public interface HackState {
 
     void setInfoHack(Hackathon hackathon, InfoHack info);

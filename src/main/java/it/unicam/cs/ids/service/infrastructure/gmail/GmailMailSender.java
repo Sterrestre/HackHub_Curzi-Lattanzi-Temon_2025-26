@@ -8,6 +8,7 @@ import it.unicam.cs.ids.service.MailSender;
  * È l'adapter che collega il dominio al servizio esterno.
  */
 
+// Pattern: Adapter
 public class GmailMailSender implements MailSender {
 
     private final Gmail gmail;

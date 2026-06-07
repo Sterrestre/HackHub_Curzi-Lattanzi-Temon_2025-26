@@ -53,6 +53,18 @@ public class InvitiController {
             Hackathon hack = hackService.getHackathonByID(req.hackathonId());
             Utente utente = utenteService.findById(req.utenteId());
             Utente organizzatore = utenteService.findById(req.organizzatoreId());
+
+            if (!hack.getOrganizzatore().getUtenteID().equals(organizzatore.getUtenteID())) {
+                return ResponseEntity.status(403).body("Solo l'organizzatore può invitare staff");
+            }
+
+            // Controllo che l'utente non sia già membro dello staff
+            boolean giaStaff = hack.getRuoli().stream()
+                    .anyMatch(r -> r.getUtente().getUtenteID().equals(utente.getUtenteID()));
+            if (giaStaff) {
+                return ResponseEntity.badRequest().body("Questo utente è già membro dello staff di questo hackathon");
+            }
+
             invitiHandler.creaInvitoStaff(organizzatore, utente, hack, req.ruolo());
             return ResponseEntity.ok("Invito staff inviato");
         } catch (IllegalArgumentException | IllegalStateException e) {

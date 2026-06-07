@@ -6,6 +6,7 @@ import it.unicam.cs.ids.model.Utente;
 
 import java.time.LocalDateTime;
 
+// Pattern: State
 public class ConfermatoState implements HackState {
 
     public ConfermatoState(Hackathon hackathon) {

@@ -6,6 +6,7 @@ import it.unicam.cs.ids.model.staff.RuoloPartecipazione;
 
 import java.time.LocalDateTime;
 
+// Pattern: State
 public class InCorsoState implements HackState {
 
     @Override

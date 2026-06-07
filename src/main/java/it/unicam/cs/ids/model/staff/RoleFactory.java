@@ -7,6 +7,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Component;
 
 @Component
+// Pattern: Factory Method
 public class RoleFactory {
 
     public RuoloPartecipazione creaERegistraRuolo(RuoliStaff ruoloStaff, Utente utente, Hackathon hackathon) {

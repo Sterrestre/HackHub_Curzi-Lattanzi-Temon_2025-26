@@ -16,5 +16,7 @@ public interface TeamRepository extends JpaRepository<Team, String> {
      * ignorando maiuscole/minuscole.
      */
     List<Team> findByNomeContainingIgnoreCase(String nome);
+
+    boolean existsByNomeIgnoreCase(String nome);
 }
 

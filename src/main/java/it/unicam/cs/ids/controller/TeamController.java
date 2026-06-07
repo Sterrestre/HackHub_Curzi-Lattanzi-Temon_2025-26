@@ -40,7 +40,7 @@ public class TeamController {
     public ResponseEntity<?> creaTeam(@RequestBody CreaTeamRequest request) {
         try {
             Utente admin = utenteService.findById(request.amministratoreId());
-            Team team = teamHandler.creaTeam(request.nome());
+            Team team = teamService.creaTeam(request.nome(), admin);
             return ResponseEntity.ok(TeamDTO.from(team));
         } catch (IllegalArgumentException | IllegalStateException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
@@ -54,7 +54,7 @@ public class TeamController {
         try {
             Team team = teamService.findTeamById(request.teamId());
             Utente utente = utenteService.findById(request.utenteId());
-            MembroTeam membro = teamHandler.aggiungiMembroTeam(team, utente, request.amministratore());
+            MembroTeam membro = teamService.aggiungiMembro(team, utente, request.amministratore());
             return ResponseEntity.ok(MembroTeamDTO.from(membro));
         } catch (IllegalArgumentException | IllegalStateException e) {
             return ResponseEntity.badRequest().body(e.getMessage());

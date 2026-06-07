@@ -113,6 +113,14 @@ public class SupportoController {
         try {
             Hackathon hack = hackathonService.getHackathonByID(req.hackathonId());
             TeamIscritto team = hack.getTeamIscrittoById(req.teamId());
+
+            // Controllo duplicati: non può esistere già una richiesta aperta
+            boolean esisteRichiesta = team.getRichiesteSupporto().stream()
+                    .anyMatch(r -> !r.isVisualizzata());
+            if (esisteRichiesta) {
+                return ResponseEntity.badRequest().body("Esiste già una richiesta di supporto aperta per questo team");
+            }
+
             RichiestaSupporto richiesta = new RichiestaSupporto(req.dettagli(), team);
             richiestaSupportoService.salva(richiesta);
             return ResponseEntity.ok("Richiesta di supporto inviata con ID: " + richiesta.getRichiestaSuppID());

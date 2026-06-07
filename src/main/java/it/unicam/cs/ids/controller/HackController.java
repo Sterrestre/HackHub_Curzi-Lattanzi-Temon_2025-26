@@ -13,6 +13,7 @@ import it.unicam.cs.ids.model.team.MembroTeam;
 import it.unicam.cs.ids.model.team.Team;
 import it.unicam.cs.ids.model.team.TeamIscritto;
 import it.unicam.cs.ids.service.TeamService;
+import it.unicam.cs.ids.model.hackathon.InfoHackBuilderImpl;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
@@ -45,7 +46,7 @@ public class HackController {
         try {
             Utente organizzatore = utenteService.findById(req.organizzatoreId());
 
-            InfoHack info = new InfoHack.Builder()
+            InfoHack info = new InfoHackBuilderImpl()
                     .regolamento(req.regolamento())
                     .dataInizio(req.dataInizio())
                     .dataFine(req.dataFine())
@@ -110,8 +111,13 @@ public class HackController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> elimina(@PathVariable String id) {
+    public ResponseEntity<?> elimina(@PathVariable String id,
+                                     @RequestParam String organizzatoreId) {
         try {
+            Hackathon hack = hackathonService.getHackathonByID(id);
+            if (!hack.getOrganizzatore().getUtenteID().equals(organizzatoreId)) {
+                return ResponseEntity.status(403).body("Solo l'organizzatore può eliminare questo hackathon");
+            }
             hackathonService.eliminaHackathon(id);
             return ResponseEntity.ok("Hackathon eliminato");
         } catch (IllegalArgumentException e) {
@@ -194,9 +200,13 @@ public class HackController {
     }
 
     @PostMapping("/{id}/conferma-classifica")
-    public ResponseEntity<?> confermaClassifica(@PathVariable String id) {
+    public ResponseEntity<?> confermaClassifica(@PathVariable String id,
+                                                @RequestParam String organizzatoreId) {
         try {
             Hackathon hack = hackathonService.getHackathonByID(id);
+            if (!hack.getOrganizzatore().getUtenteID().equals(organizzatoreId)) {
+                return ResponseEntity.status(403).body("Solo l'organizzatore può confermare la classifica");
+            }
             hackHandler.confermaClassifica(hack);
             hackathonService.salva(hack);
             return ResponseEntity.ok("Classifica confermata");
@@ -209,9 +219,13 @@ public class HackController {
 
     @PostMapping("/{id}/vincitore")
     public ResponseEntity<?> setVincitore(@PathVariable String id,
-                                          @RequestBody SetVincitoreRequest req) {
+                                          @RequestBody SetVincitoreRequest req,
+                                          @RequestParam String organizzatoreId) {
         try {
             Hackathon hack = hackathonService.getHackathonByID(id);
+            if (!hack.getOrganizzatore().getUtenteID().equals(organizzatoreId)) {
+                return ResponseEntity.status(403).body("Solo l'organizzatore può impostare il vincitore");
+            }
             TeamIscritto team = hack.getTeamIscrittoById(req.teamId());
             hackHandler.setTeamVincitore(hack, team);
             hackathonService.salva(hack);
@@ -225,13 +239,19 @@ public class HackController {
 
     @PostMapping("/{id}/penalizzazione")
     public ResponseEntity<?> applicaPenalizzazione(@PathVariable String id,
-                                                   @RequestBody ApplicaPenalizzazioneRequest req) {
+                                                   @RequestBody ApplicaPenalizzazioneRequest req,
+                                                   @RequestParam String utenteId) {
         try {
             Hackathon hack = hackathonService.getHackathonByID(id);
+            Utente utente = utenteService.findById(utenteId);
+            if (!utente.puoPenalizzare(hack)) {
+                return ResponseEntity.status(403).body("Non hai i permessi per applicare una penalizzazione");
+            }
             if (!hackHandler.validaDati(hack, req.teamId(), req.tipoIntervento(), req.motivazione())) {
                 return ResponseEntity.badRequest().body("Dati non validi per la penalizzazione");
             }
-            hackHandler.applicaPenalizzazione(hack, req.teamId(), req.tipoIntervento(), req.motivazione());            hackathonService.salva(hack);
+            hackHandler.applicaPenalizzazione(hack, req.teamId(), req.tipoIntervento(), req.motivazione());
+            hackathonService.salva(hack);
             return ResponseEntity.ok("Penalizzazione applicata");
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(e.getMessage());

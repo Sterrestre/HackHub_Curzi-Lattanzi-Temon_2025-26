@@ -7,6 +7,7 @@ import it.unicam.cs.ids.model.Utente;
 
 import java.time.LocalDateTime;
 
+// Pattern: State
 public class BozzaState implements HackState {
 
     protected final InvitiHandler invitiHandler;

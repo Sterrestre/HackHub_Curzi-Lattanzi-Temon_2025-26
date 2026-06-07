@@ -45,6 +45,14 @@ public class UtenteService {
     }
 
     public Utente registra(RegistraUtenteRequest req) {
+
+        if (utenteRepository.existsByNicknameIgnoreCase(req.nickname())) {
+            throw new IllegalArgumentException("Esiste già un utente con questo nickname");
+        }
+        if (utenteRepository.existsByUtenteEmailIgnoreCase(req.email())) {
+            throw new IllegalArgumentException("Esiste già un utente con questa email");
+        }
+
         Utente utente = new Utente(
                 UUID.randomUUID().toString(),
                 req.nome(),

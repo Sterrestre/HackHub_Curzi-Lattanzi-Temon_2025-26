@@ -27,6 +27,9 @@ public class TeamService {
         if (nome == null || nome.isBlank()) {
             throw new IllegalArgumentException("Nome team obbligatorio");
         }
+        if (teamRepository.existsByNomeIgnoreCase(nome)) {
+            throw new IllegalArgumentException("Esiste già un team con questo nome");
+        }
         if (amministratore.getTeam() != null) {
             throw new IllegalStateException("L'utente è già membro di un team");
         }

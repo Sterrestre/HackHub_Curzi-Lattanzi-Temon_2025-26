@@ -2,6 +2,7 @@ package it.unicam.cs.ids.model.hackathon;
 
 import java.time.LocalDateTime;
 
+// Pattern: Builder
 public interface InfoHackBuilder {
 
     InfoHackBuilder regolamento(String regolamento);

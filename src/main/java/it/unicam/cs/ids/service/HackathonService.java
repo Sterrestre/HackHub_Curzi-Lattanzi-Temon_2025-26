@@ -32,6 +32,12 @@ public class HackathonService {
      * Crea un nuovo hackathon, delega la logica all'handler e salva.
      */
     public Hackathon creaHackathon(Utente organizzatore, String nome, InfoHack info) {
+        boolean duplicato = hackathonRepository.findAll().stream()
+                .anyMatch(h -> h.getNome().equalsIgnoreCase(nome) &&
+                        h.getOrganizzatore().getUtenteID().equals(organizzatore.getUtenteID()));
+        if (duplicato) {
+            throw new IllegalArgumentException("Hai già creato un hackathon con questo nome");
+        }
         Hackathon h = hackHandler.creaHackathon(organizzatore, nome, info);
         h.cambiaStato(new BozzaState(invitiHandler));
         hackathonRepository.save(h);

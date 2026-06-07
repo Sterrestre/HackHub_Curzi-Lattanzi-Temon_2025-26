@@ -2,6 +2,7 @@ package it.unicam.cs.ids.service.infrastructure.gmail;
 
 import it.unicam.cs.ids.service.MailSender;
 
+// Pattern: Adapter (Mock)
 public class MockMailSender implements MailSender {
 
     @Override

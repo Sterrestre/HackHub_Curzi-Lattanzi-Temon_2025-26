@@ -18,8 +18,6 @@ public interface UtenteRepository extends JpaRepository<Utente, String> {
     // Esempi di query utili (opzionali)
     Optional<Utente> findByUtenteEmail(String email);
 
-    boolean existsByUtenteEmail(String email);
-
     List<Utente> findByNicknameContainingIgnoreCase(String nickname);
 
     List<Utente> findByUtenteNomeContainingIgnoreCase(String nome);
@@ -28,5 +26,8 @@ public interface UtenteRepository extends JpaRepository<Utente, String> {
 
     List<Utente> findByUtenteNomeContainingIgnoreCaseOrUtenteCognomeContainingIgnoreCase(
             String nome, String cognome);
+
+    boolean existsByUtenteEmailIgnoreCase(String email);
+    boolean existsByNicknameIgnoreCase(String nickname);
 }
 
