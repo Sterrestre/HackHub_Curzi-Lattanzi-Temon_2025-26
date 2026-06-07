@@ -31,7 +31,6 @@ import static it.unicam.cs.ids.model.hackathon.Stato.BOZZA;
 @Service
 public class InvitiHandler {
 
-    private final InvitoService invitoService;
     private final InvitoRepository invitoRepository;
     private final NotificationService notificationService;
     private final RoleFactory roleFactory;
@@ -40,9 +39,8 @@ public class InvitiHandler {
     @Value("${invito.scadenza.giorni}")
     private int giorniScadenzaInvito;
 
-    public InvitiHandler(InvitoService invitoService, InvitoRepository invitoRepository,
+    public InvitiHandler(InvitoRepository invitoRepository,
                          NotificationService notificationService, RoleFactory roleFactory) {
-        this.invitoService = invitoService;
         this.invitoRepository = invitoRepository;
         this.notificationService = notificationService;
         this.roleFactory = roleFactory;
@@ -55,7 +53,6 @@ public class InvitiHandler {
                                 Hackathon hackathon, RuoliStaff ruolo) {
         LocalDateTime scadenza = LocalDateTime.now().plusDays(giorniScadenzaInvito);
         InvitoHackathon invito = new InvitoHackathon(organizzatore, destinatario, hackathon, ruolo, scadenza);
-        invitoService.salva(invito);
         notificationService.inviaInvito(invito);
     }
 
@@ -64,7 +61,6 @@ public class InvitiHandler {
      */
     public void creaInvitoTeam(MembroTeam mittente, Utente destinatario, Team team) {
         InvitoTeam invito = new InvitoTeam(mittente, destinatario, team);
-        invitoService.salva(invito);
         notificationService.inviaInvito(invito);
     }
 
@@ -78,13 +74,13 @@ public class InvitiHandler {
             case InvitoTeam team -> gestisciRispostaTeam(team, accetta);
             default -> throw new IllegalStateException("Tipo di invito non riconosciuto: " + invito);
         }
-        invitoService.elimina(invito);
     }
 
     /**
      * Gestisce la risposta a un invito team.
      * Se accettato, aggiunge il destinatario al team (solo se non appartiene già a un team).
      */
+    // TODO Controlla il sequence
     private void gestisciRispostaTeam(InvitoTeam invito, boolean accetta) {
         if (accetta) {
             if (invito.getDestinatario().getTeam() != null) {
@@ -190,7 +186,6 @@ public class InvitiHandler {
             }
 
             invitiScaduti.forEach(notificationService::inviaNotificaInvitoScaduto);
-            invitiScaduti.forEach(invitoService::elimina);
         }
     }
 

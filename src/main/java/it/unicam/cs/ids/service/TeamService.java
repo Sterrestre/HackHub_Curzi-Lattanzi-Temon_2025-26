@@ -1,5 +1,6 @@
 package it.unicam.cs.ids.service;
 
+import it.unicam.cs.ids.handler.TeamHandler;
 import it.unicam.cs.ids.model.Utente;
 import it.unicam.cs.ids.model.team.MembroTeam;
 import it.unicam.cs.ids.model.team.Team;
@@ -20,18 +21,19 @@ public class TeamService {
     private final TeamRepository teamRepository;
     private final UtenteRepository utenteRepository;
     private final HackathonRepository hackathonRepository;
+    private final TeamHandler teamHandler;
 
-    public TeamService(TeamRepository teamRepository, UtenteRepository utenteRepository, HackathonRepository hackathonRepository) {
+    public TeamService(TeamRepository teamRepository, UtenteRepository utenteRepository, HackathonRepository hackathonRepository, TeamHandler teamHandler) {
         this.teamRepository = teamRepository;
         this.utenteRepository = utenteRepository;
         this.hackathonRepository = hackathonRepository;
+        this.teamHandler = teamHandler;
     }
 
     public Team creaTeam(String nome, Utente amministratore) {
-        Team team = new Team(nome);
+        Team team = teamHandler.creaTeam(nome); // valida i dati e lancia eccezioni se non validi
         teamRepository.save(team); // salva il team prima
-        MembroTeam creatore = team.aggiungiMembro(amministratore); // setta utente.team = team
-        team.rendiAmministratore(creatore);
+        teamHandler.aggiungiMembroTeam(team, amministratore, true); // aggiunge l'amministratore come membro del team
         utenteRepository.save(amministratore); // salva l'utente aggiornato
         teamRepository.save(team); // salva il team con il membro
         return team;
@@ -56,10 +58,7 @@ public class TeamService {
     }
 
     public MembroTeam aggiungiMembro(Team team, Utente utente, boolean amministratore) {
-        MembroTeam nuovoMembro = team.aggiungiMembro(utente);
-        if (amministratore) {
-            team.rendiAmministratore(nuovoMembro);
-        }
+        MembroTeam nuovoMembro = teamHandler.aggiungiMembroTeam(team, utente, amministratore);
         teamRepository.save(team);
         return nuovoMembro;
     }

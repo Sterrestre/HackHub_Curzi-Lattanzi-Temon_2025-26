@@ -40,7 +40,7 @@ public class TeamController {
     public ResponseEntity<?> creaTeam(@RequestBody CreaTeamRequest request) {
         try {
             Utente admin = utenteService.findById(request.amministratoreId());
-            Team team = teamHandler.creaTeam(request.nome(), admin);
+            Team team = teamHandler.creaTeam(request.nome());
             return ResponseEntity.ok(TeamDTO.from(team));
         } catch (IllegalArgumentException | IllegalStateException e) {
             return ResponseEntity.badRequest().body(e.getMessage());

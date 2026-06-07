@@ -7,6 +7,7 @@ import it.unicam.cs.ids.model.inviti.Invito;
 import it.unicam.cs.ids.model.inviti.InvitoHackathon;
 import it.unicam.cs.ids.model.inviti.InvitoTeam;
 import it.unicam.cs.ids.model.staff.RuoliStaff;
+import it.unicam.cs.ids.model.team.MembroTeam;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -166,5 +167,16 @@ public class MailCreator {
         return "Buongiorno " + hack.getOrganizzatore() + ",\n\n" +
                 "l'hackathon da te creato \"" + hack.getNome() + "\" è appena stato confermato, ed è dunque visibile a tutti gli utenti," +
                 "che possono iniziare ad iscriversi.\n\n";
+    }
+
+
+// MEMBRO TEAM RESO AMMINISTRATORE
+    public static String creaOggettoAmministratore(MembroTeam membroTeam) {
+        return "Sei diventato amministratore del team " + membroTeam.getTeam();
+    }
+
+    public static String creaCorpoAmministratore(MembroTeam membroTeam) {
+        return "Congratulazioni " + membroTeam.getUtente().getUtenteNome() + "!\n\n" +
+                "sei appena diventato amministratore del team " + membroTeam.getTeam() + ".";
     }
 }

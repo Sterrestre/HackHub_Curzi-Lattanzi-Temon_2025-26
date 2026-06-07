@@ -5,6 +5,7 @@ import it.unicam.cs.ids.model.hackathon.Hackathon;
 import it.unicam.cs.ids.model.inviti.Invito;
 import it.unicam.cs.ids.model.inviti.InvitoHackathon;
 import it.unicam.cs.ids.model.staff.RuoliStaff;
+import it.unicam.cs.ids.model.team.MembroTeam;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,15 +17,18 @@ import java.util.List;
 public class NotificationService {
 
     private final MailSender mailSender;
+    private final InvitoService invitoService;
 
-    public NotificationService(MailSender mailSender) {
+    public NotificationService(MailSender mailSender, InvitoService invitoService) {
         this.mailSender = mailSender;
+        this.invitoService = invitoService;
     }
 
     public void inviaInvito(Invito invito) {
         String oggetto = MailCreator.creaOggettoInvito(invito);
         String corpo = MailCreator.creaCorpoInvito(invito);
         mailSender.inviaEmail(invito.getDestinatario().getUtenteEmail(), oggetto, corpo);
+        invitoService.salva(invito);
     }
 
 
@@ -32,6 +36,7 @@ public class NotificationService {
         String oggetto = MailCreator.creaOggettoInvitoAccettato(invito);
         String corpo = MailCreator.creaCorpoInvitoAccettato(invito);
         mailSender.inviaEmail(invito.getDestinatario().getUtenteEmail(), oggetto, corpo);
+        invitoService.elimina(invito);
     }
 
 
@@ -39,6 +44,7 @@ public class NotificationService {
         String oggetto = MailCreator.creaOggettoInvitoRifiutato(invito);
         String corpo = MailCreator.creaCorpoInvitoRifiutato(invito);
         mailSender.inviaEmail(invito.getDestinatario().getUtenteEmail(), oggetto, corpo);
+        invitoService.elimina(invito);
     }
 
 
@@ -60,6 +66,7 @@ public class NotificationService {
         String corpo = MailCreator.creaMessaggioInvitoScaduto(invito);
 
         mailSender.inviaEmail(invito.getDestinatario().getUtenteEmail(), oggetto, corpo);
+        invitoService.elimina(invito);
     }
 
     public void inviaNotificaHackathonConfermato(Hackathon hackathon) {
@@ -67,5 +74,12 @@ public class NotificationService {
         String corpo = MailCreator.creaCorpoHackathonConfermato(hackathon);
 
         mailSender.inviaEmail(hackathon.getOrganizzatore().getUtenteEmail(), oggetto, corpo);
+    }
+
+    public void inviaNotificaAmministratore(MembroTeam membroTeam) {
+        String oggetto = MailCreator.creaOggettoAmministratore(membroTeam);
+        String corpo = MailCreator.creaCorpoAmministratore(membroTeam);
+
+        mailSender.inviaEmail(membroTeam.getUtente().getUtenteEmail(), oggetto, corpo);
     }
 }

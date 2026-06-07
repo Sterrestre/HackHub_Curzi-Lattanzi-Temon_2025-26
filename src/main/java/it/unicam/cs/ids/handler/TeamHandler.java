@@ -16,13 +16,11 @@ import org.springframework.stereotype.Service;
 @Service
 public class TeamHandler {
 
-    private final TeamService teamService;
     private final NotificationService notificationService;
     private final InvitiHandler invitiHandler;
     private final MembriTeamHandler membriTeamHandler;
 
-    public TeamHandler(TeamService teamService, NotificationService notificationService, InvitiHandler invitiHandler, MembriTeamHandler membriTeamHandler) {
-        this.teamService = teamService;
+    public TeamHandler(NotificationService notificationService, InvitiHandler invitiHandler, MembriTeamHandler membriTeamHandler) {
         this.notificationService = notificationService;
         this.invitiHandler = invitiHandler;
         this.membriTeamHandler = membriTeamHandler;
@@ -33,25 +31,19 @@ public class TeamHandler {
      * L'utente amministratore diventa automaticamente membro del team.
      *
      * @param nome           il nome del team
-     * @param amministratore l'utente che crea il team; non deve appartenere a nessun altro team
      * @return il nuovo team
      * @throws IllegalStateException    se l'utente è già membro di un team
      * @throws IllegalArgumentException se il nome è null o vuoto
      */
-    public Team creaTeam(String nome, Utente amministratore) {
-        if (amministratore.getTeam() != null) {
-            throw new IllegalStateException("L'utente è già membro di un team");
-        };
+    public Team creaTeam(String nome) {
         if (nome == null || nome.isBlank()) {
             throw new IllegalArgumentException("Nome team obbligatorio");
         }
-
-        return teamService.creaTeam(nome, amministratore);
+        return new Team(nome);
     }
 
     /**
      * Aggiunge un membro al team.
-     * La parte relativa alla gestione del membro è delegata a TeamService.
      *
      * @param team           il team a cui aggiungere il membro
      * @param utente         l'utente da aggiungere
@@ -59,9 +51,14 @@ public class TeamHandler {
      * @return il nuovo MembroTeam creato
      */
     public MembroTeam aggiungiMembroTeam(Team team, Utente utente, boolean amministratore) {
-        return teamService.aggiungiMembro(team, utente, amministratore);
-        // TODO futuro: notificationService.inviaNotificaAggiuntaMembro(utente, team)
-        // quando il metodo sarà aggiunto a NotificationService
+        if (utente.getTeam() != null) {
+            throw new IllegalStateException("L'utente è già membro di un team");
+        };
+        MembroTeam nuovoMembro = team.aggiungiMembro(utente);
+        if (amministratore) {
+            team.rendiAmministratore(nuovoMembro);
+        }
+        return nuovoMembro;
     }
 
 

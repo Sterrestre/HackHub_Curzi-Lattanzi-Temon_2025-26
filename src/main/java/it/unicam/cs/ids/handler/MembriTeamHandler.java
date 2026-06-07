@@ -6,6 +6,7 @@ import it.unicam.cs.ids.model.team.MembroTeam;
 import it.unicam.cs.ids.model.team.MembroTeamIscritto;
 import it.unicam.cs.ids.model.team.Team;
 import it.unicam.cs.ids.model.team.TeamIscritto;
+import it.unicam.cs.ids.service.NotificationService;
 import it.unicam.cs.ids.service.TeamService;
 import org.springframework.stereotype.Service;
 
@@ -13,9 +14,11 @@ import org.springframework.stereotype.Service;
 public class MembriTeamHandler {
 
     private final TeamService teamService;
+    private final NotificationService notificationService;
 
-    public MembriTeamHandler (TeamService teamService) {
+    public MembriTeamHandler (TeamService teamService, NotificationService notificationService) {
         this.teamService = teamService;
+        this.notificationService = notificationService;
     }
 
 
@@ -26,19 +29,24 @@ public class MembriTeamHandler {
      * @throws IllegalArgumentException se l'utente che vuole rendere amministratore un altro membro non è amministratore o se il membro da rendere amministratore non appartiene allo stesso team dell'amministratore o se il membro da rendere amministratore è già amministratore
      * @return un messaggio di successo
      */
+    // Implementazione CU "Rendi amministratore" - it 3
     public MembroTeam rendiAmministratore(MembroTeam admin, MembroTeam membroTeam) {
+        // Controllo del prerequisitoo: solo un amministratore può rendere un altro membro amministratore
         if (!admin.isAmministratore()) {
             throw new IllegalArgumentException("Solo un amministratore può rendere un altro membro amministratore.");
         }
 
         if (membroTeam.getTeam() == admin.getTeam()) {
             if (membroTeam.isAmministratore()) {
-                throw new IllegalArgumentException("Il membro è già amministratore");
+                throw new IllegalArgumentException(membroTeam.getUtente().getNickname() + " è già amministratore del team.");
+            } else {
+                membroTeam.setAmministratore(true);
+                notificationService.inviaNotificaAmministratore(membroTeam);
+                return membroTeam;
             }
-            membroTeam.setAmministratore(true);
-            // TODO invia notifica — da implementare quando sarà aggiunto a NotificationService
+        } else {
+            throw new IllegalArgumentException("Il membro da rendere amministratore deve appartenere allo stesso team dell'amministratore.");
         }
-        return membroTeam;
     }
 
 

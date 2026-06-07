@@ -24,5 +24,5 @@ public class MailSenderConfig {
     }
 }
 
-// TODO : risolvi la questione mail e sblocca l'adapter
+// TODO futuro: risolvi la questione mail e sblocca l'adapter
 
