@@ -4,6 +4,8 @@ import it.unicam.cs.ids.model.inviti.Invito;
 import it.unicam.cs.ids.repository.InvitoRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class InvitoService {
 
@@ -24,6 +26,10 @@ public class InvitoService {
     public Invito findById(String id) {
         return invitoRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Invito non trovato"));
+    }
+
+    public List<Invito> findAll() {
+        return invitoRepository.findAll();
     }
 }
 

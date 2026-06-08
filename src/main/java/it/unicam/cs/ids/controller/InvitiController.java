@@ -7,6 +7,7 @@ import it.unicam.cs.ids.handler.InvitiHandler;
 import it.unicam.cs.ids.model.Utente;
 import it.unicam.cs.ids.model.hackathon.Hackathon;
 import it.unicam.cs.ids.model.inviti.Invito;
+import it.unicam.cs.ids.model.inviti.InvitoTeam;
 import it.unicam.cs.ids.model.team.MembroTeam;
 import it.unicam.cs.ids.model.team.Team;
 import it.unicam.cs.ids.service.HackathonService;
@@ -14,11 +15,10 @@ import it.unicam.cs.ids.service.InvitoService;
 import it.unicam.cs.ids.service.UtenteService;
 import it.unicam.cs.ids.service.TeamService;
 import org.springframework.http.ResponseEntity;
+import it.unicam.cs.ids.model.inviti.InvitoHackathon;
+import java.util.List;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * Controller per la gestione degli inviti staff e team.
@@ -104,6 +104,32 @@ public class InvitiController {
             return ResponseEntity.badRequest().body(e.getMessage());
         } catch (Exception e) {
             return ResponseEntity.internalServerError().body("Errore interno: " + e.getMessage());
+        }
+    }
+
+    @GetMapping("/hackathon/{hackathonId}")
+    public ResponseEntity<?> getInvitiHackathon(@PathVariable String hackathonId) {
+        try {
+            List<Invito> inviti = invitoService.findAll().stream()
+                    .filter(i -> i instanceof InvitoHackathon ih &&
+                            ih.getHackathon().getHackathonID().equals(hackathonId))
+                    .toList();
+            return ResponseEntity.ok(inviti);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @GetMapping("/team/{teamId}")
+    public ResponseEntity<?> getInvitiTeam(@PathVariable String teamId) {
+        try {
+            List<Invito> inviti = invitoService.findAll().stream()
+                    .filter(i -> i instanceof InvitoTeam it &&
+                            it.getTeam().getTeamID().equals(teamId))
+                    .toList();
+            return ResponseEntity.ok(inviti);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 }

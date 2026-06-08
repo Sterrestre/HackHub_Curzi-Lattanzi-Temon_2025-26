@@ -125,6 +125,7 @@ public class InvitiHandler {
         Hackathon hack = staff.getHackathon();
         if (accetta) {
             roleFactory.creaERegistraRuolo(staff.getRuolo(), staff.getDestinatario(), hack);
+            staff.getDestinatario().setMembroDiStaff(true);
             notificationFacade.inviaNotificaInvitoAccettato(staff);
         } else {
             HackHandler.setStaffIncompleto(hack, INCOMPLETO);
@@ -140,6 +141,7 @@ public class InvitiHandler {
         Hackathon hack = staff.getHackathon();
         if (accetta) {
             roleFactory.creaERegistraRuolo(staff.getRuolo(), staff.getDestinatario(), hack);
+            staff.getDestinatario().setMembroDiStaff(true);
             notificationFacade.inviaNotificaInvitoAccettato(staff);
         } else {
             if (hack.getStato() == BOZZA) {
