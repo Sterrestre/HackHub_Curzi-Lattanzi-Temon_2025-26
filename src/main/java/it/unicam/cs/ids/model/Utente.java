@@ -2,7 +2,9 @@ package it.unicam.cs.ids.model;
 
 import it.unicam.cs.ids.model.hackathon.Hackathon;
 import it.unicam.cs.ids.model.staff.RuoloPartecipazione;
+import it.unicam.cs.ids.model.team.MembroTeamIscritto;
 import it.unicam.cs.ids.model.team.Team;
+import it.unicam.cs.ids.model.team.TeamIscritto;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
@@ -23,6 +25,9 @@ public class Utente {
 
     @OneToMany(mappedBy = "utente", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<RuoloPartecipazione> ruoli = new ArrayList<>();
+
+    @OneToMany(mappedBy = "utente", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<MembroTeamIscritto> iscrizioniTeam = new ArrayList<>();
 
     private boolean membroDiStaff = false;
 
@@ -92,6 +97,14 @@ public class Utente {
         if(!ruoli.contains(ruolo)){
             ruoli.add(ruolo);
         }
+    }
+
+    public List<Hackathon> getPartecipazioni() {
+        return iscrizioniTeam.stream()
+                .map(MembroTeamIscritto::getTeamIscritto)
+                .map(TeamIscritto::getHackathon)
+                .distinct()
+                .toList();
     }
 
     // Metodo helper per ricavare i permessi

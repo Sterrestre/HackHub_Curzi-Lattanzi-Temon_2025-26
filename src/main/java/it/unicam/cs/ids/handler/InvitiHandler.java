@@ -11,8 +11,7 @@ import it.unicam.cs.ids.model.staff.RuoliStaff;
 import it.unicam.cs.ids.model.team.MembroTeam;
 import it.unicam.cs.ids.model.team.Team;
 import it.unicam.cs.ids.repository.InvitoRepository;
-import it.unicam.cs.ids.service.InvitoService;
-import it.unicam.cs.ids.service.NotificationService;
+import it.unicam.cs.ids.service.NotificationFacade;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -32,7 +31,7 @@ import static it.unicam.cs.ids.model.hackathon.Stato.BOZZA;
 public class InvitiHandler {
 
     private final InvitoRepository invitoRepository;
-    private final NotificationService notificationService;
+    private final NotificationFacade notificationFacade;
     private final RoleFactory roleFactory;
 
     /** Giorni di validità di un invito staff, letti da application.properties. */
@@ -40,9 +39,9 @@ public class InvitiHandler {
     private int giorniScadenzaInvito;
 
     public InvitiHandler(InvitoRepository invitoRepository,
-                         NotificationService notificationService, RoleFactory roleFactory) {
+                         NotificationFacade notificationFacade, RoleFactory roleFactory) {
         this.invitoRepository = invitoRepository;
-        this.notificationService = notificationService;
+        this.notificationFacade = notificationFacade;
         this.roleFactory = roleFactory;
     }
 
@@ -53,7 +52,7 @@ public class InvitiHandler {
                                 Hackathon hackathon, RuoliStaff ruolo) {
         LocalDateTime scadenza = LocalDateTime.now().plusDays(giorniScadenzaInvito);
         InvitoHackathon invito = new InvitoHackathon(organizzatore, destinatario, hackathon, ruolo, scadenza);
-        notificationService.inviaInvito(invito);
+        notificationFacade.inviaInvito(invito);
     }
 
     /**
@@ -61,7 +60,7 @@ public class InvitiHandler {
      */
     public void creaInvitoTeam(MembroTeam mittente, Utente destinatario, Team team) {
         InvitoTeam invito = new InvitoTeam(mittente, destinatario, team);
-        notificationService.inviaInvito(invito);
+        notificationFacade.inviaInvito(invito);
     }
 
     /**
@@ -113,7 +112,7 @@ public class InvitiHandler {
 
             if (numGiudici == 1 && numMentori >= 1) {
                 hackathon.cambiaStato(new ConfermatoState(hackathon));
-                notificationService.inviaNotificaHackathonConfermato(hackathon);
+                notificationFacade.inviaNotificaHackathonConfermato(hackathon);
             }
         }
     }
@@ -126,10 +125,10 @@ public class InvitiHandler {
         Hackathon hack = staff.getHackathon();
         if (accetta) {
             roleFactory.creaERegistraRuolo(staff.getRuolo(), staff.getDestinatario(), hack);
-            notificationService.inviaNotificaInvitoAccettato(staff);
+            notificationFacade.inviaNotificaInvitoAccettato(staff);
         } else {
             HackHandler.setStaffIncompleto(hack, INCOMPLETO);
-            notificationService.inviaNotificaStaffIncompleto(hack, List.of(staff));
+            notificationFacade.inviaNotificaStaffIncompleto(hack, List.of(staff));
         }
     }
 
@@ -141,7 +140,7 @@ public class InvitiHandler {
         Hackathon hack = staff.getHackathon();
         if (accetta) {
             roleFactory.creaERegistraRuolo(staff.getRuolo(), staff.getDestinatario(), hack);
-            notificationService.inviaNotificaInvitoAccettato(staff);
+            notificationFacade.inviaNotificaInvitoAccettato(staff);
         } else {
             if (hack.getStato() == BOZZA) {
                 int numMentori = Math.toIntExact(hack.getRuoli().stream()
@@ -152,12 +151,12 @@ public class InvitiHandler {
                     int numInvitiMentori = this.getInvitiMentori(hack) - 1;
                     if (numInvitiMentori == 0) {
                         HackHandler.setStaffIncompleto(hack, INCOMPLETO);
-                        notificationService.inviaNotificaStaffIncompleto(hack, List.of(staff));
+                        notificationFacade.inviaNotificaStaffIncompleto(hack, List.of(staff));
                     }
                 }
             }
             if (hack.getStaffIncompleto() != INCOMPLETO) {
-                notificationService.inviaNotificaInvitoRifiutato(staff);
+                notificationFacade.inviaNotificaInvitoRifiutato(staff);
             }
         }
     }
@@ -182,10 +181,10 @@ public class InvitiHandler {
 
             if (hack.getStato() == BOZZA) {
                 HackHandler.setStaffIncompleto(hack, INCOMPLETO);
-                notificationService.inviaNotificaStaffIncompleto(hack, invitiScaduti);
+                notificationFacade.inviaNotificaStaffIncompleto(hack, invitiScaduti);
             }
 
-            invitiScaduti.forEach(notificationService::inviaNotificaInvitoScaduto);
+            invitiScaduti.forEach(notificationFacade::inviaNotificaInvitoScaduto);
         }
     }
 

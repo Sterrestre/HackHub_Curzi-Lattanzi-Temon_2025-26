@@ -6,8 +6,7 @@ import it.unicam.cs.ids.model.team.MembroTeam;
 import it.unicam.cs.ids.model.team.MembroTeamIscritto;
 import it.unicam.cs.ids.model.team.Team;
 import it.unicam.cs.ids.model.team.TeamIscritto;
-import it.unicam.cs.ids.service.NotificationService;
-import it.unicam.cs.ids.service.TeamService;
+import it.unicam.cs.ids.service.NotificationFacade;
 import org.springframework.stereotype.Service;
 
 /**
@@ -16,12 +15,12 @@ import org.springframework.stereotype.Service;
 @Service
 public class TeamHandler {
 
-    private final NotificationService notificationService;
+    private final NotificationFacade notificationFacade;
     private final InvitiHandler invitiHandler;
     private final MembriTeamHandler membriTeamHandler;
 
-    public TeamHandler(NotificationService notificationService, InvitiHandler invitiHandler, MembriTeamHandler membriTeamHandler) {
-        this.notificationService = notificationService;
+    public TeamHandler(NotificationFacade notificationFacade, InvitiHandler invitiHandler, MembriTeamHandler membriTeamHandler) {
+        this.notificationFacade = notificationFacade;
         this.invitiHandler = invitiHandler;
         this.membriTeamHandler = membriTeamHandler;
     }

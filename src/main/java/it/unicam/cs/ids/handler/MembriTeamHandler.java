@@ -1,24 +1,29 @@
 package it.unicam.cs.ids.handler;
 
 import it.unicam.cs.ids.model.MetodoPagamento;
+import it.unicam.cs.ids.model.Utente;
 import it.unicam.cs.ids.model.hackathon.Hackathon;
+import it.unicam.cs.ids.model.hackathon.Stato;
 import it.unicam.cs.ids.model.team.MembroTeam;
 import it.unicam.cs.ids.model.team.MembroTeamIscritto;
 import it.unicam.cs.ids.model.team.Team;
 import it.unicam.cs.ids.model.team.TeamIscritto;
-import it.unicam.cs.ids.service.NotificationService;
+import it.unicam.cs.ids.service.NotificationFacade;
 import it.unicam.cs.ids.service.TeamService;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class MembriTeamHandler {
 
     private final TeamService teamService;
-    private final NotificationService notificationService;
+    private final NotificationFacade notificationFacade;
 
-    public MembriTeamHandler (TeamService teamService, NotificationService notificationService) {
+    public MembriTeamHandler (TeamService teamService, NotificationFacade notificationFacade) {
         this.teamService = teamService;
-        this.notificationService = notificationService;
+        this.notificationFacade = notificationFacade;
     }
 
 
@@ -41,7 +46,7 @@ public class MembriTeamHandler {
                 throw new IllegalArgumentException(membroTeam.getUtente().getNickname() + " è già amministratore del team.");
             } else {
                 membroTeam.setAmministratore(true);
-                notificationService.inviaNotificaAmministratore(membroTeam);
+                notificationFacade.inviaNotificaAmministratore(membroTeam);
                 return membroTeam;
             }
         } else {
@@ -55,8 +60,26 @@ public class MembriTeamHandler {
      * @param membroTeam
      */
     public void rimuoviMembroTeam(MembroTeam membroTeam) {
+        Utente utente = membroTeam.getUtente();
+        List<Hackathon> partecipazioni = new ArrayList<>(utente.getPartecipazioni());
+        for (Hackathon hack : partecipazioni) {
+            // Se l'hackathon non è concluso, trovo il teamIscritto corrispondente al membro del team e
+            // rimuovo il membro del team --> CU "Disiscriviti"
+            if (hack.getStato() != Stato.CONCLUSO) {
+                hack.getTeamIscritti().stream()
+                        .filter(ti -> ti.getElencoIscritti().stream()
+                                .anyMatch(mi -> mi.getUtente().equals(utente)))
+                        .findFirst()
+                        .ifPresent(teamIscritto -> {
+                            teamIscritto.getElencoIscritti().removeIf(mi -> mi.getUtente().equals(membroTeam.getUtente()));
+                        });
+
+                utente.getPartecipazioni().remove(hack);
+            }
+        }
+
         Team team = membroTeam.getTeam();
-        membroTeam.getUtente().setTeam(null);
+        utente.setTeam(null);
         teamService.rimuoviMembro(team, membroTeam);
     }
 
@@ -81,6 +104,8 @@ public class MembriTeamHandler {
 
         MembroTeamIscritto membroTeamIscritto = new MembroTeamIscritto(membTeam.getUtente(), teamIscr, metPag);
         teamIscr.getElencoIscritti().add(membroTeamIscritto);
+        membTeam.getUtente().getPartecipazioni().add(hackathon);
+
         return membroTeamIscritto;
     }
 }
