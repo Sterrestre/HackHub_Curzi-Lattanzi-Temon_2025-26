@@ -1,1 +1,4 @@
 build/reports/problems/problems-report.html
+variabili.env
+*.mv.db
+*.trace.db

@@ -20,9 +20,12 @@ dependencies {
     // Spring Boot base
     implementation ("org.springframework.boot:spring-boot-starter-web")
 
-    // Database H2
+    // Database MySQL
     implementation ("org.springframework.boot:spring-boot-starter-data-jpa")
-    runtimeOnly ("com.h2database:h2")
+    runtimeOnly ("com.mysql:mysql-connector-j")
+
+    // H2 solo per i test unitari (DB in-memory, non usato in produzione/docker)
+    testRuntimeOnly ("com.h2database:h2")
 
     // Validazioni (opzionale ma utile)
     implementation ("org.springframework.boot:spring-boot-starter-validation")
