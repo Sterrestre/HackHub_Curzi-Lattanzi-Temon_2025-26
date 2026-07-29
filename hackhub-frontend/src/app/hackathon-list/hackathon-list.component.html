@@ -1,0 +1,13 @@
+<h2>Hackathon disponibili</h2>
+
+<p *ngIf="caricamento">Caricamento in corso...</p>
+<p *ngIf="errore">Impossibile contattare il backend. Verifica che sia in esecuzione.</p>
+
+<ul *ngIf="!caricamento && !errore">
+    <li *ngFor="let h of hackathons">
+        <strong>{{ h.nome }}</strong> — {{ h.stato }}
+        <br>
+        Luogo: {{ h.info.luogo }} | Squadre iscritte: {{ h.numTeamIscritti }} / {{ h.info.numMaxTeam }}
+    </li>
+    <li *ngIf="hackathons.length === 0">Nessun hackathon presente.</li>
+</ul>
