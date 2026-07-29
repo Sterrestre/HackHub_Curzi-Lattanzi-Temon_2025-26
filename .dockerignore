@@ -1,0 +1,8 @@
+.git
+.gradle
+.idea
+build
+VisualParadigm
+*.mv.db
+*.trace.db
+variabili.env
