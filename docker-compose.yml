@@ -50,5 +50,12 @@ services:
       timeout: 5s
       retries: 10
 
+  frontend:
+    build: ./hackhub-frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - hackhub
+
 volumes:
   hackhub_mysql_data:
