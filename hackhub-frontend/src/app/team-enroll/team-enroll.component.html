@@ -1,0 +1,21 @@
+<p><a [routerLink]="['/hackathon', hackathonId]">← Torna al dettaglio hackathon</a></p>
+
+<h2>Iscrivi il tuo team</h2>
+
+<p *ngIf="inviato">Team iscritto con successo! Torno al dettaglio...</p>
+<p *ngIf="errore" class="errore">{{ errore }}</p>
+
+<form [formGroup]="form" (ngSubmit)="onSubmit()" *ngIf="!inviato">
+
+    <label>
+        Nome del team
+        <input type="text" formControlName="nomeTeam">
+    </label>
+
+    <label>
+        Id amministratore team (temporaneo, arrivera' dal login)
+        <input type="text" formControlName="amministratoreId">
+    </label>
+
+    <button type="submit">Iscrivi team</button>
+</form>

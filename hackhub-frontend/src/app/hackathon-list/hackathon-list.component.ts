@@ -1,11 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { RouterLink } from '@angular/router';
 import { Hackathon, HackathonService } from '../services/hackathon.service';
 
 @Component({
     selector: 'app-hackathon-list',
     standalone: true,
-    imports: [CommonModule],
+    imports: [CommonModule, RouterLink],
     templateUrl: './hackathon-list.component.html'
 })
 export class HackathonListComponent implements OnInit {

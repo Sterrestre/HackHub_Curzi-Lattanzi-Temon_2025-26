@@ -1,0 +1,66 @@
+<p><a routerLink="/">← Torna alla lista</a></p>
+
+<h2>Crea nuovo hackathon</h2>
+
+<p *ngIf="inviato">Hackathon creato con successo! Torno alla lista...</p>
+<p *ngIf="errore" class="errore">{{ errore }}</p>
+
+<form [formGroup]="form" (ngSubmit)="onSubmit()" *ngIf="!inviato">
+
+    <label>
+        Id organizzatore (temporaneo, arrivera' dal login)
+        <input type="text" formControlName="organizzatoreId">
+    </label>
+
+    <label>
+        Nome hackathon
+        <input type="text" formControlName="nome">
+    </label>
+
+    <label>
+        Regolamento
+        <textarea formControlName="regolamento"></textarea>
+    </label>
+
+    <label>
+        Data inizio
+        <input type="datetime-local" formControlName="dataInizio">
+    </label>
+
+    <label>
+        Data fine
+        <input type="datetime-local" formControlName="dataFine">
+    </label>
+
+    <label>
+        Scadenza iscrizioni
+        <input type="datetime-local" formControlName="scadenzaIscrizioni">
+    </label>
+
+    <label>
+        Luogo
+        <input type="text" formControlName="luogo">
+    </label>
+
+    <label>
+        Quota iscrizione (€)
+        <input type="number" formControlName="quotaIscrizione">
+    </label>
+
+    <label>
+        Premio (€)
+        <input type="number" formControlName="premio">
+    </label>
+
+    <label>
+        Numero massimo team
+        <input type="number" formControlName="numMaxTeam">
+    </label>
+
+    <label>
+        Partecipanti massimi per team
+        <input type="number" formControlName="maxPartecipantiPerTeam">
+    </label>
+
+    <button type="submit">Crea hackathon</button>
+</form>

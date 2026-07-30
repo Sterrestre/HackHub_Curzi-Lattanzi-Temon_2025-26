@@ -23,6 +23,20 @@ export interface Hackathon {
     stato: string;
 }
 
+export interface CreaHackathonRequest {
+    organizzatoreId: string;
+    nome: string;
+    regolamento: string;
+    dataInizio: string;
+    dataFine: string;
+    scadenzaIscrizioni: string;
+    luogo: string;
+    quotaIscrizione: number;
+    premio: number;
+    numMaxTeam: number;
+    maxPartecipantiPerTeam: number;
+}
+
 @Injectable({
     providedIn: 'root'
 })
@@ -33,5 +47,17 @@ export class HackathonService {
 
     getAll(): Observable<Hackathon[]> {
         return this.http.get<Hackathon[]>(`${this.baseUrl}/all`);
+    }
+
+    getById(id: string): Observable<Hackathon> {
+        return this.http.get<Hackathon>(`${this.baseUrl}/${id}`);
+    }
+
+    getClassifica(id: string): Observable<string[]> {
+        return this.http.get<string[]>(`${this.baseUrl}/${id}/classifica`);
+    }
+
+    crea(req: CreaHackathonRequest): Observable<any> {
+        return this.http.post(`${this.baseUrl}/crea`, req);
     }
 }

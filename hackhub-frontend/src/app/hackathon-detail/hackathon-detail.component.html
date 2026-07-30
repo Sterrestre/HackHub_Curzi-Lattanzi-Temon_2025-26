@@ -1,0 +1,45 @@
+<p><a routerLink="/">← Torna alla lista</a></p>
+
+<p *ngIf="caricamento">Caricamento in corso...</p>
+<p *ngIf="errore">Impossibile trovare questo hackathon.</p>
+
+<div *ngIf="hackathon && !errore" class="hackathon-detail">
+    <h2>{{ hackathon.nome }}</h2>
+    <p><strong>Stato:</strong> {{ hackathon.stato }}</p>
+    <p><a [routerLink]="['/hackathon', hackathon.id, 'iscrivi']">Iscrivi il tuo team a questo hackathon</a></p>
+
+    <section>
+        <h3>Informazioni</h3>
+        <ul>
+            <li><strong>Luogo:</strong> {{ hackathon.info.luogo }}</li>
+            <li><strong>Periodo:</strong> {{ hackathon.info.dataInizio }} → {{ hackathon.info.dataFine }}</li>
+            <li><strong>Scadenza iscrizioni:</strong> {{ hackathon.info.scadenzaIscrizioni }}</li>
+            <li><strong>Quota iscrizione:</strong> {{ hackathon.info.quotaIscrizione }} €</li>
+            <li><strong>Premio:</strong> {{ hackathon.info.premio }} €</li>
+            <li><strong>Squadre:</strong> {{ hackathon.numTeamIscritti }} / {{ hackathon.info.numMaxTeam }}</li>
+            <li><strong>Partecipanti max per team:</strong> {{ hackathon.info.maxPartecipantiPerTeam }}</li>
+        </ul>
+    </section>
+
+    <section>
+        <h3>Classifica</h3>
+        <ul *ngIf="classifica.length > 0">
+            <li *ngFor="let riga of classifica">{{ riga }}</li>
+        </ul>
+        <p *ngIf="classifica.length === 0">Classifica non ancora disponibile.</p>
+    </section>
+
+    <section>
+        <h3>Sottomissioni</h3>
+        <ul *ngIf="sottomissioni.length > 0">
+            <li *ngFor="let s of sottomissioni">
+                <strong>{{ s.titolo }}</strong>
+                <span *ngIf="s.valutata"> — voto: {{ s.voto }}</span>
+                <span *ngIf="!s.valutata"> — non ancora valutata</span>
+                <br>
+                {{ s.descrizione }}
+            </li>
+        </ul>
+        <p *ngIf="sottomissioni.length === 0">Nessuna sottomissione presente.</p>
+    </section>
+</div>

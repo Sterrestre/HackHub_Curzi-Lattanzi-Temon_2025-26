@@ -1,11 +1,15 @@
 <h2>Hackathon disponibili</h2>
 
+<p><a routerLink="/nuovo-hackathon">+ Crea nuovo hackathon</a></p>
+
 <p *ngIf="caricamento">Caricamento in corso...</p>
 <p *ngIf="errore">Impossibile contattare il backend. Verifica che sia in esecuzione.</p>
 
 <ul *ngIf="!caricamento && !errore">
     <li *ngFor="let h of hackathons">
-        <strong>{{ h.nome }}</strong> — {{ h.stato }}
+        <a [routerLink]="['/hackathon', h.id]">
+            <strong>{{ h.nome }}</strong> — {{ h.stato }}
+        </a>
         <br>
         Luogo: {{ h.info.luogo }} | Squadre iscritte: {{ h.numTeamIscritti }} / {{ h.info.numMaxTeam }}
     </li>
