@@ -20,6 +20,10 @@ dependencies {
     // Spring Boot base
     implementation ("org.springframework.boot:spring-boot-starter-web")
 
+    // Login tramite OAuth2
+    implementation("org.springframework.boot:spring-boot-starter-security")
+    implementation("org.springframework.boot:spring-boot-starter-oauth2-client")
+
     // Database MySQL
     implementation ("org.springframework.boot:spring-boot-starter-data-jpa")
     runtimeOnly ("com.mysql:mysql-connector-j")
