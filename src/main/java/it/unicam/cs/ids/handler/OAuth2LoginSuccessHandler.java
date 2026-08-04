@@ -58,6 +58,7 @@ public class OAuth2LoginSuccessHandler extends SavedRequestAwareAuthenticationSu
 
             // TODO: eventuale redirect ad una pagina di primo accesso
             // response.sendRedirect("profilo/completa");
+            // Aggiunta riga per provare a committare
 
         // se l'utente esiste, non modifico nulla
         } else {
