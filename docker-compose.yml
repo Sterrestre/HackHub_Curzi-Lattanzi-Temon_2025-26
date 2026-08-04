@@ -34,7 +34,7 @@ services:
   mysql:
     image: mysql:8.0
     env_file:
-      - C:\0_UNIVERSITA'\AWMC\variabili.env
+      - variabili.env
 
     environment:
       MYSQL_DATABASE: ${DB_NAME}
