@@ -8,6 +8,14 @@
     <p><strong>Stato:</strong> {{ hackathon.stato }}</p>
     <p><a [routerLink]="['/hackathon', hackathon.id, 'iscrivi']">Iscrivi il tuo team a questo hackathon</a></p>
 
+    <!-- Conferma hackathon: visibile solo quando e' ancora in bozza -->
+    <div *ngIf="hackathon.stato === 'BOZZA'">
+        <button type="button" (click)="confermaHackathon()" [disabled]="confermaInCorso">
+            Conferma hackathon (organizzatore)
+        </button>
+        <p *ngIf="confermaErrore" class="errore">{{ confermaErrore }}</p>
+    </div>
+
     <section>
         <h3>Informazioni</h3>
         <ul>
@@ -34,10 +42,28 @@
         <ul *ngIf="sottomissioni.length > 0">
             <li *ngFor="let s of sottomissioni">
                 <strong>{{ s.titolo }}</strong>
-                <span *ngIf="s.valutata"> — voto: {{ s.voto }}</span>
+                <span *ngIf="s.valutata"> — voto: {{ s.voto }} ({{ s.giudizio }})</span>
                 <span *ngIf="!s.valutata"> — non ancora valutata</span>
                 <br>
                 {{ s.descrizione }}
+
+                <!-- Form di valutazione, solo per sottomissioni non ancora valutate -->
+                <div *ngIf="!s.valutata && valutazioneInput[s.teamIscrittoId]" class="valutazione-form">
+                    <label>
+                        Id giudice (temporaneo)
+                        <input type="text" [(ngModel)]="valutazioneInput[s.teamIscrittoId].giudiceId">
+                    </label>
+                    <label>
+                        Voto (0-10)
+                        <input type="number" min="0" max="10" [(ngModel)]="valutazioneInput[s.teamIscrittoId].voto">
+                    </label>
+                    <label>
+                        Giudizio
+                        <input type="text" [(ngModel)]="valutazioneInput[s.teamIscrittoId].giudizio">
+                    </label>
+                    <button type="button" (click)="valuta(s)">Valuta</button>
+                    <p *ngIf="valutazioneErrore[s.teamIscrittoId]" class="errore">{{ valutazioneErrore[s.teamIscrittoId] }}</p>
+                </div>
             </li>
         </ul>
         <p *ngIf="sottomissioni.length === 0">Nessuna sottomissione presente.</p>

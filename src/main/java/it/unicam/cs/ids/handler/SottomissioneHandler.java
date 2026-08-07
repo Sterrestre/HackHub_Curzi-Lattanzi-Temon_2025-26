@@ -1,5 +1,6 @@
 package it.unicam.cs.ids.handler;
 
+import it.unicam.cs.ids.model.hackathon.Stato;
 import it.unicam.cs.ids.model.Sottomissione;
 import it.unicam.cs.ids.model.StatoSottomissione;
 import it.unicam.cs.ids.model.Utente;
@@ -35,6 +36,12 @@ public class SottomissioneHandler {
                                     String descrizione, String linkRepository) {
         if (teamIscritto == null) throw new IllegalArgumentException("TeamIscritto nullo");
         if (titolo == null || titolo.isBlank()) throw new IllegalArgumentException("Titolo obbligatorio");
+
+        // Una sottomissione puo' essere caricata solo mentre l'hackathon e' in corso:
+        // non prima (non e' ancora iniziato) e non dopo (e' gia' concluso)
+        if (teamIscritto.getHackathon().getStato() != Stato.IN_CORSO) {
+            throw new IllegalStateException("Impossibile caricare la sottomissione: l'hackathon non è in corso");
+        }
 
         Sottomissione sottomissione = teamIscritto.getSottomissione();
         if (sottomissione == null) {

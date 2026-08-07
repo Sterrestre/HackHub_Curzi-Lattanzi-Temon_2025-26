@@ -60,4 +60,8 @@ export class HackathonService {
     crea(req: CreaHackathonRequest): Observable<any> {
         return this.http.post(`${this.baseUrl}/crea`, req);
     }
+
+    conferma(id: string): Observable<any> {
+        return this.http.post(`${this.baseUrl}/${id}/conferma`, {});
+    }
 }

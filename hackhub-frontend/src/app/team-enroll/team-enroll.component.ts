@@ -16,16 +16,20 @@ export class TeamEnrollComponent implements OnInit {
     errore: string | null = null;
     form: FormGroup;
 
+    // Popolati dopo l'iscrizione, per mostrare all'utente gli id da usare
+    // nei prossimi passi (aggiungere membri, caricare la sottomissione)
+    // finche' non c'e' il login a gestirli automaticamente.
+    teamCreatoId: string | null = null;
+    teamIscrittoId: string | null = null;
+
     constructor(
         private fb: FormBuilder,
         private route: ActivatedRoute,
         private teamService: TeamService,
         private router: Router
     ) {
-        // NOTA: "amministratoreId" e "teamId" sono temporanei: dopo il login
-        // l'utente non dovra' piu' inserirli a mano (l'id utente arrivera' dal
-        // token, e il team lo si scegliera' da un elenco dei propri team invece
-        // che digitarne l'id).
+        // NOTA: "amministratoreId" e' temporaneo: dopo il login l'utente
+        // non dovra' piu' inserirlo a mano, arrivera' dal token.
         this.form = this.fb.group({
             nomeTeam: ['', Validators.required],
             amministratoreId: ['', Validators.required]
@@ -51,13 +55,15 @@ export class TeamEnrollComponent implements OnInit {
             amministratoreId: valori.amministratoreId!
         }).subscribe({
             next: (teamCreato: any) => {
+                this.teamCreatoId = teamCreato.id;
+
                 this.teamService.iscriviAHackathon(this.hackathonId, {
                     teamId: teamCreato.id,
                     amministratoreId: valori.amministratoreId!
                 }).subscribe({
-                    next: () => {
+                    next: (iscrizione) => {
+                        this.teamIscrittoId = iscrizione.teamIscrittoId;
                         this.inviato = true;
-                        setTimeout(() => this.router.navigate(['/hackathon', this.hackathonId]), 1500);
                     },
                     error: (err) => {
                         this.errore = err?.error ?? 'Errore durante l\'iscrizione del team.';

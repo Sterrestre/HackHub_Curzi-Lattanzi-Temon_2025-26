@@ -13,12 +13,30 @@ export interface IscriviTeamRequest {
     amministratoreId: string;
 }
 
+export interface IscrizioneTeam {
+    teamIscrittoId: string;
+    messaggio: string;
+}
+
+export interface AggiungiMembroRequest {
+    teamId: string;
+    utenteId: string;
+    amministratore: boolean;
+}
+
+export interface MembroTeam {
+    id: string;
+    nickname: string;
+    amministratore: boolean;
+}
+
 @Injectable({
     providedIn: 'root'
 })
 export class TeamService {
     private readonly teamUrl = `${environment.apiUrl}/team`;
     private readonly hackathonUrl = `${environment.apiUrl}/hackathon`;
+    private readonly membriUrl = `${environment.apiUrl}/membri`;
 
     constructor(private http: HttpClient) {}
 
@@ -26,7 +44,15 @@ export class TeamService {
         return this.http.post(`${this.teamUrl}/crea`, req);
     }
 
-    iscriviAHackathon(hackathonId: string, req: IscriviTeamRequest): Observable<any> {
-        return this.http.post(`${this.hackathonUrl}/${hackathonId}/iscrivi-team`, req);
+    iscriviAHackathon(hackathonId: string, req: IscriviTeamRequest): Observable<IscrizioneTeam> {
+        return this.http.post<IscrizioneTeam>(`${this.hackathonUrl}/${hackathonId}/iscrivi-team`, req);
+    }
+
+    getMembri(teamId: string): Observable<MembroTeam[]> {
+        return this.http.get<MembroTeam[]>(`${this.membriUrl}/team/${teamId}`);
+    }
+
+    aggiungiMembro(req: AggiungiMembroRequest): Observable<MembroTeam> {
+        return this.http.post<MembroTeam>(`${this.teamUrl}/aggiungi-membro`, req);
     }
 }

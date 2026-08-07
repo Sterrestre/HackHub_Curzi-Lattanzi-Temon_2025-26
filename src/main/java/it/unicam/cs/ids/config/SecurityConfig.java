@@ -16,6 +16,10 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/", "/login", "/error").permitAll()
+                        // TEMPORANEO: apre in lettura tutte le rotte per poter sviluppare
+                        // e testare il frontend prima che l'integrazione col login sia pronta.
+                        // Da rimuovere quando l'autenticazione sara' collegata all'app Angular.
+                        .requestMatchers(org.springframework.http.HttpMethod.GET, "/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .oauth2Login(oauth -> oauth

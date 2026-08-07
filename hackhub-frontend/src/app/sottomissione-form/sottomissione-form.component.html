@@ -1,0 +1,31 @@
+<p><a [routerLink]="['/hackathon', hackathonId]">← Torna al dettaglio hackathon</a></p>
+
+<h2>Carica la tua sottomissione</h2>
+
+<p *ngIf="inviato">Sottomissione caricata con successo!</p>
+<p *ngIf="errore" class="errore">{{ errore }}</p>
+
+<form [formGroup]="form" (ngSubmit)="onSubmit()" *ngIf="!inviato">
+
+    <label>
+        Id iscrizione team (temporaneo, lo trovi dopo l'iscrizione del team)
+        <input type="text" formControlName="teamIscrittoId">
+    </label>
+
+    <label>
+        Titolo del progetto
+        <input type="text" formControlName="titolo">
+    </label>
+
+    <label>
+        Descrizione
+        <textarea formControlName="descrizione"></textarea>
+    </label>
+
+    <label>
+        Link repository
+        <input type="text" formControlName="linkRepository">
+    </label>
+
+    <button type="submit">Carica sottomissione</button>
+</form>

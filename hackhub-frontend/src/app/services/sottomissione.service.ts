@@ -5,12 +5,29 @@ import { environment } from '../../environments/environment';
 
 export interface Sottomissione {
     id: string;
+    teamIscrittoId: string;
     titolo: string;
     descrizione: string;
     linkRepository: string;
     valutata: boolean;
     voto: number | null;
     giudizio: string | null;
+}
+
+export interface CreaSottomissioneRequest {
+    teamIscrittoId: string;
+    hackathonId: string;
+    titolo: string;
+    descrizione: string;
+    linkRepository: string;
+}
+
+export interface ValutaSottomissioneRequest {
+    giudiceId: string;
+    hackathonId: string;
+    teamIscrittoId: string;
+    voto: number;
+    giudizio: string;
 }
 
 @Injectable({
@@ -23,5 +40,13 @@ export class SottomissioneService {
 
     getByHackathon(hackathonId: string): Observable<Sottomissione[]> {
         return this.http.get<Sottomissione[]>(`${this.baseUrl}/hackathon/${hackathonId}`);
+    }
+
+    carica(req: CreaSottomissioneRequest): Observable<Sottomissione> {
+        return this.http.post<Sottomissione>(`${this.baseUrl}/carica`, req);
+    }
+
+    valuta(req: ValutaSottomissioneRequest): Observable<Sottomissione> {
+        return this.http.post<Sottomissione>(`${this.baseUrl}/valuta`, req);
     }
 }

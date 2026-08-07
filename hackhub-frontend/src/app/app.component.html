@@ -1,5 +1,14 @@
 <header>
-    <h1>{{ title }}</h1>
+    <div class="header-content">
+        <a routerLink="/" class="logo">
+            <h1>{{ title }}</h1>
+        </a>
+        <nav>
+            <a routerLink="/">Hackathon</a>
+            <a routerLink="/nuovo-hackathon">Crea hackathon</a>
+            <a [href]="loginUrl">Accedi con Google</a>
+        </nav>
+    </div>
 </header>
 
 <main>

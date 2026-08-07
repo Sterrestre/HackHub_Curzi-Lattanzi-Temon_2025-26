@@ -4,6 +4,7 @@ import it.unicam.cs.ids.model.Sottomissione;
 
 public record SottomissioneDTO(
         String id,
+        String teamIscrittoId,
         String titolo,
         String descrizione,
         String linkRepository,
@@ -14,6 +15,7 @@ public record SottomissioneDTO(
     public static SottomissioneDTO from(Sottomissione s) {
         return new SottomissioneDTO(
                 s.getId(),
+                s.getTeam().getId(),
                 s.titolo(),
                 s.descrizione(),
                 s.linkRepository(),

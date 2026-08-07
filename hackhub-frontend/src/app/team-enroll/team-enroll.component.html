@@ -2,7 +2,19 @@
 
 <h2>Iscrivi il tuo team</h2>
 
-<p *ngIf="inviato">Team iscritto con successo! Torno al dettaglio...</p>
+<div *ngIf="inviato" class="esito-positivo">
+    <p>Team iscritto con successo!</p>
+    <ul>
+        <li>Id team: <strong>{{ teamCreatoId }}</strong></li>
+        <li>Id iscrizione: <strong>{{ teamIscrittoId }}</strong></li>
+    </ul>
+    <p>
+        <a [routerLink]="['/team', teamCreatoId]">Gestisci i membri del team</a>
+        &nbsp;|&nbsp;
+        <a [routerLink]="['/hackathon', hackathonId, 'sottometti']">Carica una sottomissione</a>
+    </p>
+</div>
+
 <p *ngIf="errore" class="errore">{{ errore }}</p>
 
 <form [formGroup]="form" (ngSubmit)="onSubmit()" *ngIf="!inviato">

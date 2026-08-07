@@ -136,7 +136,10 @@ public class HackController {
             MembroTeam admin = teamService.findMembroTeamById(req.teamId(), req.amministratoreId());
             TeamIscritto teamIscritto = hackHandler.iscriviTeam(team, hack, admin);
             hackathonService.salva(hack);
-            return ResponseEntity.ok("Team iscritto con successo. ID iscrizione: " + teamIscritto.getId());
+            return ResponseEntity.ok(new IscrizioneTeamDTO(
+                    teamIscritto.getId(),
+                    "Team iscritto con successo"
+            ));
         } catch (IllegalArgumentException | IllegalStateException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         } catch (Exception e) {

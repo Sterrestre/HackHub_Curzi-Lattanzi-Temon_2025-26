@@ -185,6 +185,12 @@ public class HackHandler {
             throw new DomainException("Solo un amministratore del team può iscrivere il team all'hackathon");
         }
 
+        // Controllo che l'hackathon sia confermato: non si può iscrivere un team
+        // a un hackathon ancora in bozza, concluso o già in corso
+        if (hackathon.getStato() != Stato.CONFERMATO) {
+            throw new DomainException("Non è possibile iscrivere un team a un hackathon che non è confermato");
+        }
+
         // Controllo che il team non sia già iscritto
         boolean giaIscritto = hackathon.getTeamIscritti().stream()
                 .anyMatch(t -> t.getTeam().getTeamID().equals(team.getTeamID()));

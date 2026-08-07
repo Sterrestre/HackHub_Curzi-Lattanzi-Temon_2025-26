@@ -1,0 +1,32 @@
+<p><a routerLink="/">← Torna alla lista hackathon</a></p>
+
+<h2>Membri del team</h2>
+
+<p *ngIf="caricamento">Caricamento in corso...</p>
+<p *ngIf="errore" class="errore">{{ errore }}</p>
+
+<ul *ngIf="!caricamento && membri.length > 0">
+    <li *ngFor="let m of membri">
+        {{ m.nickname }}
+        <span *ngIf="m.amministratore"> — amministratore</span>
+    </li>
+</ul>
+<p *ngIf="!caricamento && membri.length === 0">Nessun membro trovato.</p>
+
+<h3>Aggiungi un membro</h3>
+
+<p *ngIf="inviato">Membro aggiunto con successo.</p>
+
+<form [formGroup]="form" (ngSubmit)="onSubmit()">
+    <label>
+        Id utente (temporaneo, arrivera' dal login/inviti)
+        <input type="text" formControlName="utenteId">
+    </label>
+
+    <label>
+        <input type="checkbox" formControlName="amministratore">
+        Amministratore del team
+    </label>
+
+    <button type="submit">Aggiungi membro</button>
+</form>
