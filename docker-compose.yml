@@ -27,6 +27,7 @@ services:
       SPRING_PROFILES_ACTIVE: docker
       DB_HOST: mysql
       DB_PORT: 3306
+      FRONTEND_URL: http://localhost
     depends_on:
       mysql:
         condition: service_healthy

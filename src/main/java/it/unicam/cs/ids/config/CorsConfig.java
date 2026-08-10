@@ -1,16 +1,26 @@
 package it.unicam.cs.ids.config;
 
+import it.unicam.cs.ids.security.UtenteCorrenteArgumentResolver;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+import java.util.List;
+
 /**
- * Configurazione CORS: permette al frontend Angular (che gira su un'origine diversa,
- * es. localhost:4200 in sviluppo) di chiamare le API REST esposte da questo backend.
- * Senza questa configurazione il browser blocca le richieste per motivi di sicurezza.
+ * Configurazione web trasversale: CORS (permette al frontend Angular, su
+ * un'origine diversa dal backend, di chiamare le API REST) e la
+ * registrazione del resolver per l'annotazione @UtenteCorrente.
  */
 @Configuration
 public class CorsConfig implements WebMvcConfigurer {
+
+    private final UtenteCorrenteArgumentResolver utenteCorrenteArgumentResolver;
+
+    public CorsConfig(UtenteCorrenteArgumentResolver utenteCorrenteArgumentResolver) {
+        this.utenteCorrenteArgumentResolver = utenteCorrenteArgumentResolver;
+    }
 
     @Override
     public void addCorsMappings(CorsRegistry registry) {
@@ -23,5 +33,10 @@ public class CorsConfig implements WebMvcConfigurer {
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS")
                 .allowedHeaders("*")
                 .allowCredentials(true);
+    }
+
+    @Override
+    public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
+        resolvers.add(utenteCorrenteArgumentResolver);
     }
 }

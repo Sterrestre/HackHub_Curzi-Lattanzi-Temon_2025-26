@@ -8,9 +8,10 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.user.OAuth2User;
-import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -19,10 +20,16 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Component
-public class OAuth2LoginSuccessHandler extends SavedRequestAwareAuthenticationSuccessHandler {
+public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
 
     @Autowired
     private UtenteRepository repo;
+
+    // URL del frontend Angular a cui reindirizzare l'utente dopo il login.
+    // Configurabile tramite variabile d'ambiente FRONTEND_URL (stesso
+    // approccio gia' usato per tutte le altre variabili del progetto).
+    @Value("${frontend.url}")
+    private String frontendUrl;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
@@ -39,7 +46,7 @@ public class OAuth2LoginSuccessHandler extends SavedRequestAwareAuthenticationSu
                 ? nomeCompleto.substring(nome.length()).trim()
                 : "";
 
-        // Verifico se l'utente esiste già
+        // Verifico se l'utente esiste gia'
         Optional<Utente> existing = repo.findByUtenteEmail(email);
 
         // Se l'utente non esiste, lo creo
@@ -55,17 +62,11 @@ public class OAuth2LoginSuccessHandler extends SavedRequestAwareAuthenticationSu
             );
 
             repo.save(nuovo);
-
-            // TODO: eventuale redirect ad una pagina di primo accesso
-            // response.sendRedirect("profilo/completa");
-            // Aggiunta riga per provare a committare
-
-        // se l'utente esiste, non modifico nulla
-        } else {
-            Utente utente = existing.get();
-            repo.save(utente);
         }
+        // se l'utente esiste gia', non c'e' nulla da modificare
 
-        super.onAuthenticationSuccess(request, response, authentication);
+        // Reindirizza sempre al frontend, non al backend: la sessione
+        // (cookie di autenticazione) e' gia' stata stabilita a questo punto.
+        response.sendRedirect(frontendUrl);
     }
 }

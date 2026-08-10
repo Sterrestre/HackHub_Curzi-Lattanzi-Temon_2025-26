@@ -20,12 +20,7 @@ export class HackathonFormComponent {
         private hackathonService: HackathonService,
         private router: Router
     ) {
-        // NOTA: il campo "organizzatoreId" e' temporaneo. Quando sara' pronto
-        // il login, questo valore verra' preso automaticamente dall'utente
-        // autenticato (tramite il token JWT) invece di essere digitato a mano,
-        // e questo campo del form verra' rimosso.
-        this.form = this.fb.group({
-            organizzatoreId: ['', Validators.required],
+            this.form = this.fb.group({
             nome: ['', Validators.required],
             regolamento: ['', Validators.required],
             dataInizio: ['', Validators.required],
@@ -49,7 +44,6 @@ export class HackathonFormComponent {
         const valori = this.form.getRawValue();
 
         this.hackathonService.crea({
-            organizzatoreId: valori.organizzatoreId!,
             nome: valori.nome!,
             regolamento: valori.regolamento!,
             // Il backend si aspetta un LocalDateTime: aggiungiamo l'orario

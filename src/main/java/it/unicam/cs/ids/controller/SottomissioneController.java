@@ -1,5 +1,8 @@
 package it.unicam.cs.ids.controller;
 
+import it.unicam.cs.ids.model.Utente;
+import it.unicam.cs.ids.model.team.TeamIscritto;
+import it.unicam.cs.ids.security.UtenteCorrente;
 import it.unicam.cs.ids.dto.CreaSottomissioneRequest;
 import it.unicam.cs.ids.dto.SottomissioneDTO;
 import it.unicam.cs.ids.dto.ValutaSottomissioneRequest;
@@ -19,7 +22,7 @@ import java.util.List;
  * La sottomissione si recupera sempre tramite hackathon → teamIscritto.
  */
 @RestController
-@RequestMapping("/sottomissioni")
+@RequestMapping("/api/sottomissioni")
 @Transactional
 public class SottomissioneController {
 
@@ -36,8 +39,18 @@ public class SottomissioneController {
      * Carica la sottomissione di un team iscritto a un hackathon.
      */
     @PostMapping("/carica")
-    public ResponseEntity<?> carica(@RequestBody CreaSottomissioneRequest req) {
+    public ResponseEntity<?> carica(@RequestBody CreaSottomissioneRequest req,
+                                    @UtenteCorrente Utente utenteCorrente) {
         try {
+            Hackathon hackathon = hackathonService.getHackathonByID(req.hackathonId());
+            TeamIscritto teamIscritto = hackathon.getTeamIscrittoById(req.teamIscrittoId());
+
+            boolean membro = teamIscritto.getTeam().getMembri().stream()
+                    .anyMatch(m -> m.getUtente().getUtenteID().equals(utenteCorrente.getUtenteID()));
+            if (!membro) {
+                return ResponseEntity.status(403).body("Solo un membro del team può caricare la sottomissione");
+            }
+
             Sottomissione s = sottomissioneService.caricaSottomissione(
                     req.hackathonId(),
                     req.teamIscrittoId(),
@@ -57,10 +70,11 @@ public class SottomissioneController {
      * Valuta la sottomissione di un team iscritto.
      */
     @PostMapping("/valuta")
-    public ResponseEntity<?> valuta(@RequestBody ValutaSottomissioneRequest req) {
+    public ResponseEntity<?> valuta(@RequestBody ValutaSottomissioneRequest req,
+                                    @UtenteCorrente Utente giudice) {
         try {
             Sottomissione s = sottomissioneService.valutaSottomissione(
-                    req.giudiceId(),
+                    giudice.getUtenteID(),
                     req.hackathonId(),
                     req.teamIscrittoId(),
                     req.voto(),
@@ -94,8 +108,14 @@ public class SottomissioneController {
      * Recupera tutte le sottomissioni di un hackathon.
      */
     @GetMapping("/hackathon/{hackathonId}")
-    public ResponseEntity<List<SottomissioneDTO>> getByHackathon(@PathVariable String hackathonId) {
+    public ResponseEntity<?> getByHackathon(@PathVariable String hackathonId,
+                                            @UtenteCorrente Utente utenteCorrente) {
         Hackathon hack = hackathonService.getHackathonByID(hackathonId);
+
+        if (!utenteCorrente.isStaffPerHackathon(hack)) {
+            return ResponseEntity.status(403).body("Solo lo staff dell'hackathon può vedere tutte le sottomissioni");
+        }
+
         List<SottomissioneDTO> lista = hack.getSottomissioni().stream()
                 .map(SottomissioneDTO::from)
                 .toList();

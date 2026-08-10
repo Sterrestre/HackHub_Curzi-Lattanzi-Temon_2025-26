@@ -19,7 +19,7 @@ import java.util.List;
  * Recupera le entità tramite TeamService e delega la logica a MembriTeamHandler.
  */
 @RestController
-@RequestMapping("/membri")
+@RequestMapping("/api/membri")
 @Transactional
 public class MembriTeamController {
 

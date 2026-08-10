@@ -19,7 +19,7 @@ import java.util.List;
  * e con SupportoHandler per la logica di dominio.
  */
 @RestController
-@RequestMapping("/supporto")
+@RequestMapping("/api/supporto")
 @Transactional
 public class SupportoController {
 

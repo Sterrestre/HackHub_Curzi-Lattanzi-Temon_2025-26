@@ -5,6 +5,7 @@ import it.unicam.cs.ids.handler.TeamHandler;
 import it.unicam.cs.ids.model.Utente;
 import it.unicam.cs.ids.model.team.MembroTeam;
 import it.unicam.cs.ids.model.team.Team;
+import it.unicam.cs.ids.security.UtenteCorrente;
 import it.unicam.cs.ids.service.UtenteService;
 import it.unicam.cs.ids.service.TeamService;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
  * delega la logica di dominio a TeamHandler.
  */
 @RestController
-@RequestMapping("/team")
+@RequestMapping("/api/team")
 @Transactional
 public class TeamController {
 
@@ -37,9 +38,9 @@ public class TeamController {
     }
 
     @PostMapping("/crea")
-    public ResponseEntity<?> creaTeam(@RequestBody CreaTeamRequest request) {
+    public ResponseEntity<?> creaTeam(@RequestBody CreaTeamRequest request,
+                                      @UtenteCorrente Utente admin) {
         try {
-            Utente admin = utenteService.findById(request.amministratoreId());
             Team team = teamService.creaTeam(request.nome(), admin);
             return ResponseEntity.ok(TeamDTO.from(team));
         } catch (IllegalArgumentException | IllegalStateException e) {

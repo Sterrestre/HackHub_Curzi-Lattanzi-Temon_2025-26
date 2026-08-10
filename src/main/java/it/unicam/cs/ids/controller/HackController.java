@@ -6,6 +6,7 @@ import it.unicam.cs.ids.model.hackathon.Hackathon;
 import it.unicam.cs.ids.model.hackathon.InfoHack;
 import it.unicam.cs.ids.model.hackathon.Stato;
 import it.unicam.cs.ids.model.staff.Mentore;
+import it.unicam.cs.ids.security.UtenteCorrente;
 import it.unicam.cs.ids.service.HackathonService;
 import it.unicam.cs.ids.service.UtenteService;
 import it.unicam.cs.ids.handler.HackHandler;
@@ -25,7 +26,7 @@ import java.util.List;
  * Parla con HackathonService e UtenteService per recuperare le entità.
  */
 @RestController
-@RequestMapping("/hackathon")
+@RequestMapping("/api/hackathon")
 @Transactional
 public class HackController {
 
@@ -42,10 +43,9 @@ public class HackController {
     }
 
     @PostMapping("/crea")
-    public ResponseEntity<?> crea(@RequestBody CreaHackathonRequest req) {
+    public ResponseEntity<?> crea(@RequestBody CreaHackathonRequest req,
+                                  @UtenteCorrente Utente organizzatore) {
         try {
-            Utente organizzatore = utenteService.findById(req.organizzatoreId());
-
             InfoHack info = new InfoHackBuilderImpl()
                     .regolamento(req.regolamento())
                     .dataInizio(req.dataInizio())
@@ -87,8 +87,14 @@ public class HackController {
     }
 
     @PostMapping("/{id}/conferma")
-    public ResponseEntity<?> conferma(@PathVariable String id) {
+    public ResponseEntity<?> conferma(@PathVariable String id, @UtenteCorrente Utente utente) {
         try {
+            Hackathon hackathon = hackathonService.getHackathonByID(id);
+
+            if (!hackathon.getOrganizzatore().getUtenteID().equals(utente.getUtenteID())) {
+                return ResponseEntity.status(403).body("Solo l'organizzatore può confermare questo hackathon");
+            }
+
             hackathonService.aggiornaStato(id, Stato.CONFERMATO);
             return ResponseEntity.ok("Hackathon confermato");
         } catch (IllegalArgumentException | IllegalStateException e) {
@@ -112,10 +118,10 @@ public class HackController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> elimina(@PathVariable String id,
-                                     @RequestParam String organizzatoreId) {
+                                     @UtenteCorrente Utente utenteCorrente) {
         try {
             Hackathon hack = hackathonService.getHackathonByID(id);
-            if (!hack.getOrganizzatore().getUtenteID().equals(organizzatoreId)) {
+            if (!hack.getOrganizzatore().getUtenteID().equals(utenteCorrente.getUtenteID())) {
                 return ResponseEntity.status(403).body("Solo l'organizzatore può eliminare questo hackathon");
             }
             hackathonService.eliminaHackathon(id);
@@ -129,11 +135,12 @@ public class HackController {
 
     @PostMapping("/{id}/iscrivi-team")
     public ResponseEntity<?> iscriviTeam(@PathVariable String id,
-                                         @RequestBody IscriviTeamRequest req) {
+                                         @RequestBody IscriviTeamRequest req,
+                                         @UtenteCorrente Utente utenteCorrente) {
         try {
             Hackathon hack = hackathonService.getHackathonByID(id);
             Team team = teamService.findTeamById(req.teamId());
-            MembroTeam admin = teamService.findMembroTeamById(req.teamId(), req.amministratoreId());
+            MembroTeam admin = teamService.findMembroTeamByUtente(req.teamId(), utenteCorrente.getUtenteID());
             TeamIscritto teamIscritto = hackHandler.iscriviTeam(team, hack, admin);
             hackathonService.salva(hack);
             return ResponseEntity.ok(new IscrizioneTeamDTO(
@@ -204,10 +211,10 @@ public class HackController {
 
     @PostMapping("/{id}/conferma-classifica")
     public ResponseEntity<?> confermaClassifica(@PathVariable String id,
-                                                @RequestParam String organizzatoreId) {
+                                                @UtenteCorrente Utente utenteCorrente) {
         try {
             Hackathon hack = hackathonService.getHackathonByID(id);
-            if (!hack.getOrganizzatore().getUtenteID().equals(organizzatoreId)) {
+            if (!hack.getOrganizzatore().getUtenteID().equals(utenteCorrente.getUtenteID())) {
                 return ResponseEntity.status(403).body("Solo l'organizzatore può confermare la classifica");
             }
             hackHandler.confermaClassifica(hack);
@@ -223,10 +230,10 @@ public class HackController {
     @PostMapping("/{id}/vincitore")
     public ResponseEntity<?> setVincitore(@PathVariable String id,
                                           @RequestBody SetVincitoreRequest req,
-                                          @RequestParam String organizzatoreId) {
+                                          @UtenteCorrente Utente utenteCorrente) {
         try {
             Hackathon hack = hackathonService.getHackathonByID(id);
-            if (!hack.getOrganizzatore().getUtenteID().equals(organizzatoreId)) {
+            if (!hack.getOrganizzatore().getUtenteID().equals(utenteCorrente.getUtenteID())) {
                 return ResponseEntity.status(403).body("Solo l'organizzatore può impostare il vincitore");
             }
             TeamIscritto team = hack.getTeamIscrittoById(req.teamId());
@@ -243,11 +250,10 @@ public class HackController {
     @PostMapping("/{id}/penalizzazione")
     public ResponseEntity<?> applicaPenalizzazione(@PathVariable String id,
                                                    @RequestBody ApplicaPenalizzazioneRequest req,
-                                                   @RequestParam String utenteId) {
+                                                   @UtenteCorrente Utente utenteCorrente) {
         try {
             Hackathon hack = hackathonService.getHackathonByID(id);
-            Utente utente = utenteService.findById(utenteId);
-            if (!utente.puoPenalizzare(hack)) {
+            if (!utenteCorrente.puoPenalizzare(hack)) {
                 return ResponseEntity.status(403).body("Non hai i permessi per applicare una penalizzazione");
             }
             if (!hackHandler.validaDati(hack, req.teamId(), req.tipoIntervento(), req.motivazione())) {

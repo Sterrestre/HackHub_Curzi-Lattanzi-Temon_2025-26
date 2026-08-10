@@ -5,12 +5,10 @@ import { environment } from '../../environments/environment';
 
 export interface CreaTeamRequest {
     nome: string;
-    amministratoreId: string;
 }
 
 export interface IscriviTeamRequest {
     teamId: string;
-    amministratoreId: string;
 }
 
 export interface IscrizioneTeam {
@@ -34,9 +32,9 @@ export interface MembroTeam {
     providedIn: 'root'
 })
 export class TeamService {
-    private readonly teamUrl = `${environment.apiUrl}/team`;
-    private readonly hackathonUrl = `${environment.apiUrl}/hackathon`;
-    private readonly membriUrl = `${environment.apiUrl}/membri`;
+    private readonly teamUrl = `${environment.apiUrl}/api/team`;
+    private readonly hackathonUrl = `${environment.apiUrl}/api/hackathon`;
+    private readonly membriUrl = `${environment.apiUrl}/api/membri`;
 
     constructor(private http: HttpClient) {}
 

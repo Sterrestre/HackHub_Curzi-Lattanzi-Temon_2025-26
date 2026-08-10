@@ -3,7 +3,6 @@ package it.unicam.cs.ids.dto;
 import java.time.LocalDateTime;
 
 public record CreaHackathonRequest(
-        String organizzatoreId,
         String nome,
         String regolamento,
         LocalDateTime dataInizio,
@@ -15,4 +14,3 @@ public record CreaHackathonRequest(
         int numMaxTeam,
         int maxPartecipantiPerTeam
 ) {}
-

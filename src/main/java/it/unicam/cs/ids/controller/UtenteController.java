@@ -1,10 +1,14 @@
 package it.unicam.cs.ids.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import it.unicam.cs.ids.dto.UtenteDTO;
 import it.unicam.cs.ids.dto.RegistraUtenteRequest;
 import it.unicam.cs.ids.model.Utente;
 import it.unicam.cs.ids.service.UtenteService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,7 +19,7 @@ import java.util.List;
  * Parla solo con UtenteService per recuperare e creare utenti.
  */
 @RestController
-@RequestMapping("/utenti")
+@RequestMapping("/api/utenti")
 @Transactional
 public class UtenteController {
 
@@ -61,5 +65,30 @@ public class UtenteController {
                 .map(UtenteDTO::from)
                 .toList();
         return ResponseEntity.ok(lista);
+    }
+
+    @GetMapping("/me")
+    public ResponseEntity<?> getUtenteCorrente(
+            @AuthenticationPrincipal org.springframework.security.oauth2.core.user.OAuth2User principal) {
+        if (principal == null) {
+            return ResponseEntity.status(401).body("Nessun utente autenticato");
+        }
+        try {
+            String email = principal.getAttribute("email");
+            Utente utente = utenteService.findByEmail(email);
+            return ResponseEntity.ok(UtenteDTO.from(utente));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout(HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
+        if (session != null) {
+            session.invalidate();
+        }
+        SecurityContextHolder.clearContext();
+        return ResponseEntity.ok("Logout effettuato");
     }
 }

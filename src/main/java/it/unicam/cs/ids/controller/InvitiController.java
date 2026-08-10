@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.*;
  * Recupera le entità tramite i service e delega la logica a InvitiHandler.
  */
 @RestController
-@RequestMapping("/inviti")
+@RequestMapping("/api/inviti")
 @Transactional
 public class InvitiController {
 

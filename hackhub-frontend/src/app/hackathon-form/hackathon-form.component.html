@@ -8,11 +8,6 @@
 <form [formGroup]="form" (ngSubmit)="onSubmit()" *ngIf="!inviato">
 
     <label>
-        Id organizzatore (temporaneo, arrivera' dal login)
-        <input type="text" formControlName="organizzatoreId">
-    </label>
-
-    <label>
         Nome hackathon
         <input type="text" formControlName="nome">
     </label>

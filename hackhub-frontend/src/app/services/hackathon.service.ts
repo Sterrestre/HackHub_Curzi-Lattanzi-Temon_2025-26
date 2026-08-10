@@ -24,7 +24,6 @@ export interface Hackathon {
 }
 
 export interface CreaHackathonRequest {
-    organizzatoreId: string;
     nome: string;
     regolamento: string;
     dataInizio: string;
@@ -41,7 +40,7 @@ export interface CreaHackathonRequest {
     providedIn: 'root'
 })
 export class HackathonService {
-    private readonly baseUrl = `${environment.apiUrl}/hackathon`;
+    private readonly baseUrl = `${environment.apiUrl}/api/hackathon`;
 
     constructor(private http: HttpClient) {}
 

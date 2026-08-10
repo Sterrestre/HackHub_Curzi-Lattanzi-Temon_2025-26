@@ -32,6 +32,11 @@ public class UtenteService {
                 .orElseThrow(() -> new IllegalArgumentException("Utente non trovato"));
     }
 
+    public Utente findByEmail(String email) {
+        return utenteRepository.findByUtenteEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("Utente non trovato"));
+    }
+
     public void aggiornaIban(String utenteId, String nuovoIban) {
         Utente u = findById(utenteId);
         u.getConto().cambiaIban(nuovoIban);

@@ -50,10 +50,6 @@
                 <!-- Form di valutazione, solo per sottomissioni non ancora valutate -->
                 <div *ngIf="!s.valutata && valutazioneInput[s.teamIscrittoId]" class="valutazione-form">
                     <label>
-                        Id giudice (temporaneo)
-                        <input type="text" [(ngModel)]="valutazioneInput[s.teamIscrittoId].giudiceId">
-                    </label>
-                    <label>
                         Voto (0-10)
                         <input type="number" min="0" max="10" [(ngModel)]="valutazioneInput[s.teamIscrittoId].voto">
                     </label>

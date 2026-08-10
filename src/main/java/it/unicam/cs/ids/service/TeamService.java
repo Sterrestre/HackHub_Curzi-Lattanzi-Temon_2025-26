@@ -60,6 +60,14 @@ public class TeamService {
                 .orElseThrow(() -> new IllegalArgumentException("MembroTeam non trovato nel team " + team.getNome()));
     }
 
+    public MembroTeam findMembroTeamByUtente(String teamId, String utenteId) {
+        Team team = findTeamById(teamId);
+        return team.getMembri().stream()
+                .filter(m -> m.getUtente().getUtenteID().equals(utenteId))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("Non sei membro del team " + team.getNome()));
+    }
+
     public MembroTeam aggiungiMembro(Team team, Utente utente, boolean amministratore) {
         if (utente.getTeam() != null) {
             throw new IllegalStateException("L'utente è già membro di un team");

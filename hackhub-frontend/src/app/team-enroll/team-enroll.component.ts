@@ -32,7 +32,6 @@ export class TeamEnrollComponent implements OnInit {
         // non dovra' piu' inserirlo a mano, arrivera' dal token.
         this.form = this.fb.group({
             nomeTeam: ['', Validators.required],
-            amministratoreId: ['', Validators.required]
         });
     }
 
@@ -52,14 +51,12 @@ export class TeamEnrollComponent implements OnInit {
         // Passo 1: crea il team. Passo 2: iscrivilo a questo hackathon.
         this.teamService.crea({
             nome: valori.nomeTeam!,
-            amministratoreId: valori.amministratoreId!
         }).subscribe({
             next: (teamCreato: any) => {
                 this.teamCreatoId = teamCreato.id;
 
                 this.teamService.iscriviAHackathon(this.hackathonId, {
                     teamId: teamCreato.id,
-                    amministratoreId: valori.amministratoreId!
                 }).subscribe({
                     next: (iscrizione) => {
                         this.teamIscrittoId = iscrizione.teamIscrittoId;

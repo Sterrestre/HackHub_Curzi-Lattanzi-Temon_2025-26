@@ -6,7 +6,6 @@ import { Hackathon, HackathonService } from '../services/hackathon.service';
 import { Sottomissione, SottomissioneService } from '../services/sottomissione.service';
 
 interface ValutazioneInput {
-    giudiceId: string;
     voto: number;
     giudizio: string;
 }
@@ -29,8 +28,8 @@ export class HackathonDetailComponent implements OnInit {
     confermaErrore: string | null = null;
 
     // Un piccolo form di valutazione per ciascuna sottomissione non ancora
-    // valutata, indicizzato per teamIscrittoId. "giudiceId" e' temporaneo,
-    // dopo il login arrivera' dall'utente autenticato.
+    // valutata, indicizzato per teamIscrittoId. L'id del giudice non serve
+    // piu': arriva automaticamente dalla sessione dell'utente loggato.
     valutazioneInput: { [teamIscrittoId: string]: ValutazioneInput } = {};
     valutazioneErrore: { [teamIscrittoId: string]: string } = {};
 
@@ -76,10 +75,13 @@ export class HackathonDetailComponent implements OnInit {
                 // Inizializza il form di valutazione per ogni sottomissione non valutata
                 for (const s of dati) {
                     if (!s.valutata && !this.valutazioneInput[s.teamIscrittoId]) {
-                        this.valutazioneInput[s.teamIscrittoId] = { giudiceId: '', voto: 0, giudizio: '' };
+                        this.valutazioneInput[s.teamIscrittoId] = { voto: 0, giudizio: '' };
                     }
                 }
             },
+            // Se la chiamata fallisce (es. 403 perche' non sei staff di questo
+            // hackathon), mostriamo semplicemente nessuna sottomissione invece
+            // di un errore a schermo.
             error: () => (this.sottomissioni = [])
         });
     }
@@ -102,15 +104,14 @@ export class HackathonDetailComponent implements OnInit {
 
     valuta(s: Sottomissione): void {
         const input = this.valutazioneInput[s.teamIscrittoId];
-        if (!input || !input.giudiceId || !input.giudizio) {
-            this.valutazioneErrore[s.teamIscrittoId] = 'Compila id giudice, voto e giudizio.';
+        if (!input || !input.giudizio) {
+            this.valutazioneErrore[s.teamIscrittoId] = 'Compila voto e giudizio.';
             return;
         }
 
         this.valutazioneErrore[s.teamIscrittoId] = '';
 
         this.sottomissioneService.valuta({
-            giudiceId: input.giudiceId,
             hackathonId: this.hackathonId,
             teamIscrittoId: s.teamIscrittoId,
             voto: input.voto,

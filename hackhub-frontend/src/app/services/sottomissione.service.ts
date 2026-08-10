@@ -23,7 +23,6 @@ export interface CreaSottomissioneRequest {
 }
 
 export interface ValutaSottomissioneRequest {
-    giudiceId: string;
     hackathonId: string;
     teamIscrittoId: string;
     voto: number;
@@ -34,7 +33,7 @@ export interface ValutaSottomissioneRequest {
     providedIn: 'root'
 })
 export class SottomissioneService {
-    private readonly baseUrl = `${environment.apiUrl}/sottomissioni`;
+    private readonly baseUrl = `${environment.apiUrl}/api/sottomissioni`;
 
     constructor(private http: HttpClient) {}
 

@@ -151,4 +151,8 @@ public class Utente {
     public void setMembroDiStaff(boolean membroDiStaff) {
         this.membroDiStaff = membroDiStaff;
     }
+
+    public boolean isStaffPerHackathon(Hackathon h) {
+        return !getRuoliPerHackathon(h).isEmpty();
+    }
 }

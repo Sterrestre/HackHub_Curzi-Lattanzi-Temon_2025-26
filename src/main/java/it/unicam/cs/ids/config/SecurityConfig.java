@@ -10,13 +10,13 @@ import org.springframework.security.web.SecurityFilterChain;
 public class SecurityConfig {
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain filterChain(HttpSecurity http, OAuth2LoginSuccessHandler successHandler) throws Exception {
 
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/", "/login", "/error").permitAll()
-                        // TEMPORANEO: apre in lettura tutte le rotte per poter sviluppare
+                        // TODO: TEMPORANEO: apre in lettura tutte le rotte per poter sviluppare
                         // e testare il frontend prima che l'integrazione col login sia pronta.
                         // Da rimuovere quando l'autenticazione sara' collegata all'app Angular.
                         .requestMatchers(org.springframework.http.HttpMethod.GET, "/**").permitAll()
@@ -24,7 +24,7 @@ public class SecurityConfig {
                 )
                 .oauth2Login(oauth -> oauth
                         .loginPage("/login")
-                        .successHandler(new OAuth2LoginSuccessHandler())
+                        .successHandler(successHandler)
                 );
 
         return http.build();
