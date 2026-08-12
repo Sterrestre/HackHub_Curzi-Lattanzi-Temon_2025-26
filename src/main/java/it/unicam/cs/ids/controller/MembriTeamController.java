@@ -4,8 +4,10 @@ import it.unicam.cs.ids.dto.CambiaRuoloRequest;
 import it.unicam.cs.ids.dto.LasciaTeamRequest;
 import it.unicam.cs.ids.dto.MembroTeamDTO;
 import it.unicam.cs.ids.handler.MembriTeamHandler;
+import it.unicam.cs.ids.model.Utente;
 import it.unicam.cs.ids.model.team.MembroTeam;
 import it.unicam.cs.ids.model.team.Team;
+import it.unicam.cs.ids.security.UtenteCorrente;
 import it.unicam.cs.ids.service.TeamService;
 import it.unicam.cs.ids.service.UtenteService;
 import org.springframework.http.ResponseEntity;
@@ -36,9 +38,10 @@ public class MembriTeamController {
     }
 
     @PostMapping("/lascia")
-    public ResponseEntity<String> lasciaTeam(@RequestBody LasciaTeamRequest request) {
+    public ResponseEntity<String> lasciaTeam(@RequestBody LasciaTeamRequest request,
+                                             @UtenteCorrente Utente utenteCorrente) {
         try {
-            MembroTeam membro = teamService.findMembroTeamById(request.teamId(), request.membroId());
+            MembroTeam membro = teamService.findMembroTeamByUtente(request.teamId(), utenteCorrente.getUtenteID());
             membriTeamHandler.rimuoviMembroTeam(membro);
             return ResponseEntity.ok("Il membro ha lasciato il team");
         } catch (IllegalArgumentException | IllegalStateException e) {
@@ -49,9 +52,10 @@ public class MembriTeamController {
     }
 
     @PostMapping("/cambia-ruolo")
-    public ResponseEntity<MembroTeamDTO> cambiaRuolo(@RequestBody CambiaRuoloRequest request) {
+    public ResponseEntity<MembroTeamDTO> cambiaRuolo(@RequestBody CambiaRuoloRequest request,
+                                                     @UtenteCorrente Utente utenteCorrente) {
         try {
-            MembroTeam admin = teamService.findMembroTeamById(request.teamId(), request.adminId());
+            MembroTeam admin = teamService.findMembroTeamByUtente(request.teamId(), utenteCorrente.getUtenteID());
             MembroTeam membro = teamService.findMembroTeamById(request.teamId(), request.membroId());
             MembroTeam aggiornato = membriTeamHandler.rendiAmministratore(admin, membro);
             return ResponseEntity.ok(MembroTeamDTO.from(aggiornato));

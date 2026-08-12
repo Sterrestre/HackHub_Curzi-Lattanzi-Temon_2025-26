@@ -5,4 +5,3 @@ public record AggiungiMembroRequest(
         String utenteId,
         boolean amministratore
 ) {}
-

@@ -51,8 +51,13 @@ public class TeamController {
     }
 
     @PostMapping("/aggiungi-membro")
-    public ResponseEntity<?> aggiungiMembro(@RequestBody AggiungiMembroRequest request) {
+    public ResponseEntity<?> aggiungiMembro(@RequestBody AggiungiMembroRequest request,
+                                            @UtenteCorrente Utente utenteCorrente) {
         try {
+            MembroTeam admin = teamService.findMembroTeamByUtente(request.teamId(), utenteCorrente.getUtenteID());
+            if (!admin.isAmministratore()) {
+                return ResponseEntity.status(403).body("Solo un amministratore del team può aggiungere membri");
+            }
             Team team = teamService.findTeamById(request.teamId());
             Utente utente = utenteService.findById(request.utenteId());
             MembroTeam membro = teamService.aggiungiMembro(team, utente, request.amministratore());
@@ -65,9 +70,10 @@ public class TeamController {
     }
 
     @PostMapping("/invita")
-    public ResponseEntity<?> invita(@RequestBody InvitaRequest request) {
+    public ResponseEntity<?> invita(@RequestBody InvitaRequest request,
+                                    @UtenteCorrente Utente utenteCorrente) {
         try {
-            MembroTeam admin = teamService.findMembroTeamById(request.teamId(), request.adminId());
+            MembroTeam admin = teamService.findMembroTeamByUtente(request.teamId(), utenteCorrente.getUtenteID());
             Utente utente = utenteService.findById(request.utenteId());
             String msg = teamHandler.invitaUtente(admin, utente);
             return ResponseEntity.ok(msg);

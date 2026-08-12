@@ -1,0 +1,17 @@
+<h2>I miei inviti</h2>
+
+<p *ngIf="caricamento">Caricamento in corso...</p>
+<p *ngIf="errore" class="errore">{{ errore }}</p>
+<p *ngIf="messaggio">{{ messaggio }}</p>
+
+<ul *ngIf="!caricamento && inviti.length > 0">
+    <li *ngFor="let i of inviti">
+        <strong>{{ i.nomeHackathon }}</strong> — invito come <strong>{{ i.ruolo }}</strong>
+        <br>
+        Da: {{ i.mittenteNickname }}
+        <br>
+        <button type="button" (click)="rispondi(i, true)">Accetta</button>
+        <button type="button" (click)="rispondi(i, false)">Rifiuta</button>
+    </li>
+</ul>
+<p *ngIf="!caricamento && inviti.length === 0">Nessun invito in sospeso.</p>

@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { Hackathon, HackathonService } from '../services/hackathon.service';
 import { Sottomissione, SottomissioneService } from '../services/sottomissione.service';
+import { InvitoService } from '../services/invito.service';
 
 interface ValutazioneInput {
     voto: number;
@@ -27,16 +28,25 @@ export class HackathonDetailComponent implements OnInit {
     confermaInCorso = false;
     confermaErrore: string | null = null;
 
-    // Un piccolo form di valutazione per ciascuna sottomissione non ancora
-    // valutata, indicizzato per teamIscrittoId. L'id del giudice non serve
-    // piu': arriva automaticamente dalla sessione dell'utente loggato.
+    classificaInCorso = false;
+    classificaErrore: string | null = null;
+    classificaMessaggio: string | null = null;
+
+    // Form per invitare un utente come giudice o mentore (solo organizzatore)
+    invitoEmail = '';
+    invitoRuolo: 'GIUDICE' | 'MENTORE' = 'GIUDICE';
+    invitoInCorso = false;
+    invitoErrore: string | null = null;
+    invitoMessaggio: string | null = null;
+
     valutazioneInput: { [teamIscrittoId: string]: ValutazioneInput } = {};
     valutazioneErrore: { [teamIscrittoId: string]: string } = {};
 
     constructor(
         private route: ActivatedRoute,
         private hackathonService: HackathonService,
-        private sottomissioneService: SottomissioneService
+        private sottomissioneService: SottomissioneService,
+        private invitoService: InvitoService
     ) {}
 
     ngOnInit(): void {
@@ -72,16 +82,12 @@ export class HackathonDetailComponent implements OnInit {
         this.sottomissioneService.getByHackathon(this.hackathonId).subscribe({
             next: (dati) => {
                 this.sottomissioni = dati;
-                // Inizializza il form di valutazione per ogni sottomissione non valutata
                 for (const s of dati) {
                     if (!s.valutata && !this.valutazioneInput[s.teamIscrittoId]) {
                         this.valutazioneInput[s.teamIscrittoId] = { voto: 0, giudizio: '' };
                     }
                 }
             },
-            // Se la chiamata fallisce (es. 403 perche' non sei staff di questo
-            // hackathon), mostriamo semplicemente nessuna sottomissione invece
-            // di un errore a schermo.
             error: () => (this.sottomissioni = [])
         });
     }
@@ -98,6 +104,50 @@ export class HackathonDetailComponent implements OnInit {
             error: (err) => {
                 this.confermaInCorso = false;
                 this.confermaErrore = err?.error ?? 'Errore durante la conferma dell\'hackathon.';
+            }
+        });
+    }
+
+    pubblicaClassifica(): void {
+        this.classificaInCorso = true;
+        this.classificaErrore = null;
+        this.classificaMessaggio = null;
+
+        this.hackathonService.confermaClassifica(this.hackathonId).subscribe({
+            next: () => {
+                this.classificaInCorso = false;
+                this.classificaMessaggio = 'Classifica pubblicata!';
+            },
+            error: (err) => {
+                this.classificaInCorso = false;
+                this.classificaErrore = err?.error ?? 'Errore durante la pubblicazione della classifica.';
+            }
+        });
+    }
+
+    invitaStaff(): void {
+        if (!this.invitoEmail) {
+            this.invitoErrore = 'Inserisci l\'email dell\'utente da invitare.';
+            return;
+        }
+
+        this.invitoInCorso = true;
+        this.invitoErrore = null;
+        this.invitoMessaggio = null;
+
+        this.invitoService.invitaStaff({
+            hackathonId: this.hackathonId,
+            email: this.invitoEmail,
+            ruolo: this.invitoRuolo
+        }).subscribe({
+            next: () => {
+                this.invitoInCorso = false;
+                this.invitoMessaggio = 'Invito inviato!';
+                this.invitoEmail = '';
+            },
+            error: (err) => {
+                this.invitoInCorso = false;
+                this.invitoErrore = err?.error ?? 'Errore durante l\'invio dell\'invito.';
             }
         });
     }

@@ -8,13 +8,36 @@
     <p><strong>Stato:</strong> {{ hackathon.stato }}</p>
     <p><a [routerLink]="['/hackathon', hackathon.id, 'iscrivi']">Iscrivi il tuo team a questo hackathon</a></p>
 
-    <!-- Conferma hackathon: visibile solo quando e' ancora in bozza -->
+    <!-- Conferma hackathon: visibile solo quando e' ancora in bozza.
+         Se non sei l'organizzatore, il backend rispondera' comunque 403. -->
     <div *ngIf="hackathon.stato === 'BOZZA'">
         <button type="button" (click)="confermaHackathon()" [disabled]="confermaInCorso">
             Conferma hackathon (organizzatore)
         </button>
         <p *ngIf="confermaErrore" class="errore">{{ confermaErrore }}</p>
     </div>
+
+    <!-- Invita staff (giudice/mentore): stessa logica, il backend verifica
+         che sia davvero l'organizzatore a chiamare l'endpoint. -->
+    <section>
+        <h3>Invita un giudice o mentore</h3>
+        <div class="valutazione-form">
+            <label>
+                Email dell'utente da invitare
+                <input type="email" [(ngModel)]="invitoEmail">
+            </label>
+            <label>
+                Ruolo
+                <select [(ngModel)]="invitoRuolo">
+                    <option value="GIUDICE">Giudice</option>
+                    <option value="MENTORE">Mentore</option>
+                </select>
+            </label>
+            <button type="button" (click)="invitaStaff()" [disabled]="invitoInCorso">Invita</button>
+            <p *ngIf="invitoErrore" class="errore">{{ invitoErrore }}</p>
+            <p *ngIf="invitoMessaggio">{{ invitoMessaggio }}</p>
+        </div>
+    </section>
 
     <section>
         <h3>Informazioni</h3>
@@ -35,6 +58,12 @@
             <li *ngFor="let riga of classifica">{{ riga }}</li>
         </ul>
         <p *ngIf="classifica.length === 0">Classifica non ancora disponibile.</p>
+
+        <button type="button" (click)="pubblicaClassifica()" [disabled]="classificaInCorso">
+            Pubblica/conferma classifica (organizzatore)
+        </button>
+        <p *ngIf="classificaErrore" class="errore">{{ classificaErrore }}</p>
+        <p *ngIf="classificaMessaggio">{{ classificaMessaggio }}</p>
     </section>
 
     <section>
@@ -47,7 +76,6 @@
                 <br>
                 {{ s.descrizione }}
 
-                <!-- Form di valutazione, solo per sottomissioni non ancora valutate -->
                 <div *ngIf="!s.valutata && valutazioneInput[s.teamIscrittoId]" class="valutazione-form">
                     <label>
                         Voto (0-10)
@@ -62,6 +90,6 @@
                 </div>
             </li>
         </ul>
-        <p *ngIf="sottomissioni.length === 0">Nessuna sottomissione presente.</p>
+        <p *ngIf="sottomissioni.length === 0">Nessuna sottomissione presente (o non hai i permessi per vederle).</p>
     </section>
 </div>

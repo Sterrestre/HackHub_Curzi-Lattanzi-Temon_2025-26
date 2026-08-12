@@ -105,8 +105,14 @@ public class HackController {
     }
 
     @PostMapping("/{id}/stato")
-    public ResponseEntity<?> cambiaStato(@PathVariable String id, @RequestBody Stato nuovoStato) {
+    public ResponseEntity<?> cambiaStato(@PathVariable String id,
+                                         @RequestBody Stato nuovoStato,
+                                         @UtenteCorrente Utente utenteCorrente) {
         try {
+            Hackathon hack = hackathonService.getHackathonByID(id);
+            if (!hack.getOrganizzatore().getUtenteID().equals(utenteCorrente.getUtenteID())) {
+                return ResponseEntity.status(403).body("Solo l'organizzatore può cambiare lo stato dell'hackathon");
+            }
             hackathonService.aggiornaStato(id, nuovoStato);
             return ResponseEntity.ok().build();
         } catch (IllegalArgumentException | IllegalStateException e) {
@@ -175,9 +181,13 @@ public class HackController {
     }
 
     @PostMapping("/assegna-mentore")
-    public ResponseEntity<String> assegnaMentore(@RequestBody AssegnaMentoreRequest req) {
+    public ResponseEntity<String> assegnaMentore(@RequestBody AssegnaMentoreRequest req,
+                                                 @UtenteCorrente Utente utenteCorrente) {
         try {
             Hackathon hack = hackathonService.getHackathonByID(req.hackathonId());
+            if (!hack.getOrganizzatore().getUtenteID().equals(utenteCorrente.getUtenteID())) {
+                return ResponseEntity.status(403).body("Solo l'organizzatore può assegnare un mentore");
+            }
             TeamIscritto team = hack.getTeamIscrittoById(req.teamId());
             Mentore mentore = (Mentore) hack.getRuoli().stream()
                     .filter(r -> r.getId().equals(req.ruoloMentoreId()))
@@ -195,10 +205,14 @@ public class HackController {
 
     @PostMapping("/{id}/iscrivi-membro")
     public ResponseEntity<?> iscriviMembro(@PathVariable String id,
-                                           @RequestBody IscriviMembroRequest req) {
+                                           @RequestBody IscriviMembroRequest req,
+                                           @UtenteCorrente Utente utenteCorrente) {
         try {
             Hackathon hack = hackathonService.getHackathonByID(id);
             MembroTeam membro = teamService.findMembroTeamById(req.teamId(), req.membroId());
+            if (!membro.getUtente().getUtenteID().equals(utenteCorrente.getUtenteID())) {
+                return ResponseEntity.status(403).body("Puoi iscrivere solo te stesso");
+            }
             String risultato = hackHandler.iscriviMembroteam(membro, hack);
             hackathonService.salva(hack);
             return ResponseEntity.ok(risultato);
@@ -270,9 +284,13 @@ public class HackController {
     }
 
     @PostMapping("/{id}/valida-presenze")
-    public ResponseEntity<?> validaPresenze(@PathVariable String id) {
+    public ResponseEntity<?> validaPresenze(@PathVariable String id,
+                                            @UtenteCorrente Utente utenteCorrente) {
         try {
             Hackathon hack = hackathonService.getHackathonByID(id);
+            if (!hack.getOrganizzatore().getUtenteID().equals(utenteCorrente.getUtenteID())) {
+                return ResponseEntity.status(403).body("Solo l'organizzatore può validare le presenze");
+            }
             hackHandler.validaPresenze(hack);
             return ResponseEntity.ok("Presenze validate");
         } catch (IllegalArgumentException | IllegalStateException e) {
@@ -284,9 +302,13 @@ public class HackController {
 
     @PostMapping("/{id}/imposta-presenza")
     public ResponseEntity<?> impostaPresenza(@PathVariable String id,
-                                             @RequestBody ImpostaPresenzaRequest req) {
+                                             @RequestBody ImpostaPresenzaRequest req,
+                                             @UtenteCorrente Utente utenteCorrente) {
         try {
             Hackathon hack = hackathonService.getHackathonByID(id);
+            if (!hack.getOrganizzatore().getUtenteID().equals(utenteCorrente.getUtenteID())) {
+                return ResponseEntity.status(403).body("Solo l'organizzatore può impostare le presenze");
+            }
             TeamIscritto team = hack.getTeamIscrittoById(req.teamId());
             team.getElencoIscritti().stream()
                     .filter(m -> m.getUtente().getUtenteID().equals(req.utenteId()))

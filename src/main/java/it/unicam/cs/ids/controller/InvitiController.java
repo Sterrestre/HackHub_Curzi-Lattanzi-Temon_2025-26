@@ -1,5 +1,8 @@
 package it.unicam.cs.ids.controller;
 
+import it.unicam.cs.ids.dto.InvitoStaffDTO;
+import it.unicam.cs.ids.model.inviti.InvitoHackathon;
+import it.unicam.cs.ids.security.UtenteCorrente;
 import it.unicam.cs.ids.dto.InvitaStaffRequest;
 import it.unicam.cs.ids.dto.InvitaTeamRequest;
 import it.unicam.cs.ids.dto.RispostaInvitoRequest;
@@ -48,17 +51,16 @@ public class InvitiController {
     }
 
     @PostMapping("/staff")
-    public ResponseEntity<String> invitaStaff(@RequestBody InvitaStaffRequest req) {
+    public ResponseEntity<?> invitaStaff(@RequestBody InvitaStaffRequest req,
+                                         @UtenteCorrente Utente organizzatore) {
         try {
             Hackathon hack = hackService.getHackathonByID(req.hackathonId());
-            Utente utente = utenteService.findById(req.utenteId());
-            Utente organizzatore = utenteService.findById(req.organizzatoreId());
+            Utente utente = utenteService.findByEmail(req.email());
 
             if (!hack.getOrganizzatore().getUtenteID().equals(organizzatore.getUtenteID())) {
                 return ResponseEntity.status(403).body("Solo l'organizzatore può invitare staff");
             }
 
-            // Controllo che l'utente non sia già membro dello staff
             boolean giaStaff = hack.getRuoli().stream()
                     .anyMatch(r -> r.getUtente().getUtenteID().equals(utente.getUtenteID()));
             if (giaStaff) {
@@ -75,9 +77,10 @@ public class InvitiController {
     }
 
     @PostMapping("/team")
-    public ResponseEntity<String> invitaTeam(@RequestBody InvitaTeamRequest req) {
+    public ResponseEntity<String> invitaTeam(@RequestBody InvitaTeamRequest req,
+                                             @UtenteCorrente Utente utenteCorrente) {
         try {
-            MembroTeam membroTeam = teamService.findMembroTeamById(req.teamId(), req.mittenteId());
+            MembroTeam membroTeam = teamService.findMembroTeamByUtente(req.teamId(), utenteCorrente.getUtenteID());
             Utente utente = utenteService.findById(req.utenteId());
             Team team = teamService.findTeamById(req.teamId());
 
@@ -95,9 +98,15 @@ public class InvitiController {
     }
 
     @PostMapping("/rispondi")
-    public ResponseEntity<String> rispondi(@RequestBody RispostaInvitoRequest req) {
+    public ResponseEntity<?> rispondi(@RequestBody RispostaInvitoRequest req,
+                                      @UtenteCorrente Utente utenteCorrente) {
         try {
             Invito invito = invitoService.findById(req.invitoId());
+
+            if (!invito.getDestinatario().getUtenteID().equals(utenteCorrente.getUtenteID())) {
+                return ResponseEntity.status(403).body("Questo invito non è indirizzato a te");
+            }
+
             invitiHandler.rispostaInvito(invito, req.accetta());
             return ResponseEntity.ok("Risposta registrata");
         } catch (IllegalArgumentException | IllegalStateException e) {
@@ -131,5 +140,16 @@ public class InvitiController {
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
+    }
+
+    @GetMapping("/miei")
+    public ResponseEntity<?> getMieiInviti(@UtenteCorrente Utente utenteCorrente) {
+        List<InvitoStaffDTO> inviti = invitoService.findAll().stream()
+                .filter(i -> i instanceof InvitoHackathon)
+                .map(i -> (InvitoHackathon) i)
+                .filter(i -> i.getDestinatario().getUtenteID().equals(utenteCorrente.getUtenteID()))
+                .map(InvitoStaffDTO::from)
+                .toList();
+        return ResponseEntity.ok(inviti);
     }
 }

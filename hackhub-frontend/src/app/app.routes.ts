@@ -5,6 +5,7 @@ import { HackathonFormComponent } from './hackathon-form/hackathon-form.componen
 import { TeamEnrollComponent } from './team-enroll/team-enroll.component';
 import { TeamMembersComponent } from './team-members/team-members.component';
 import { SottomissioneFormComponent } from './sottomissione-form/sottomissione-form.component';
+import { MieiInvitiComponent } from './miei-inviti/miei-inviti.component';
 
 export const routes: Routes = [
     { path: '', component: HackathonListComponent },
@@ -13,4 +14,5 @@ export const routes: Routes = [
     { path: 'hackathon/:id/iscrivi', component: TeamEnrollComponent },
     { path: 'hackathon/:id/sottometti', component: SottomissioneFormComponent },
     { path: 'team/:teamId', component: TeamMembersComponent },
+    { path: 'miei-inviti', component: MieiInvitiComponent },
 ];

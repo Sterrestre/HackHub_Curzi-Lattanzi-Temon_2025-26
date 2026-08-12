@@ -63,4 +63,8 @@ export class HackathonService {
     conferma(id: string): Observable<any> {
         return this.http.post(`${this.baseUrl}/${id}/conferma`, {});
     }
+
+    confermaClassifica(id: string): Observable<any> {
+        return this.http.post(`${this.baseUrl}/${id}/conferma-classifica`, {});
+    }
 }
