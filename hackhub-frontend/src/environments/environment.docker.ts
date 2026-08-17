@@ -1,8 +1,8 @@
 export const environment = {
     production: true,
-    // Il browser dell'utente NON fa parte della rete Docker interna:
-    // deve chiamare il backend tramite la porta pubblicata sull'host,
-    // non tramite il nome del servizio (quello vale solo tra container,
-    // es. backend -> mysql).
-    apiUrl: 'http://localhost:8080'
+    // Calcola l'indirizzo del backend usando lo stesso host con cui e' stato
+    // aperto il frontend. Cosi' funziona sia in locale (localhost) sia su
+    // AWS (l'IP pubblico) sia con un eventuale dominio futuro, senza dover
+    // ricompilare per ogni ambiente diverso.
+    apiUrl: `http://${window.location.hostname}:8080`
 };
