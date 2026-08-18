@@ -29,7 +29,7 @@ public class CorsConfig implements WebMvcConfigurer {
                         "http://localhost:4200",   // frontend Angular in sviluppo locale
                         "http://localhost:80",     // frontend servito da Nginx in Docker (locale)
                         "http://localhost",
-                        "http://35.181.19.124"      // frontend servito da Nginx su AWS
+                        "http://35-181-19-124.sslip.io"     // frontend servito da Nginx su AWS
                 )
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS")
                 .allowedHeaders("*")
