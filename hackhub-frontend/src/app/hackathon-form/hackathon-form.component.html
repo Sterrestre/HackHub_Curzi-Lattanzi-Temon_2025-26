@@ -3,6 +3,7 @@
 <h2>Crea nuovo hackathon</h2>
 
 <p *ngIf="inviato">Hackathon creato con successo! Torno alla lista...</p>
+<p *ngIf="avvisoInviti" class="errore">{{ avvisoInviti }}</p>
 <p *ngIf="errore" class="errore">{{ errore }}</p>
 
 <form [formGroup]="form" (ngSubmit)="onSubmit()" *ngIf="!inviato">
@@ -55,6 +56,16 @@
     <label>
         Partecipanti massimi per team
         <input type="number" formControlName="maxPartecipantiPerTeam">
+    </label>
+
+    <label>
+        Email del giudice da invitare (facoltativo)
+        <input type="email" formControlName="emailGiudice">
+    </label>
+
+    <label>
+        Email del mentore da invitare (facoltativo)
+        <input type="email" formControlName="emailMentore">
     </label>
 
     <button type="submit">Crea hackathon</button>

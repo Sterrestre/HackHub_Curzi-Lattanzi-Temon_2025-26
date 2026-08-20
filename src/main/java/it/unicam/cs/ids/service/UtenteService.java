@@ -32,9 +32,12 @@ public class UtenteService {
                 .orElseThrow(() -> new IllegalArgumentException("Utente non trovato"));
     }
 
+    @org.springframework.transaction.annotation.Transactional(readOnly = true)
     public Utente findByEmail(String email) {
-        return utenteRepository.findByUtenteEmail(email)
+        Utente utente = utenteRepository.findByUtenteEmail(email)
                 .orElseThrow(() -> new IllegalArgumentException("Utente non trovato"));
+        org.hibernate.Hibernate.initialize(utente.getRuoli());
+        return utente;
     }
 
     public void aggiornaIban(String utenteId, String nuovoIban) {

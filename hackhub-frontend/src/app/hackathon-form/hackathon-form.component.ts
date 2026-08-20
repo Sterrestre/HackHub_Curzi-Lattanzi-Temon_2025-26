@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { HackathonService } from '../services/hackathon.service';
+import { InvitoService } from '../services/invito.service';
 
 @Component({
     selector: 'app-hackathon-form',
@@ -13,14 +14,16 @@ import { HackathonService } from '../services/hackathon.service';
 export class HackathonFormComponent {
     inviato = false;
     errore: string | null = null;
+    avvisoInviti: string | null = null;
     form: FormGroup;
 
     constructor(
         private fb: FormBuilder,
         private hackathonService: HackathonService,
+        private invitoService: InvitoService,
         private router: Router
     ) {
-            this.form = this.fb.group({
+        this.form = this.fb.group({
             nome: ['', Validators.required],
             regolamento: ['', Validators.required],
             dataInizio: ['', Validators.required],
@@ -30,7 +33,11 @@ export class HackathonFormComponent {
             quotaIscrizione: [0, [Validators.required, Validators.min(0)]],
             premio: [0, [Validators.required, Validators.min(0)]],
             numMaxTeam: [1, [Validators.required, Validators.min(1)]],
-            maxPartecipantiPerTeam: [1, [Validators.required, Validators.min(1)]]
+            maxPartecipantiPerTeam: [1, [Validators.required, Validators.min(1)]],
+            // Facoltativi: se compilati, dopo la creazione l'organizzatore
+            // invita subito queste persone come giudice/mentore.
+            emailGiudice: [''],
+            emailMentore: ['']
         });
     }
 
@@ -46,8 +53,6 @@ export class HackathonFormComponent {
         this.hackathonService.crea({
             nome: valori.nome!,
             regolamento: valori.regolamento!,
-            // Il backend si aspetta un LocalDateTime: aggiungiamo l'orario
-            // se l'utente ha selezionato solo la data.
             dataInizio: this.toIsoDateTime(valori.dataInizio!),
             dataFine: this.toIsoDateTime(valori.dataFine!),
             scadenzaIscrizioni: this.toIsoDateTime(valori.scadenzaIscrizioni!),
@@ -57,9 +62,9 @@ export class HackathonFormComponent {
             numMaxTeam: valori.numMaxTeam!,
             maxPartecipantiPerTeam: valori.maxPartecipantiPerTeam!
         }).subscribe({
-            next: () => {
+            next: (hackathonCreato: any) => {
                 this.inviato = true;
-                setTimeout(() => this.router.navigate(['/']), 1500);
+                this.inviaInvitiOpzionali(hackathonCreato.id, valori.emailGiudice, valori.emailMentore);
             },
             error: (err) => {
                 this.errore = err?.error ?? 'Errore durante la creazione dell\'hackathon.';
@@ -67,9 +72,33 @@ export class HackathonFormComponent {
         });
     }
 
+    private inviaInvitiOpzionali(hackathonId: string, emailGiudice: string, emailMentore: string): void {
+        const avvisi: string[] = [];
+
+        if (emailGiudice) {
+            this.invitoService.invitaStaff({ hackathonId, email: emailGiudice, ruolo: 'GIUDICE' }).subscribe({
+                error: (err) => avvisi.push(`Giudice non invitato: ${err?.error ?? 'errore sconosciuto'}`)
+            });
+        }
+        if (emailMentore) {
+            this.invitoService.invitaStaff({ hackathonId, email: emailMentore, ruolo: 'MENTORE' }).subscribe({
+                error: (err) => avvisi.push(`Mentore non invitato: ${err?.error ?? 'errore sconosciuto'}`)
+            });
+        }
+
+        // Diamo qualche istante alle due chiamate (indipendenti) di completarsi
+        // prima di mostrare eventuali avvisi e tornare alla lista.
+        setTimeout(() => {
+            if (avvisi.length > 0) {
+                this.avvisoInviti = avvisi.join(' — ') +
+                    ' (l\'hackathon è stato comunque creato correttamente; puoi invitare di nuovo dal suo dettaglio)';
+            } else {
+                this.router.navigate(['/']);
+            }
+        }, 1200);
+    }
+
     private toIsoDateTime(valoreInput: string): string {
-        // Un <input type="datetime-local"> restituisce es. "2026-08-10T15:00";
-        // aggiungiamo i secondi per un formato ISO completo.
         return valoreInput.length === 16 ? `${valoreInput}:00` : valoreInput;
     }
 }
