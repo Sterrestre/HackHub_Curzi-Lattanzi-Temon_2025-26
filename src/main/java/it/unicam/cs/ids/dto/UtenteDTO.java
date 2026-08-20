@@ -13,7 +13,8 @@ public record UtenteDTO(
         String email,
         String nickname,
         String biografia,
-        boolean membroDiStaff
+        boolean membroDiStaff,
+        String teamId
 ) {
     public static UtenteDTO from(Utente u) {
         return new UtenteDTO(
@@ -23,7 +24,8 @@ public record UtenteDTO(
                 u.getUtenteEmail(),
                 u.getNickname(),
                 u.getBiografia(),
-                u.isMembroDiStaff()
+                u.isMembroDiStaff(),
+                u.getTeam() != null ? u.getTeam().getTeamID() : null
         );
     }
 }
