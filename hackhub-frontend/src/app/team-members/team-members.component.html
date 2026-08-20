@@ -13,20 +13,15 @@
 </ul>
 <p *ngIf="!caricamento && membri.length === 0">Nessun membro trovato.</p>
 
-<h3>Aggiungi un membro</h3>
+<h3>Invita un membro</h3>
 
-<p *ngIf="inviato">Membro aggiunto con successo.</p>
+<p *ngIf="inviato">Invito inviato con successo.</p>
 
 <form [formGroup]="form" (ngSubmit)="onSubmit()">
     <label>
-        Id utente (temporaneo, arrivera' dal login/inviti)
-        <input type="text" formControlName="utenteId">
+        Email dell'utente da invitare
+        <input type="email" formControlName="email">
     </label>
 
-    <label>
-        <input type="checkbox" formControlName="amministratore">
-        Amministratore del team
-    </label>
-
-    <button type="submit">Aggiungi membro</button>
+    <button type="submit">Invita</button>
 </form>

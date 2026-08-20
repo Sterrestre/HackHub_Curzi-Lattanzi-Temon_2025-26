@@ -82,4 +82,12 @@ export class HackathonService {
     getStaff(id: string): Observable<StaffHackathon> {
         return this.http.get<StaffHackathon>(`${this.baseUrl}/${id}/staff`);
     }
+
+    getMieiComeTeam(): Observable<Hackathon[]> {
+        return this.http.get<Hackathon[]>(`${this.baseUrl}/miei-team`);
+    }
+
+    getMieiComeStaff(): Observable<Hackathon[]> {
+        return this.http.get<Hackathon[]>(`${this.baseUrl}/miei-staff`);
+    }
 }

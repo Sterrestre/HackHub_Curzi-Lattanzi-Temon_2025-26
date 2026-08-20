@@ -1,0 +1,17 @@
+<h2>Crea il tuo team</h2>
+
+<p *ngIf="caricamentoUtente">Caricamento in corso...</p>
+
+<div *ngIf="!caricamentoUtente && teamEsistenteId">
+    <p>Fai già parte di un team.</p>
+    <p><a [routerLink]="['/team', teamEsistenteId]">Vai alla pagina del tuo team</a></p>
+</div>
+
+<form [formGroup]="form" (ngSubmit)="onSubmit()" *ngIf="!caricamentoUtente && !teamEsistenteId">
+    <label>
+        Nome del team
+        <input type="text" formControlName="nome">
+    </label>
+    <button type="submit" [disabled]="inCorso">Crea team</button>
+    <p *ngIf="errore" class="errore">{{ errore }}</p>
+</form>

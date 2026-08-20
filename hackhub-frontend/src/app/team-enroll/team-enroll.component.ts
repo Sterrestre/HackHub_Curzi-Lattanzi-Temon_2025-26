@@ -1,74 +1,59 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { TeamService } from '../services/team.service';
+import { UtenteService } from '../services/utente.service';
+import { estraiMessaggioErrore } from '../utils/errore.util';
 
 @Component({
     selector: 'app-team-enroll',
     standalone: true,
-    imports: [CommonModule, ReactiveFormsModule, RouterLink],
+    imports: [CommonModule, RouterLink],
     templateUrl: './team-enroll.component.html'
 })
 export class TeamEnrollComponent implements OnInit {
     hackathonId = '';
     inviato = false;
     errore: string | null = null;
-    form: FormGroup;
 
-    // Popolati dopo l'iscrizione, per mostrare all'utente gli id da usare
-    // nei prossimi passi (aggiungere membri, caricare la sottomissione)
-    // finche' non c'e' il login a gestirli automaticamente.
-    teamCreatoId: string | null = null;
+    caricamentoUtente = true;
+    teamEsistenteId: string | null = null;
+
     teamIscrittoId: string | null = null;
 
     constructor(
-        private fb: FormBuilder,
         private route: ActivatedRoute,
         private teamService: TeamService,
-        private router: Router
-    ) {
-        // NOTA: "amministratoreId" e' temporaneo: dopo il login l'utente
-        // non dovra' piu' inserirlo a mano, arrivera' dal token.
-        this.form = this.fb.group({
-            nomeTeam: ['', Validators.required],
-        });
-    }
+        private utenteService: UtenteService
+    ) {}
 
     ngOnInit(): void {
         this.hackathonId = this.route.snapshot.paramMap.get('id') ?? '';
+
+        this.utenteService.getCorrente().subscribe({
+            next: (utente) => {
+                this.teamEsistenteId = utente.teamId;
+                this.caricamentoUtente = false;
+            },
+            error: () => {
+                this.caricamentoUtente = false;
+            }
+        });
     }
 
-    onSubmit(): void {
-        if (this.form.invalid) {
-            this.form.markAllAsTouched();
-            return;
-        }
+    iscriviTeam(): void {
+        if (!this.teamEsistenteId) return;
 
         this.errore = null;
-        const valori = this.form.getRawValue();
-
-        // Passo 1: crea il team. Passo 2: iscrivilo a questo hackathon.
-        this.teamService.crea({
-            nome: valori.nomeTeam!,
+        this.teamService.iscriviAHackathon(this.hackathonId, {
+            teamId: this.teamEsistenteId
         }).subscribe({
-            next: (teamCreato: any) => {
-                this.teamCreatoId = teamCreato.id;
-
-                this.teamService.iscriviAHackathon(this.hackathonId, {
-                    teamId: teamCreato.id,
-                }).subscribe({
-                    next: (iscrizione) => {
-                        this.teamIscrittoId = iscrizione.teamIscrittoId;
-                        this.inviato = true;
-                    },
-                    error: (err) => {
-                        this.errore = err?.error ?? 'Errore durante l\'iscrizione del team.';
-                    }
-                });
+            next: (iscrizione) => {
+                this.teamIscrittoId = iscrizione.teamIscrittoId;
+                this.inviato = true;
             },
             error: (err) => {
-                this.errore = err?.error ?? 'Errore durante la creazione del team.';
+                this.errore = estraiMessaggioErrore(err, 'Errore durante l\'iscrizione del team.');
             }
         });
     }

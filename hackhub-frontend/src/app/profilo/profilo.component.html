@@ -1,0 +1,48 @@
+<h2>Il mio profilo</h2>
+
+<p *ngIf="caricamento">Caricamento in corso...</p>
+<p *ngIf="errore">Devi effettuare il login per vedere il tuo profilo.</p>
+
+<div *ngIf="utente && !errore">
+    <section>
+        <h3>Dati personali</h3>
+        <ul>
+            <li><strong>Nome:</strong> {{ utente.nome }} {{ utente.cognome }}</li>
+            <li><strong>Nickname:</strong> {{ utente.nickname }}</li>
+            <li><strong>Email:</strong> {{ utente.email }}</li>
+            <li *ngIf="utente.biografia"><strong>Biografia:</strong> {{ utente.biografia }}</li>
+        </ul>
+    </section>
+
+    <section>
+        <h3>Il mio team</h3>
+        <p *ngIf="utente.teamId">
+            Fai parte di un team.
+            <a [routerLink]="['/team', utente.teamId]">Vai alla pagina del team</a>
+        </p>
+        <p *ngIf="!utente.teamId">
+            Non fai ancora parte di nessun team.
+            <a routerLink="/crea-team">Crea il tuo team</a>
+        </p>
+    </section>
+
+    <section>
+        <h3>Hackathon a cui partecipi (come team)</h3>
+        <ul *ngIf="hackathonComeTeam.length > 0">
+            <li *ngFor="let h of hackathonComeTeam">
+                <a [routerLink]="['/hackathon', h.id]">{{ h.nome }}</a> — {{ h.stato }}
+            </li>
+        </ul>
+        <p *ngIf="hackathonComeTeam.length === 0">Nessuno al momento.</p>
+    </section>
+
+    <section>
+        <h3>Hackathon di cui sei staff</h3>
+        <ul *ngIf="hackathonComeStaff.length > 0">
+            <li *ngFor="let h of hackathonComeStaff">
+                <a [routerLink]="['/hackathon', h.id]">{{ h.nome }}</a> — {{ h.stato }}
+            </li>
+        </ul>
+        <p *ngIf="hackathonComeStaff.length === 0">Nessuno al momento.</p>
+    </section>
+</div>

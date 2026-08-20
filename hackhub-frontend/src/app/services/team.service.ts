@@ -22,6 +22,11 @@ export interface AggiungiMembroRequest {
     amministratore: boolean;
 }
 
+export interface InvitaMembroRequest {
+    teamId: string;
+    email: string;
+}
+
 export interface MembroTeam {
     id: string;
     nickname: string;
@@ -52,5 +57,9 @@ export class TeamService {
 
     aggiungiMembro(req: AggiungiMembroRequest): Observable<MembroTeam> {
         return this.http.post<MembroTeam>(`${this.teamUrl}/aggiungi-membro`, req);
+    }
+
+    invitaMembro(req: InvitaMembroRequest): Observable<any> {
+        return this.http.post(`${this.teamUrl}/invita`, req, { responseType: 'text' as 'json' });
     }
 }

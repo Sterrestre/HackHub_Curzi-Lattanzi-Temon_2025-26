@@ -7,10 +7,10 @@
             <a routerLink="/">Hackathon</a>
             <a routerLink="/nuovo-hackathon">Crea hackathon</a>
             <a routerLink="/miei-inviti">I miei inviti</a>
-
+            <a routerLink="/crea-team">Crea team</a>
             <ng-container *ngIf="!caricamentoUtente">
         <span *ngIf="utenteCorrente">
-          Ciao, {{ utenteCorrente.nickname }}
+          Ciao, <a routerLink="/profilo">{{ utenteCorrente.nickname }}</a>
             <button type="button" (click)="logout()">Logout</button>
         </span>
                 <a *ngIf="!utenteCorrente" [href]="loginUrl">Accedi con Google</a>

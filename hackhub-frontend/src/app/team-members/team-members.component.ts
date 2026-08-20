@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { MembroTeam, TeamService } from '../services/team.service';
+import { estraiMessaggioErrore } from '../utils/errore.util';
 
 @Component({
     selector: 'app-team-members',
@@ -23,11 +24,8 @@ export class TeamMembersComponent implements OnInit {
         private route: ActivatedRoute,
         private teamService: TeamService
     ) {
-        // NOTA: "utenteId" e' temporaneo, dopo il login si scegliera'
-        // l'utente da un elenco (es. tramite invito) invece di digitarne l'id.
         this.form = this.fb.group({
-            utenteId: ['', Validators.required],
-            amministratore: [false]
+            email: ['', [Validators.required, Validators.email]]
         });
     }
 
@@ -57,20 +55,17 @@ export class TeamMembersComponent implements OnInit {
         }
 
         this.errore = null;
-        const valori = this.form.getRawValue();
 
-        this.teamService.aggiungiMembro({
+        this.teamService.invitaMembro({
             teamId: this.teamId,
-            utenteId: valori.utenteId!,
-            amministratore: valori.amministratore!
+            email: this.form.value.email!
         }).subscribe({
             next: () => {
                 this.inviato = true;
-                this.form.reset({ amministratore: false });
-                this.caricaMembri();
+                this.form.reset();
             },
             error: (err) => {
-                this.errore = err?.error ?? 'Errore durante l\'aggiunta del membro.';
+                this.errore = estraiMessaggioErrore(err, 'Errore durante l\'invio dell\'invito.');
             }
         });
     }

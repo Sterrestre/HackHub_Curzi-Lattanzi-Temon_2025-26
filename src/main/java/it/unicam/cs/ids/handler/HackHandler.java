@@ -210,13 +210,13 @@ public class HackHandler {
             throw new HackCompleto();
         }
 
-        // Controllo che nessun membro del team sia organizzatore o giudice dell'hackathon
+        // Controllo che nessun membro del team sia organizzatore, giudice o mentore dell'hackathon
         for (MembroTeam m : team.getMembri()) {
-            boolean isOrganizzatoreOGiudice = m.getUtente().getRuoli().stream()
+            boolean isStaffDiQuestoHackathon = m.getUtente().getRuoli().stream()
                     .filter(r -> r.getHackathon().equals(hackathon))
-                    .anyMatch(r -> r instanceof Organizzatore || r instanceof Giudice);
-            if (isOrganizzatoreOGiudice) {
-                throw new DomainException("Il team non può iscriversi: almeno un membro è organizzatore o giudice");
+                    .anyMatch(r -> r instanceof Organizzatore || r instanceof Giudice || r instanceof Mentore);
+            if (isStaffDiQuestoHackathon) {
+                throw new DomainException("Il team non può iscriversi: almeno un membro è organizzatore, giudice o mentore di questo hackathon");
             }
         }
 

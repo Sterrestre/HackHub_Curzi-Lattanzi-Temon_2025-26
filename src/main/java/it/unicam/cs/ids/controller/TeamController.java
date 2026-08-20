@@ -74,7 +74,7 @@ public class TeamController {
                                     @UtenteCorrente Utente utenteCorrente) {
         try {
             MembroTeam admin = teamService.findMembroTeamByUtente(request.teamId(), utenteCorrente.getUtenteID());
-            Utente utente = utenteService.findById(request.utenteId());
+            Utente utente = utenteService.findByEmail(request.email());
             String msg = teamHandler.invitaUtente(admin, utente);
             return ResponseEntity.ok(msg);
         } catch (IllegalArgumentException | IllegalStateException e) {

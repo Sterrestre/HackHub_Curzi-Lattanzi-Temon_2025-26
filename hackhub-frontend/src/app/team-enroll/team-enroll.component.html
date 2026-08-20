@@ -2,14 +2,12 @@
 
 <h2>Iscrivi il tuo team</h2>
 
+<p *ngIf="caricamentoUtente">Caricamento in corso...</p>
+
 <div *ngIf="inviato" class="esito-positivo">
     <p>Team iscritto con successo!</p>
-    <ul>
-        <li>Id team: <strong>{{ teamCreatoId }}</strong></li>
-        <li>Id iscrizione: <strong>{{ teamIscrittoId }}</strong></li>
-    </ul>
     <p>
-        <a [routerLink]="['/team', teamCreatoId]">Gestisci i membri del team</a>
+        <a [routerLink]="['/team', teamEsistenteId]">Gestisci i membri del team</a>
         &nbsp;|&nbsp;
         <a [routerLink]="['/hackathon', hackathonId, 'sottometti']">Carica una sottomissione</a>
     </p>
@@ -17,12 +15,12 @@
 
 <p *ngIf="errore" class="errore">{{ errore }}</p>
 
-<form [formGroup]="form" (ngSubmit)="onSubmit()" *ngIf="!inviato">
+<div *ngIf="!caricamentoUtente && !inviato && teamEsistenteId">
+    <p>Iscriverai il tuo team a questo hackathon.</p>
+    <button type="button" (click)="iscriviTeam()">Iscrivi il mio team</button>
+</div>
 
-    <label>
-        Nome del team
-        <input type="text" formControlName="nomeTeam">
-    </label>
-
-    <button type="submit">Iscrivi team</button>
-</form>
+<div *ngIf="!caricamentoUtente && !inviato && !teamEsistenteId">
+    <p>Non fai ancora parte di nessun team.</p>
+    <p><a routerLink="/crea-team">Crea il tuo team</a> prima di iscriverti a un hackathon.</p>
+</div>
