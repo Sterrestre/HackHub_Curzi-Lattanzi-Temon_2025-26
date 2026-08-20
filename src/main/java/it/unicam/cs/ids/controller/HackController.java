@@ -322,4 +322,11 @@ public class HackController {
             return ResponseEntity.internalServerError().body("Errore interno: " + e.getMessage());
         }
     }
+
+    @GetMapping("/{id}/sono-staff")
+    public ResponseEntity<Boolean> sonoStaff(@PathVariable String id,
+                                             @UtenteCorrente Utente utenteCorrente) {
+        Hackathon hack = hackathonService.getHackathonByID(id);
+        return ResponseEntity.ok(utenteCorrente.isStaffPerHackathon(hack));
+    }
 }

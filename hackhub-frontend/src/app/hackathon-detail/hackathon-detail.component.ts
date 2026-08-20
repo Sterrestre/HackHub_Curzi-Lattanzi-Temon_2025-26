@@ -5,6 +5,8 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
 import { Hackathon, HackathonService } from '../services/hackathon.service';
 import { Sottomissione, SottomissioneService } from '../services/sottomissione.service';
 import { InvitoService } from '../services/invito.service';
+import { UtenteService } from '../services/utente.service';
+import { estraiMessaggioErrore } from '../utils/errore.util';
 
 interface ValutazioneInput {
     voto: number;
@@ -25,6 +27,10 @@ export class HackathonDetailComponent implements OnInit {
     caricamento = true;
     errore = false;
 
+    sonOrganizzatore = false;
+    sonoStaff = false;
+    mostraIscriviTeam = true;
+
     confermaInCorso = false;
     confermaErrore: string | null = null;
 
@@ -32,7 +38,6 @@ export class HackathonDetailComponent implements OnInit {
     classificaErrore: string | null = null;
     classificaMessaggio: string | null = null;
 
-    // Form per invitare un utente come giudice o mentore (solo organizzatore)
     invitoEmail = '';
     invitoRuolo: 'GIUDICE' | 'MENTORE' = 'GIUDICE';
     invitoInCorso = false;
@@ -46,7 +51,8 @@ export class HackathonDetailComponent implements OnInit {
         private route: ActivatedRoute,
         private hackathonService: HackathonService,
         private sottomissioneService: SottomissioneService,
-        private invitoService: InvitoService
+        private invitoService: InvitoService,
+        private utenteService: UtenteService
     ) {}
 
     ngOnInit(): void {
@@ -67,6 +73,7 @@ export class HackathonDetailComponent implements OnInit {
             next: (dati) => {
                 this.hackathon = dati;
                 this.caricamento = false;
+                this.determinaVisibilita();
             },
             error: () => {
                 this.errore = true;
@@ -92,6 +99,32 @@ export class HackathonDetailComponent implements OnInit {
         });
     }
 
+    private determinaVisibilita(): void {
+        if (!this.hackathon) return;
+
+        this.utenteService.getCorrente().subscribe({
+            next: (utente) => {
+                this.sonOrganizzatore = utente.id === this.hackathon!.organizzatoreId;
+
+                this.hackathonService.sonoStaff(this.hackathonId).subscribe({
+                    next: (staff) => {
+                        this.sonoStaff = staff;
+                        this.mostraIscriviTeam = !this.sonOrganizzatore && !this.sonoStaff;
+                    },
+                    error: () => {
+                        this.sonoStaff = false;
+                        this.mostraIscriviTeam = !this.sonOrganizzatore;
+                    }
+                });
+            },
+            error: () => {
+                this.sonOrganizzatore = false;
+                this.sonoStaff = false;
+                this.mostraIscriviTeam = true;
+            }
+        });
+    }
+
     confermaHackathon(): void {
         this.confermaInCorso = true;
         this.confermaErrore = null;
@@ -103,7 +136,7 @@ export class HackathonDetailComponent implements OnInit {
             },
             error: (err) => {
                 this.confermaInCorso = false;
-                this.confermaErrore = err?.error ?? 'Errore durante la conferma dell\'hackathon.';
+                this.confermaErrore = estraiMessaggioErrore(err, 'Errore durante la conferma dell\'hackathon.');
             }
         });
     }
@@ -120,7 +153,7 @@ export class HackathonDetailComponent implements OnInit {
             },
             error: (err) => {
                 this.classificaInCorso = false;
-                this.classificaErrore = err?.error ?? 'Errore durante la pubblicazione della classifica.';
+                this.classificaErrore = estraiMessaggioErrore(err, 'Errore durante la pubblicazione della classifica.');
             }
         });
     }
@@ -147,7 +180,7 @@ export class HackathonDetailComponent implements OnInit {
             },
             error: (err) => {
                 this.invitoInCorso = false;
-                this.invitoErrore = err?.error ?? 'Errore durante l\'invio dell\'invito.';
+                this.invitoErrore = estraiMessaggioErrore(err, 'Errore durante l\'invio dell\'invito.');
             }
         });
     }
@@ -169,7 +202,7 @@ export class HackathonDetailComponent implements OnInit {
         }).subscribe({
             next: () => this.caricaTutto(),
             error: (err) => {
-                this.valutazioneErrore[s.teamIscrittoId] = err?.error ?? 'Errore durante la valutazione.';
+                this.valutazioneErrore[s.teamIscrittoId] = estraiMessaggioErrore(err, 'Errore durante la valutazione.');
             }
         });
     }

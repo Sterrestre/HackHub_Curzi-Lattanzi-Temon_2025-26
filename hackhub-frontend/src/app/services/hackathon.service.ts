@@ -21,6 +21,7 @@ export interface Hackathon {
     info: InfoHack;
     numTeamIscritti: number;
     stato: string;
+    organizzatoreId: string;
 }
 
 export interface CreaHackathonRequest {
@@ -66,5 +67,9 @@ export class HackathonService {
 
     confermaClassifica(id: string): Observable<any> {
         return this.http.post(`${this.baseUrl}/${id}/conferma-classifica`, {});
+    }
+
+    sonoStaff(id: string): Observable<boolean> {
+        return this.http.get<boolean>(`${this.baseUrl}/${id}/sono-staff`);
     }
 }

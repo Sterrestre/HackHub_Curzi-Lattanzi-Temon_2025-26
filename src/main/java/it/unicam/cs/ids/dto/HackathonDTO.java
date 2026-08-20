@@ -9,7 +9,8 @@ public record HackathonDTO(
         String nome,
         InfoHackDTO info,
         int numTeamIscritti,
-        Stato stato
+        Stato stato,
+        String organizzatoreId
 ) {
     public static HackathonDTO from(Hackathon h) {
         return new HackathonDTO(
@@ -17,9 +18,8 @@ public record HackathonDTO(
                 h.getNome(),
                 InfoHackDTO.from(h.getInfoHack()),
                 h.getTeamIscritti().size(),
-                h.getStato()
+                h.getStato(),
+                h.getOrganizzatore().getUtenteID()
         );
     }
 }
-
-

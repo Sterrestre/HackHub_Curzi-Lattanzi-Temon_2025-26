@@ -4,6 +4,7 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { Router, RouterLink } from '@angular/router';
 import { HackathonService } from '../services/hackathon.service';
 import { InvitoService } from '../services/invito.service';
+import { estraiMessaggioErrore } from '../utils/errore.util';
 
 @Component({
     selector: 'app-hackathon-form',
@@ -67,7 +68,7 @@ export class HackathonFormComponent {
                 this.inviaInvitiOpzionali(hackathonCreato.id, valori.emailGiudice, valori.emailMentore);
             },
             error: (err) => {
-                this.errore = err?.error ?? 'Errore durante la creazione dell\'hackathon.';
+                this.errore = estraiMessaggioErrore(err, 'Errore durante la creazione dell\'hackathon.');
             }
         });
     }
