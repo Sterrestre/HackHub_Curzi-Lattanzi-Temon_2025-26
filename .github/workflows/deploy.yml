@@ -22,7 +22,6 @@ jobs:
           script: |
             cd ${{ secrets.EC2_PROJECT_PATH }}
             git pull
-            docker compose --env-file variabili.env down
             docker compose --env-file variabili.env up --build -d
             docker compose --env-file variabili.env ps
 
