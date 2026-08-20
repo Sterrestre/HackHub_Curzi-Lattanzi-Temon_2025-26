@@ -17,8 +17,7 @@
     <section>
         <h3>Il mio team</h3>
         <p *ngIf="utente.teamId">
-            Fai parte di un team.
-            <a [routerLink]="['/team', utente.teamId]">Vai alla pagina del team</a>
+            Fai parte del team: <a [routerLink]="['/team', utente.teamId]">{{ utente.teamNome }}</a>
         </p>
         <p *ngIf="!utente.teamId">
             Non fai ancora parte di nessun team.

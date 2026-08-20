@@ -12,6 +12,7 @@ export interface UtenteDTO {
     biografia: string;
     membroDiStaff: boolean;
     teamId: string | null;
+    teamNome: string | null;
 }
 
 @Injectable({
