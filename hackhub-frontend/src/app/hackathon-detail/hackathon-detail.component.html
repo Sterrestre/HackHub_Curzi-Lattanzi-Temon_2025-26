@@ -48,6 +48,19 @@
         </ul>
     </section>
 
+    <section *ngIf="staff">
+        <h3>Staff dell'hackathon</h3>
+        <ul>
+            <li><strong>Organizzatore:</strong> {{ staff.organizzatoreNickname }}</li>
+            <li><strong>Giudice:</strong> {{ staff.giudiceNickname ?? 'non ancora assegnato' }}</li>
+            <li>
+                <strong>Mentori:</strong>
+                <span *ngIf="staff.mentoriNickname.length > 0">{{ staff.mentoriNickname.join(', ') }}</span>
+                <span *ngIf="staff.mentoriNickname.length === 0">nessuno ancora</span>
+            </li>
+        </ul>
+    </section>
+
     <section>
         <h3>Classifica</h3>
         <ul *ngIf="classifica.length > 0">

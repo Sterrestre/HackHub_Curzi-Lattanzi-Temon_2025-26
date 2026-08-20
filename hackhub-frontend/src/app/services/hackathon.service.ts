@@ -37,6 +37,12 @@ export interface CreaHackathonRequest {
     maxPartecipantiPerTeam: number;
 }
 
+export interface StaffHackathon {
+    organizzatoreNickname: string;
+    giudiceNickname: string | null;
+    mentoriNickname: string[];
+}
+
 @Injectable({
     providedIn: 'root'
 })
@@ -62,14 +68,18 @@ export class HackathonService {
     }
 
     conferma(id: string): Observable<any> {
-        return this.http.post(`${this.baseUrl}/${id}/conferma`, {});
+        return this.http.post(`${this.baseUrl}/${id}/conferma`, {}, { responseType: 'text' as 'json' });
     }
 
     confermaClassifica(id: string): Observable<any> {
-        return this.http.post(`${this.baseUrl}/${id}/conferma-classifica`, {});
+        return this.http.post(`${this.baseUrl}/${id}/conferma-classifica`, {}, { responseType: 'text' as 'json' });
     }
 
     sonoStaff(id: string): Observable<boolean> {
         return this.http.get<boolean>(`${this.baseUrl}/${id}/sono-staff`);
+    }
+
+    getStaff(id: string): Observable<StaffHackathon> {
+        return this.http.get<StaffHackathon>(`${this.baseUrl}/${id}/staff`);
     }
 }

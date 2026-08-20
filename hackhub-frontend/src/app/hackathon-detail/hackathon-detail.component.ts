@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, RouterLink } from '@angular/router';
-import { Hackathon, HackathonService } from '../services/hackathon.service';
+import { Hackathon, HackathonService, StaffHackathon } from '../services/hackathon.service';
 import { Sottomissione, SottomissioneService } from '../services/sottomissione.service';
 import { InvitoService } from '../services/invito.service';
 import { UtenteService } from '../services/utente.service';
@@ -24,6 +24,7 @@ export class HackathonDetailComponent implements OnInit {
     hackathon: Hackathon | null = null;
     classifica: string[] = [];
     sottomissioni: Sottomissione[] = [];
+    staff: StaffHackathon | null = null;
     caricamento = true;
     errore = false;
 
@@ -84,6 +85,11 @@ export class HackathonDetailComponent implements OnInit {
         this.hackathonService.getClassifica(this.hackathonId).subscribe({
             next: (dati) => (this.classifica = dati),
             error: () => (this.classifica = [])
+        });
+
+        this.hackathonService.getStaff(this.hackathonId).subscribe({
+            next: (dati) => (this.staff = dati),
+            error: () => (this.staff = null)
         });
 
         this.sottomissioneService.getByHackathon(this.hackathonId).subscribe({

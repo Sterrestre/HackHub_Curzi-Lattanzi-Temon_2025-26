@@ -26,7 +26,7 @@ export class InvitoService {
     constructor(private http: HttpClient) {}
 
     invitaStaff(req: InvitaStaffRequest): Observable<any> {
-        return this.http.post(`${this.baseUrl}/staff`, req);
+        return this.http.post(`${this.baseUrl}/staff`, req, { responseType: 'text' as 'json' });
     }
 
     getMieiInviti(): Observable<InvitoStaff[]> {
@@ -34,6 +34,6 @@ export class InvitoService {
     }
 
     rispondi(invitoId: string, accetta: boolean): Observable<any> {
-        return this.http.post(`${this.baseUrl}/rispondi`, { invitoId, accetta });
+        return this.http.post(`${this.baseUrl}/rispondi`, { invitoId, accetta }, { responseType: 'text' as 'json' });
     }
 }

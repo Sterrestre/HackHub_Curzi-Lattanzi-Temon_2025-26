@@ -211,6 +211,18 @@ public class Hackathon {
         return sottomissioni.stream().filter(Sottomissione::isValutata).toList();
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Hackathon that)) return false;
+        return id != null && id.equals(that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return id != null ? id.hashCode() : 0;
+    }
+
     public List<TeamIscritto> calcolaClassificaPreliminare() {
 
         List<TeamIscritto> team = getTeamIscritti();

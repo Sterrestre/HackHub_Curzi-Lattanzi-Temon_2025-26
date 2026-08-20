@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { InvitoStaff, InvitoService } from '../services/invito.service';
+import { estraiMessaggioErrore } from '../utils/errore.util';
 
 @Component({
     selector: 'app-miei-inviti',
@@ -41,7 +42,7 @@ export class MieiInvitiComponent implements OnInit {
                 this.carica();
             },
             error: (err) => {
-                this.errore = err?.error ?? 'Errore durante la risposta all\'invito.';
+                this.errore = estraiMessaggioErrore(err, 'Errore durante la risposta all\'invito.');
             }
         });
     }
