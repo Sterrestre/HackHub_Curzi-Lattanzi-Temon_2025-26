@@ -329,4 +329,10 @@ public class HackController {
         Hackathon hack = hackathonService.getHackathonByID(id);
         return ResponseEntity.ok(utenteCorrente.isStaffPerHackathon(hack));
     }
+
+    @GetMapping("/{id}/staff")
+    public ResponseEntity<StaffHackathonDTO> getStaff(@PathVariable String id) {
+        Hackathon hack = hackathonService.getHackathonByID(id);
+        return ResponseEntity.ok(StaffHackathonDTO.from(hack));
+    }
 }

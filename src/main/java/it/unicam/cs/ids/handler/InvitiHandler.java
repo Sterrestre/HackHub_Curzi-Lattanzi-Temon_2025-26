@@ -79,7 +79,6 @@ public class InvitiHandler {
      * Gestisce la risposta a un invito team.
      * Se accettato, aggiunge il destinatario al team (solo se non appartiene già a un team).
      */
-    // TODO Controlla il sequence
     private void gestisciRispostaTeam(InvitoTeam invito, boolean accetta) {
         if (accetta) {
             if (invito.getDestinatario().getTeam() != null) {
@@ -96,6 +95,15 @@ public class InvitiHandler {
     private void gestisciRispostaStaff(InvitoHackathon staff, boolean accetta) {
         RuoliStaff ruolo = staff.getRuolo();
         Hackathon hackathon = staff.getHackathon();
+
+        if (accetta) {
+            boolean giaHaAltroRuolo = hackathon.getRuoli().stream()
+                    .anyMatch(r -> r.getUtente().getUtenteID().equals(staff.getDestinatario().getUtenteID())
+                            && r.getTipoRuolo() != ruolo);
+            if (giaHaAltroRuolo) {
+                throw new IllegalStateException("Questo utente ricopre già un altro ruolo di staff per questo hackathon");
+            }
+        }
 
         switch (ruolo) {
             case GIUDICE -> gestisciRispostaGiudice(staff, accetta);
