@@ -108,6 +108,7 @@ public class InvitiController {
             }
 
             invitiHandler.rispostaInvito(invito, req.accetta());
+            invitoService.elimina(invito);
             return ResponseEntity.ok("Risposta registrata");
         } catch (IllegalArgumentException | IllegalStateException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
