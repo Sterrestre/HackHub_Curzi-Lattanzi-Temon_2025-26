@@ -45,4 +45,3 @@ jobs:
             git pull
             docker compose --env-file variabili.env up --build -d
             docker compose --env-file variabili.env ps
-
