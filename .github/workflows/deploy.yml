@@ -6,7 +6,28 @@ on:
       - main
 
 jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+
+      - name: Make gradlew executable
+        run: chmod +x ./gradlew
+
+      - name: Run tests
+        run: ./gradlew test
+
+
   deploy:
+    needs: build-and-test
     runs-on: ubuntu-latest
 
     steps:
@@ -24,4 +45,3 @@ jobs:
             git pull
             docker compose --env-file variabili.env up --build -d
             docker compose --env-file variabili.env ps
-
