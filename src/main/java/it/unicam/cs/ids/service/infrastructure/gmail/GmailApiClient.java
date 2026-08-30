@@ -23,10 +23,9 @@ public class GmailApiClient {
      * @param destinatario indirizzo email del destinatario
      * @param oggetto      oggetto della mail
      * @param corpo        corpo della mail
-     * @param mittente     indirizzo email del mittente
      */
-    public static void inviaEmail(Gmail gmail, String destinatario, String oggetto, String corpo, String mittente) throws Exception {
-        MimeMessage mimeMessage = creaMimeMessage(destinatario, oggetto, corpo, mittente);
+    public static void inviaEmail(Gmail gmail, String destinatario, String oggetto, String corpo) throws Exception {
+        MimeMessage mimeMessage = creaMimeMessage(destinatario, oggetto, corpo);
         Message gmailMessage = creaGmailMessage(mimeMessage);
 
         gmail.users()
@@ -38,14 +37,14 @@ public class GmailApiClient {
     /**
      * Crea un MimeMessage standard JavaMail.
      */
-    private static MimeMessage creaMimeMessage(String destinatario, String oggetto, String corpo, String mittente) throws Exception {
+    private static MimeMessage creaMimeMessage(String destinatario, String oggetto, String corpo) throws Exception {
         Properties props = new Properties();
         Session session = Session.getDefaultInstance(props, null);
 
         MimeMessage message = new MimeMessage(session);
 
         // Mittente configurabile tramite paramentro
-        message.setFrom(new InternetAddress(mittente, "HackHub Support Team"));
+        message.setFrom(new InternetAddress("HackHub Support Team"));
         message.addRecipient(jakarta.mail.Message.RecipientType.TO, new InternetAddress(destinatario));
         message.setSubject(oggetto);
         message.setText(corpo);
