@@ -189,6 +189,6 @@ class HackHandlerTest {
 
         assertThatThrownBy(() -> handler.iscriviTeam(team, hackathon, admin))
                 .isInstanceOf(DomainException.class)
-                .hasMessageContaining("organizzatore o giudice");
+                .hasMessageContaining("organizzatore, giudice o mentore");
     }
 }
