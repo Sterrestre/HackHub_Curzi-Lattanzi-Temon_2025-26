@@ -12,20 +12,22 @@ import it.unicam.cs.ids.service.MailSender;
 public class GmailMailSender implements MailSender {
 
     private final Gmail gmail;
+    private final String mittente;
 
     /**
      * Costruttore: riceve un client Gmail già autenticato,
      * creato tramite GmailClientFactory.
      */
 
-    public GmailMailSender(Gmail gmail) {
+    public GmailMailSender(Gmail gmail, String mittente) {
         this.gmail = gmail;
+        this.mittente = mittente;
     }
 
     @Override
     public void inviaEmail(String destinatario, String oggetto, String corpo) {
         try {
-            GmailApiClient.inviaEmail((com.google.api.services.gmail.Gmail) gmail, destinatario, oggetto, corpo);
+            GmailApiClient.inviaEmail(gmail, destinatario, oggetto, corpo, mittente);
         } catch (Exception e) {
             throw new RuntimeException("Errore durante l'invio della mail a " + destinatario, e);
         }
