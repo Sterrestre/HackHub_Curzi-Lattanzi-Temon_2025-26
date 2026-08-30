@@ -2,14 +2,10 @@ package it.unicam.cs.ids.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import it.unicam.cs.ids.dto.CreaHackathonRequest;
-import it.unicam.cs.ids.dto.HackathonDTO;
-import it.unicam.cs.ids.dto.InfoHackDTO;
-import it.unicam.cs.ids.handler.HackHandler;
 import it.unicam.cs.ids.model.Utente;
 import it.unicam.cs.ids.model.hackathon.Hackathon;
 import it.unicam.cs.ids.model.hackathon.Stato;
 import it.unicam.cs.ids.service.HackathonService;
-import it.unicam.cs.ids.service.TeamService;
 import it.unicam.cs.ids.service.UtenteService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,10 +42,10 @@ class HackControllerTest {
     private HackathonService hackathonService;
     @MockBean
     private UtenteService utenteService;
-    @MockBean
-    private HackHandler hackHandler;
-    @MockBean
-    private TeamService teamService;
+//    @MockBean
+//    private HackHandler hackHandler;
+//    @MockBean
+//    private TeamService teamService;
 
     @Test
     void getAllRestituisceLaListaDegliHackathonInFormatoJson() throws Exception {
@@ -117,7 +113,6 @@ class HackControllerTest {
         )).thenReturn(hackathonCreato);
 
         CreaHackathonRequest richiesta = new CreaHackathonRequest(
-                "org-1",
                 "Nuovo hackathon",
                 "Regolamento",
                 LocalDateTime.now().plusDays(30),
@@ -144,7 +139,6 @@ class HackControllerTest {
                 .thenThrow(new IllegalArgumentException("Utente non trovato"));
 
         CreaHackathonRequest richiesta = new CreaHackathonRequest(
-                "org-inesistente",
                 "Nuovo hackathon",
                 "Regolamento",
                 LocalDateTime.now().plusDays(30),
