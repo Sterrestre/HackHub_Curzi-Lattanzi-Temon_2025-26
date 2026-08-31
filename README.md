@@ -65,10 +65,10 @@ Questa infrastruttura permette di mantenere un ambiente di deploy riproducibile 
 
  ### Strumenti di progettazione
 Durante la fase di analisi e progettazione sono stati utilizzati:
-•	**Visual Paradigm** per la modellazione UML,
-•	**IntelliJ IDEA** per lo sviluppo Java,
-•	**Postman** per il testing delle API,
-•	**Docker Compose** per la gestione dei container.
+- **Visual Paradigm** per la modellazione UML;
+- **IntelliJ IDEA** per lo sviluppo Java;
+- **Postman** per il testing delle API;
+- **Docker Compose** per la gestione dei container.
 
 
 ## Scelte progettuali
