@@ -4,5 +4,8 @@ export const environment = {
     // aperto il frontend. Cosi' funziona sia in locale (localhost) sia su
     // AWS (l'IP pubblico) sia con un eventuale dominio futuro, senza dover
     // ricompilare per ogni ambiente diverso.
-    apiUrl: `http://${window.location.hostname}:8080`
+//    apiUrl: `http://${window.location.hostname}:8080`
+    // Non serve più ricarcolare il backend, poiché adesso è servito dallo stesso
+    // dominio del frontend tramite nginx
+    apiUrl: ''
 };
