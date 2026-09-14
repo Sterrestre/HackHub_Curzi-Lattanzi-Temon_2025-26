@@ -3,6 +3,7 @@ package it.unicam.cs.ids.config;
 import it.unicam.cs.ids.handler.OAuth2LoginSuccessHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.SecurityFilterChain;
 
@@ -16,10 +17,10 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/", "/login", "/error").permitAll()
-                        // TODO: TEMPORANEO: apre in lettura tutte le rotte per poter sviluppare
-                        // e testare il frontend prima che l'integrazione col login sia pronta.
-                        // Da rimuovere quando l'autenticazione sara' collegata all'app Angular.
-                        .requestMatchers(org.springframework.http.HttpMethod.GET, "/**").permitAll()
+                        // Consultare hackathon, classifiche e sottomissioni e' pubblico:
+                        // non serve un account per guardare, solo per agire.
+                        .requestMatchers(HttpMethod.GET, "/**").permitAll()
+                        // Tutto il resto (creare, iscrivere, valutare, ecc.) richiede login.
                         .anyRequest().authenticated()
                 )
                 .oauth2Login(oauth -> oauth
