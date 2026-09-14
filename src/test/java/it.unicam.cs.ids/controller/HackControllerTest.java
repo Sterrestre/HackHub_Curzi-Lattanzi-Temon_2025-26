@@ -34,6 +34,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.authentication;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+
 /**
  * Test a livello di controller: verifica il comportamento HTTP reale
  * dell'endpoint (status code, corpo della risposta JSON), non la logica
@@ -165,6 +167,7 @@ class HackControllerTest {
 
         mockMvc.perform(post("/api/hackathon/crea")
                         .with(authentication(creaAutenticazione("organizzatore@test.it")))
+                        .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(richiesta)))
                 .andExpect(status().isOk())
@@ -209,7 +212,8 @@ class HackControllerTest {
         when(hackathonService.getHackathonByID("hack-1")).thenReturn(hackathon);
 
         mockMvc.perform(post("/api/hackathon/hack-1/conferma")
-                        .with(authentication(creaAutenticazione("organizzatore@test.it"))))
+                        .with(authentication(creaAutenticazione("organizzatore@test.it")))
+                        .with(csrf()))
                 .andExpect(status().isOk());
     }
 
@@ -229,7 +233,8 @@ class HackControllerTest {
                 .when(hackathonService).aggiornaStato("hack-1", Stato.CONFERMATO);
 
         mockMvc.perform(post("/api/hackathon/hack-1/conferma")
-                        .with(authentication(creaAutenticazione("organizzatore@test.it"))))
+                        .with(authentication(creaAutenticazione("organizzatore@test.it")))
+                        .with(csrf()))
                 .andExpect(status().isBadRequest());
     }
 }
