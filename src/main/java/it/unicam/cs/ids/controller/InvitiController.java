@@ -1,11 +1,8 @@
 package it.unicam.cs.ids.controller;
 
-import it.unicam.cs.ids.dto.InvitoStaffDTO;
+import it.unicam.cs.ids.dto.*;
 import it.unicam.cs.ids.model.inviti.InvitoHackathon;
 import it.unicam.cs.ids.security.UtenteCorrente;
-import it.unicam.cs.ids.dto.InvitaStaffRequest;
-import it.unicam.cs.ids.dto.InvitaTeamRequest;
-import it.unicam.cs.ids.dto.RispostaInvitoRequest;
 import it.unicam.cs.ids.handler.InvitiHandler;
 import it.unicam.cs.ids.model.Utente;
 import it.unicam.cs.ids.model.hackathon.Hackathon;
@@ -18,7 +15,6 @@ import it.unicam.cs.ids.service.InvitoService;
 import it.unicam.cs.ids.service.UtenteService;
 import it.unicam.cs.ids.service.TeamService;
 import org.springframework.http.ResponseEntity;
-import it.unicam.cs.ids.model.inviti.InvitoHackathon;
 import java.util.List;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
@@ -145,11 +141,9 @@ public class InvitiController {
 
     @GetMapping("/miei")
     public ResponseEntity<?> getMieiInviti(@UtenteCorrente Utente utenteCorrente) {
-        List<InvitoStaffDTO> inviti = invitoService.findAll().stream()
-                .filter(i -> i instanceof InvitoHackathon)
-                .map(i -> (InvitoHackathon) i)
+        List<InvitoRicevutoDTO> inviti = invitoService.findAll().stream()
                 .filter(i -> i.getDestinatario().getUtenteID().equals(utenteCorrente.getUtenteID()))
-                .map(InvitoStaffDTO::from)
+                .map(InvitoRicevutoDTO::from)
                 .toList();
         return ResponseEntity.ok(inviti);
     }

@@ -6,9 +6,12 @@
 
 <ul *ngIf="!caricamento && inviti.length > 0">
     <li *ngFor="let i of inviti">
-        <strong>{{ i.nomeHackathon }}</strong> — invito come <strong>{{ i.ruolo }}</strong>
-        <br>
-        Da: {{ i.mittenteNickname }}
+    <span *ngIf="i.tipo === 'STAFF'">
+      <strong>{{ i.titolo }}</strong> — invito come <strong>{{ i.dettaglio }}</strong>
+    </span>
+        <span *ngIf="i.tipo === 'TEAM'">
+      Invito a unirti al team <strong>{{ i.titolo }}</strong> (da {{ i.dettaglio }})
+    </span>
         <br>
         <button type="button" (click)="rispondi(i, true)">Accetta</button>
         <button type="button" (click)="rispondi(i, false)">Rifiuta</button>

@@ -11,10 +11,9 @@ export interface InvitaStaffRequest {
 
 export interface InvitoStaff {
     id: string;
-    hackathonId: string;
-    nomeHackathon: string;
-    ruolo: string;
-    mittenteNickname: string;
+    tipo: 'STAFF' | 'TEAM';
+    titolo: string;
+    dettaglio: string;
 }
 
 @Injectable({
