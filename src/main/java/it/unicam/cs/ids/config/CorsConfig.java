@@ -13,7 +13,9 @@ import java.util.List;
  * un'origine diversa dal backend, di chiamare le API REST) e la
  * registrazione del resolver per l'annotazione @UtenteCorrente.
  */
-@Configuration
+
+// Disabilitato a seguito dell'implementazione del reverse proxy Nginx, che gestisce le richieste CORS.
+// @Configuration
 public class CorsConfig implements WebMvcConfigurer {
 
     private final UtenteCorrenteArgumentResolver utenteCorrenteArgumentResolver;

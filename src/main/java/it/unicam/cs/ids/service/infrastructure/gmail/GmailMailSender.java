@@ -2,6 +2,9 @@ package it.unicam.cs.ids.service.infrastructure.gmail;
 
 import com.google.api.services.gmail.Gmail;
 import it.unicam.cs.ids.service.MailSender;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.stereotype.Service;
 
 /**
  * Implementazione concreta di MailSender che utilizza l'API Gmail.
@@ -9,25 +12,21 @@ import it.unicam.cs.ids.service.MailSender;
  */
 
 // Pattern: Adapter
+@Service
+@ConditionalOnProperty(name = "gmail.enabled", havingValue = "true")
 public class GmailMailSender implements MailSender {
 
-// SE DISTINZIONE PROD E DEV
     private final Gmail gmail;
-//    private final String mittente;
+    private final String mittente;
 
     /**
      * Costruttore: riceve un client Gmail già autenticato,
      * creato tramite GmailClientFactory.
      */
 
-// SE DISTINZIONE PROD E DEV
-//    public GmailMailSender(Gmail gmail, String mittente) {
-//        this.gmail = gmail;
-//        this.mittente = mittente;
-//    }
-
-    public GmailMailSender(Gmail gmail) {
+    public GmailMailSender(Gmail gmail, @Value("${GMAIL_SENDER_EMAIL:noreply@unicam.it}") String mittente) {
         this.gmail = gmail;
+        this.mittente = mittente;
     }
 
     @Override

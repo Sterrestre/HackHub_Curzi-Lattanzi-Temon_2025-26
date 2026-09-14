@@ -27,6 +27,7 @@ dependencies {
     // Database MySQL
     implementation ("org.springframework.boot:spring-boot-starter-data-jpa")
     runtimeOnly ("com.mysql:mysql-connector-j")
+    runtimeOnly("com.h2database:h2")
 
     // H2 solo per i test unitari (DB in-memory, non usato in produzione/docker)
     testRuntimeOnly ("com.h2database:h2")

@@ -14,22 +14,22 @@ import org.springframework.context.annotation.Profile;
 public class MailSenderConfig {
 
 // Da inserire per usare un mittente configurabile tramite application.properties o variabile d'ambiente.
-//    @Value("${GMAIL_SENDER}")
-//    private String mittente;
+    @Value("${GMAIL_SENDER:noreply@hackhub.it}")
+    private String mittente;
 
 
     @Bean
+    // Profili "prod" per usare GmailMailSender in produzione, e "dev" per usare MockMailSender in sviluppo. Non sono attivi a causa di Gmail API, che richiede un URI https.
+    @Profile("prod")
     @ConditionalOnProperty(name = "gmail.enabled", havingValue = "true")
-// Profili "prod" per usare GmailMailSender in produzione, e "dev" per usare MockMailSender in sviluppo. Non sono attivi a causa di Gmail API, che richiede un URI https.
-//    @Profile("prod")
     public MailSender mailSender(Gmail gmail) {
-//        return new GmailMailSender(gmail, mittente);
-        return new GmailMailSender(gmail);
+        return new GmailMailSender(gmail, mittente);
+//        return new GmailMailSender(gmail);
     }
 
     @Bean
-    @ConditionalOnProperty(name = "gmail.enabled", havingValue = "false")
-//    @Profile("dev")
+    //    @Profile("dev") <-- commentato perché se in prod impostiamo gmail.enabled=false, Spring usa in automatico il mockMailSender, senza far fallire l'iniezione delle dipendenze.
+    @ConditionalOnProperty(name = "gmail.enabled", havingValue = "false",matchIfMissing = true)
     public MailSender mockMailSender() {
         return new MockMailSender();
     }

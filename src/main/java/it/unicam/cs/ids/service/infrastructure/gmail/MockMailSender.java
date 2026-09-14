@@ -1,8 +1,12 @@
 package it.unicam.cs.ids.service.infrastructure.gmail;
 
 import it.unicam.cs.ids.service.MailSender;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.stereotype.Service;
 
 // Pattern: Adapter (Mock)
+@Service
+@ConditionalOnProperty(name = "gmail.enabled", havingValue = "false", matchIfMissing = true)
 public class MockMailSender implements MailSender {
 
     @Override

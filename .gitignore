@@ -2,3 +2,8 @@ build/reports/problems/problems-report.html
 variabili.env
 *.mv.db
 *.trace.db
+
+# Credenziali e Token privati
+secrets/
+tokens/
+*.json

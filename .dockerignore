@@ -6,3 +6,7 @@ VisualParadigm
 *.mv.db
 *.trace.db
 variabili.env
+
+# Escludi dal contesto di build Docker
+secrets/
+tokens/
