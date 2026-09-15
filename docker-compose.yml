@@ -24,7 +24,7 @@ services:
     env_file:
       - variabili.env
     environment:
-      SPRING_PROFILES_ACTIVE: docker
+      SPRING_PROFILES_ACTIVE: prod
       DB_HOST: mysql
       DB_PORT: 3306
       FRONTEND_URL: ${FRONTEND_URL}
