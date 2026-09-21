@@ -36,13 +36,21 @@ public class HackHandler {
      * Crea un nuovo hackathon e registra l'organizzatore.
      * La persistenza è delegata a HackathonService.
      */
-    public Hackathon creaHackathon(Utente utente, String nome, InfoHack info) {
+//    public Hackathon creaHackathon(Utente utente, String nome, InfoHack info) {
 //        if (!utente.isMembroDiStaff()) {
 //            throw new IllegalArgumentException("Solo i membri di staff possono creare un hackathon");
 //        }
-        Hackathon hackathon = new Hackathon(info, nome);
-        roleFactory.creaERegistraRuolo(ORGANIZZATORE, utente, hackathon);
-        return hackathon;
+//        Hackathon hackathon = new Hackathon(info, nome);
+//        roleFactory.creaERegistraRuolo(ORGANIZZATORE, utente, hackathon);
+//        return hackathon;
+//    }
+
+    public Hackathon creaHackathon(Utente utente, String nome, InfoHack info) {
+        return new Hackathon(info, nome);
+    }
+
+    public void assegnaOrganizzatore(Utente utente, Hackathon hackathon) {
+        roleFactory.creaERegistraRuolo(RuoliStaff.ORGANIZZATORE, utente, hackathon);
     }
 
     /** Conferma un hackathon delegando al suo stato corrente. */

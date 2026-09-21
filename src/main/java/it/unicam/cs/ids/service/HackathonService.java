@@ -34,13 +34,22 @@ public class HackathonService {
     public Hackathon creaHackathon(Utente organizzatore, String nome, InfoHack info) {
         boolean duplicato = hackathonRepository.findAll().stream()
                 .anyMatch(h -> h.getNome().equalsIgnoreCase(nome) &&
+                        h.getOrganizzatore() != null &&
                         h.getOrganizzatore().getUtenteID().equals(organizzatore.getUtenteID()));
         if (duplicato) {
             throw new IllegalArgumentException("Hai già creato un hackathon con questo nome");
         }
+
         Hackathon h = hackHandler.creaHackathon(organizzatore, nome, info);
         h.cambiaStato(new BozzaState(invitiHandler));
-        hackathonRepository.save(h);
+
+        // Salviamo prima l'hackathon da solo: cosi' esiste gia' una riga nel
+        // database quando, subito dopo, gli colleghiamo il ruolo organizzatore.
+        hackathonRepository.saveAndFlush(h);
+
+        hackHandler.assegnaOrganizzatore(organizzatore, h);
+        hackathonRepository.saveAndFlush(h);
+
         return h;
     }
 
