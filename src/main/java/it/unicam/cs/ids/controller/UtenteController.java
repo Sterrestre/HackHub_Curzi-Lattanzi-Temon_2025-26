@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+// Commento per fare un commit - ignorami
+
 /**
  * Controller per la gestione degli utenti.
  * Parla solo con UtenteService per recuperare e creare utenti.
