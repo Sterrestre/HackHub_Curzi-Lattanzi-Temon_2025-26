@@ -2,6 +2,7 @@ package it.unicam.cs.ids.security;
 
 import it.unicam.cs.ids.model.Utente;
 import it.unicam.cs.ids.service.UtenteService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
@@ -31,7 +32,7 @@ public class UtenteCorrenteArgumentResolver implements HandlerMethodArgumentReso
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
         return parameter.hasParameterAnnotation(UtenteCorrente.class);
-    }
+}
 
     @Override
     public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer,
