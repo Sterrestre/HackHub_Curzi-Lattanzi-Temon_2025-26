@@ -37,9 +37,9 @@ public class HackHandler {
      * La persistenza è delegata a HackathonService.
      */
     public Hackathon creaHackathon(Utente utente, String nome, InfoHack info) {
-        if (!utente.isMembroDiStaff()) {
-            throw new IllegalArgumentException("Solo i membri di staff possono creare un hackathon");
-        }
+//        if (!utente.isMembroDiStaff()) {
+//            throw new IllegalArgumentException("Solo i membri di staff possono creare un hackathon");
+//        }
         Hackathon hackathon = new Hackathon(info, nome);
         roleFactory.creaERegistraRuolo(ORGANIZZATORE, utente, hackathon);
         return hackathon;
