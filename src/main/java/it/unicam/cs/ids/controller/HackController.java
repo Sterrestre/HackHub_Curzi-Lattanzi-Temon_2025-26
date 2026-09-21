@@ -64,6 +64,7 @@ public class HackController {
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         } catch (Exception e) {
+            e.printStackTrace();
             return ResponseEntity.internalServerError().body("Errore interno: " + e.getMessage());
         }
     }
