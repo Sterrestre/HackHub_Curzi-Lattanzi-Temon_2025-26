@@ -42,10 +42,39 @@ public class HackController {
         this.teamService = teamService;
     }
 
+//    @PostMapping("/crea")
+//    public ResponseEntity<?> crea(@RequestBody CreaHackathonRequest req,
+//                                  @UtenteCorrente Utente organizzatore) {
+//        try {
+//            InfoHack info = new InfoHackBuilderImpl()
+//                    .regolamento(req.regolamento())
+//                    .dataInizio(req.dataInizio())
+//                    .dataFine(req.dataFine())
+//                    .scadenzaIscrizioni(req.scadenzaIscrizioni())
+//                    .luogo(req.luogo())
+//                    .quotaIscrizione(req.quotaIscrizione())
+//                    .premio(req.premio())
+//                    .numMaxTeam(req.numMaxTeam())
+//                    .dimMaxTeam(req.maxPartecipantiPerTeam())
+//                    .build();
+//
+//            return ResponseEntity.ok(HackathonDTO.from(
+//                    hackathonService.creaHackathon(organizzatore, req.nome(), info)
+//            ));
+//        } catch (IllegalArgumentException e) {
+//            return ResponseEntity.badRequest().body(e.getMessage());
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            return ResponseEntity.internalServerError().body("Errore interno: " + e.getMessage());
+//        }
+//    }
+
     @PostMapping("/crea")
     public ResponseEntity<?> crea(@RequestBody CreaHackathonRequest req,
                                   @UtenteCorrente Utente organizzatore) {
         try {
+            Utente organizzatoreAggiornato = utenteService.findById(organizzatore.getUtenteID());
+
             InfoHack info = new InfoHackBuilderImpl()
                     .regolamento(req.regolamento())
                     .dataInizio(req.dataInizio())
@@ -59,7 +88,7 @@ public class HackController {
                     .build();
 
             return ResponseEntity.ok(HackathonDTO.from(
-                    hackathonService.creaHackathon(organizzatore, req.nome(), info)
+                    hackathonService.creaHackathon(organizzatoreAggiornato, req.nome(), info)
             ));
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
