@@ -392,35 +392,27 @@ public class HackController {
 
     @GetMapping("/miei-team")
     public ResponseEntity<List<HackathonDTO>> getMieiHackathonComeTeam(@UtenteCorrente Utente utenteCorrente) {
-        try {
-            Utente utente = utenteService.findById(utenteCorrente.getUtenteID());
-            if (utente.getTeam() == null) {
-                return ResponseEntity.ok(List.of());
-            }
-            String teamId = utente.getTeam().getTeamID();
-            List<HackathonDTO> lista = hackathonService.getTutti().stream()
-                    .filter(h -> h.getTeamIscritti().stream()
-                            .anyMatch(ti -> ti.getTeam().getTeamID().equals(teamId)))
-                    .map(HackathonDTO::from)
-                    .toList();
-            return ResponseEntity.ok(lista);
-        } catch (Exception e) {
+        Utente utente = utenteService.findById(utenteCorrente.getUtenteID());
+        if (utente.getTeam() == null) {
             return ResponseEntity.ok(List.of());
         }
+        String teamId = utente.getTeam().getTeamID();
+        List<HackathonDTO> lista = hackathonService.getTutti().stream()
+                .filter(h -> h.getTeamIscritti().stream()
+                        .anyMatch(ti -> ti.getTeam().getTeamID().equals(teamId)))
+                .map(HackathonDTO::from)
+                .toList();
+        return ResponseEntity.ok(lista);
     }
 
     @GetMapping("/miei-staff")
     public ResponseEntity<List<HackathonDTO>> getMieiHackathonComeStaff(@UtenteCorrente Utente utenteCorrente) {
-        try {
-            Utente utente = utenteService.findById(utenteCorrente.getUtenteID());
-            List<HackathonDTO> lista = utente.getRuoli().stream()
-                    .map(r -> r.getHackathon())
-                    .distinct()
-                    .map(HackathonDTO::from)
-                    .toList();
-            return ResponseEntity.ok(lista);
-        } catch (Exception e) {
-            return ResponseEntity.ok(List.of());
-        }
+        Utente utente = utenteService.findById(utenteCorrente.getUtenteID());
+        List<HackathonDTO> lista = utente.getRuoli().stream()
+                .map(r -> r.getHackathon())
+                .distinct()
+                .map(HackathonDTO::from)
+                .toList();
+        return ResponseEntity.ok(lista);
     }
 }
