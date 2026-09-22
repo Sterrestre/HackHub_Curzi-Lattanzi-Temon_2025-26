@@ -27,9 +27,17 @@ public class UtenteService {
                 .findByUtenteNomeContainingIgnoreCaseOrUtenteCognomeContainingIgnoreCase(query, query);
     }
 
+//    public Utente findById(String utenteId) {
+//        return utenteRepository.findById(utenteId)
+//                .orElseThrow(() -> new IllegalArgumentException("Utente non trovato"));
+//    }
+
+    @org.springframework.transaction.annotation.Transactional(readOnly = true)
     public Utente findById(String utenteId) {
-        return utenteRepository.findById(utenteId)
+        Utente utente = utenteRepository.findById(utenteId)
                 .orElseThrow(() -> new IllegalArgumentException("Utente non trovato"));
+        org.hibernate.Hibernate.initialize(utente.getRuoli());
+        return utente;
     }
 
     @org.springframework.transaction.annotation.Transactional(readOnly = true)
