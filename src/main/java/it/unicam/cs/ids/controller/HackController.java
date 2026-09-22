@@ -366,12 +366,37 @@ public class HackController {
         return ResponseEntity.ok(StaffHackathonDTO.from(hack));
     }
 
+//    @GetMapping("/miei-team")
+//    public ResponseEntity<List<HackathonDTO>> getMieiHackathonComeTeam(@UtenteCorrente Utente utenteCorrente) {
+//        if (utenteCorrente.getTeam() == null) {
+//            return ResponseEntity.ok(List.of());
+//        }
+//        String teamId = utenteCorrente.getTeam().getTeamID();
+//        List<HackathonDTO> lista = hackathonService.getTutti().stream()
+//                .filter(h -> h.getTeamIscritti().stream()
+//                        .anyMatch(ti -> ti.getTeam().getTeamID().equals(teamId)))
+//                .map(HackathonDTO::from)
+//                .toList();
+//        return ResponseEntity.ok(lista);
+//    }
+//
+//    @GetMapping("/miei-staff")
+//    public ResponseEntity<List<HackathonDTO>> getMieiHackathonComeStaff(@UtenteCorrente Utente utenteCorrente) {
+//        List<HackathonDTO> lista = utenteCorrente.getRuoli().stream()
+//                .map(r -> r.getHackathon())
+//                .distinct()
+//                .map(HackathonDTO::from)
+//                .toList();
+//        return ResponseEntity.ok(lista);
+//    }
+
     @GetMapping("/miei-team")
     public ResponseEntity<List<HackathonDTO>> getMieiHackathonComeTeam(@UtenteCorrente Utente utenteCorrente) {
-        if (utenteCorrente.getTeam() == null) {
+        Utente utente = utenteService.findById(utenteCorrente.getUtenteID());
+        if (utente.getTeam() == null) {
             return ResponseEntity.ok(List.of());
         }
-        String teamId = utenteCorrente.getTeam().getTeamID();
+        String teamId = utente.getTeam().getTeamID();
         List<HackathonDTO> lista = hackathonService.getTutti().stream()
                 .filter(h -> h.getTeamIscritti().stream()
                         .anyMatch(ti -> ti.getTeam().getTeamID().equals(teamId)))
@@ -382,7 +407,8 @@ public class HackController {
 
     @GetMapping("/miei-staff")
     public ResponseEntity<List<HackathonDTO>> getMieiHackathonComeStaff(@UtenteCorrente Utente utenteCorrente) {
-        List<HackathonDTO> lista = utenteCorrente.getRuoli().stream()
+        Utente utente = utenteService.findById(utenteCorrente.getUtenteID());
+        List<HackathonDTO> lista = utente.getRuoli().stream()
                 .map(r -> r.getHackathon())
                 .distinct()
                 .map(HackathonDTO::from)
