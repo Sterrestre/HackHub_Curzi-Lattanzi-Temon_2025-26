@@ -5,7 +5,9 @@ import it.unicam.cs.ids.model.hackathon.Hackathon;
 import jakarta.persistence.*;
 
 @Entity
+@Table(name = "ruolo_partecipazione")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "dtype")
 public abstract class RuoloPartecipazione {
 
     @Id

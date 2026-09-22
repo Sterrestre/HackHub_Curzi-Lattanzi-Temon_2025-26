@@ -5,7 +5,10 @@ import it.unicam.cs.ids.model.team.Team;
 import it.unicam.cs.ids.repository.UtenteRepository;
 import it.unicam.cs.ids.dto.RegistraUtenteRequest;
 import java.util.UUID;
+
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -34,8 +37,11 @@ public class UtenteService {
 
     @org.springframework.transaction.annotation.Transactional(readOnly = true)
     public Utente findById(String utenteId) {
+        if (utenteId == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "ID utente non valido o nullo");
+        }
         Utente utente = utenteRepository.findById(utenteId)
-                .orElseThrow(() -> new IllegalArgumentException("Utente non trovato"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Utente non trovato" + utenteId));
         org.hibernate.Hibernate.initialize(utente.getRuoli());
         return utente;
     }

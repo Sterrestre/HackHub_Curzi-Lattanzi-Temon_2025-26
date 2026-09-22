@@ -14,6 +14,7 @@ import java.util.*;
 import static it.unicam.cs.ids.model.staff.RuoliStaff.ORGANIZZATORE;
 
 @Entity
+@Table(name ="hackathon")
 public class Hackathon {
 
     @Id

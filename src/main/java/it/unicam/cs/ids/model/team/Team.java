@@ -2,10 +2,7 @@ package it.unicam.cs.ids.model.team;
 
 import it.unicam.cs.ids.model.Utente;
 import it.unicam.cs.ids.model.team.MembroTeam;
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,6 +10,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Entity
+@Table(name = "team")
 public class Team {
     @Id
     private String teamID;
